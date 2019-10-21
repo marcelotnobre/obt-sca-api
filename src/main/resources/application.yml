@@ -1,0 +1,198 @@
+# Ambiente de desenvolvimento
+# https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+
+#Enabling HTTP/2 support in Spring Boot
+server:
+    port: 8090
+    http2:
+            enabled: true
+---
+#Enabling GZip compression in Spring Boot
+
+# Enable response compression
+server:
+    compression:
+            enabled: true
+# The comma-separated list of mime types that should be compressed
+            mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/json;charset=UTF-8
+
+# Compress the response only if the response size is at least 1KB
+            min-response-size: 1024
+---
+## MULTIPART (MultipartProperties)
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 50MB
+      max-request-size: 75MB
+---
+
+
+# PROFILES
+spring:
+      profiles:
+#            active: oauth-security,dev 
+              active: basic-security,dev   
+
+# Acessando o banco de dados local - mysql
+---
+spring:
+    datasources:
+## Ambiente HOMOLOGAÇÃO - SCA - kinghost
+#        url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
+#        username: outerboxtech
+#        password: fabrica123
+
+# Ambiente DESENVOLVIMENTO - SCA - kinghost 
+#    -
+#      name: desenvolvimento
+#      url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech01?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
+#      username: outerboxtech01
+#      password: fabricadesenv1234
+
+# Ambiente Local        
+     -
+        name: desenvolvimento
+        url: jdbc:mysql://localhost/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+        username: root
+        password: 
+       
+    jpa:   
+        hibernate:
+#           para executar esses dois comandos, deve desabilitar o flyway
+            # generate-ddl: false
+            ddl-auto: none
+---
+
+spring:
+    flyway:
+        enabled: true
+        locations: classpath:db/migration/mysql
+        baseline-on-migrate: true
+#        locations: classpath:db/migration/postgres
+---
+# exibe os comandos SQL
+spring:
+      jpa:
+         database: MYSQL
+         show-sql: true
+#         hibernate:
+#              naming:
+#                implicit_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+#                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+         properties:               
+            hibernate: 
+                dialect: org.hibernate.dialect.MySQL55Dialect
+#                envers:
+#                    default_schema: AUDITORIA
+                cache:
+                    # To enable query cache, you need to specify one more additional configuration property.
+                    use_query_cache: true
+                    # Enable second level cache (you can skip this property because default value is true for it).
+                    use_second_level_cache: true
+                    region:
+                        factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+         
+                
+---
+spring:
+    jackson:
+#        date-format: yyyy-MM-dd      não está funcionand
+#        joda-date-time-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ  não está funcionand
+        deserialization:
+            fail-on-unknown-properties: true
+       
+# Variaveis do properties da aplicacao     
+outerboxtech:
+  mail:
+    host: smtp.outerboxtech.com.br
+    port: 587
+    username: fabrica@outerboxtech.com.br
+    password: f@br!c@1234
+  s3:
+    access-key-id: AKXAIGKHGQxEK6MAG7BD
+    secret-access-key: asdasd
+
+---
+            
+# Configuração do pool de conexão em desenvolvimento
+
+spring:
+  datasource: 
+    hikari:
+#     não retirar essa linha abaixo. O spring controla as transações
+      auto-commit: false
+      minimum-idle: 2
+      maximum-pool-size: 15
+      idle-timeout: 300000
+      pool-name: "HikariPool"
+      connectionTestQuery: SELECT 1
+      max-lifetime: 1200000
+      connection-timeout: 20000
+      data-source-properties: 
+            #  prepStmtCacheSize
+            #  This sets the number of prepared statements that the MySQL driver will cache per connection. 
+            #  The default is a conservative 25. We recommend setting this to between 250-500.
+            prepStmtCacheSize: 250    
+            #  prepStmtCacheSqlLimit
+            #  This is the maximum length of a prepared SQL statement that the driver will cache. 
+            #  The MySQL default is 256. In our experience, especially with ORM frameworks like Hibernate, this default is well below the threshold of generated statement lengths. 
+            #  Our recommended setting is 2048.
+            prepStmtCacheSqlLimit: 2048
+            #  cachePrepStmts
+            #  Neither of the above parameters have any effect if the cache is in fact disabled, as it is by default. 
+            #  You must set this parameter to true.
+            cachePrepStmts: true
+            # useServerPrepStmts 
+            # Newer versions of MySQL support server-side prepared statements, this can provide a substantial performance boost. 
+            # Set this property to true.
+            useServerPrepStmts: true
+            # cacheResultSetMetadata
+            # The number of queries to cache ResultSetMetadata for if cacheResultSetMetaData is set to ‘true’ (default 50)
+            cacheResultSetMetadata: true
+            # cacheServerConfiguration
+            # Should the driver cache the results of 'SHOW VARIABLES' and 'SHOW COLLATION' on a per-URL basis
+            cacheServerConfiguration: true
+        
+---
+# logging.level.br.com.obt.sca.api: DEBUG
+# logging:level:org:hibernate: ERROR
+
+logging:
+   file: logs/ambiente_desenvolvimento.log
+   pattern:
+#     console: "%d %-5level %logger : %msg%n"
+     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+#     file: "%d %-5level [%thread] %logger : %msg%n"
+     file: "%d %-5level [%thread] %logger{0} : %msg%n"
+   level:
+#     root: INFO
+#     org.springframework.web: WARN
+#     org.hibernate: WARN
+     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql: TRACE
+     br.com.obt.clinica.api: DEBUG
+     br.com.obt.clinica.api.resource: DEBUG
+
+# spring:
+#   datasources:
+#       url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech01?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
+#       username: outerboxtech01
+#       password: fabricadesenv1234
+
+management.endpoints.web.exposure.include: "*"
+
+spring:
+  boot:
+    admin:
+      client:
+        instance:
+          service-base-url: "https://obt-sca-api.herokuapp.com"
+          management-base-url: "https://obt-sca-api.herokuapp.com"
+          name: "SCA-API"
+        url: "https://obt-sba.herokuapp.com"
+        username: "admin"
+        password: "Out3rb0x_sb@"

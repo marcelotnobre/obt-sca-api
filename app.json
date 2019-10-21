@@ -1,0 +1,33 @@
+{
+  "addons": [
+    "jawsdb"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/java"
+    }
+  ],
+  "env": {
+    "JAWSDB_URL": {
+      "required": true
+    },
+    "JDBC_DATABASE_PASSWORD": {
+      "required": true
+    },
+    "JDBC_DATABASE_URL": {
+      "required": true
+    },
+    "JDBC_DATABASE_USERNAME": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "obt-sca-api",
+  "scripts": {
+  },
+  "stack": "heroku-18"
+}
