@@ -54,130 +54,136 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/usuarios")
 public class UsuarioResource {
 
-	@Autowired
-	private UsuarioService usuarioService;
+    @Autowired
+    private UsuarioService usuarioService;
 
-	@Autowired
-	private ApplicationEventPublisher publisher;
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
-	@ApiOperation(value = "Listar dos usuarios paginada por nome", response = List.class)
-	@GetMapping(value = "/paginacao")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
-	public ResponseEntity<Page<Usuario>> findByNomeContainingPagination(
-			@RequestParam(required = false, defaultValue = "") String nome,
-			@RequestParam(required = false, defaultValue = "id") String sort,
-			@RequestParam(required = false, defaultValue = "asc") String order,
-			@PageableDefault(size = 10) Pageable pageable) {
+    @ApiOperation(value = "Listar dos usuarios paginada por nome", response = List.class)
+    @GetMapping(value = "/paginacao")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    public ResponseEntity<Page<Usuario>> findByNomeContainingPagination(
+                    @RequestParam(required = false, defaultValue = "") String nome,
+                    @RequestParam(required = false, defaultValue = "id") String sort,
+                    @RequestParam(required = false, defaultValue = "asc") String order,
+                    @PageableDefault(size = 10) Pageable pageable) {
 
-		final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                        Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
-		Page<Usuario> usuarioPage = usuarioService.findByNomeContaining(nome, pageRequest);
+        Page<Usuario> usuarioPage = usuarioService.findByNomeContaining(nome, pageRequest);
 
-		if (usuarioPage.getContent().isEmpty()) {
-			return new ResponseEntity<Page<Usuario>>(HttpStatus.NO_CONTENT);
-		} else {
-			long totalPermissoes = usuarioPage.getTotalElements();
-			int nbPagePermissoes = usuarioPage.getNumberOfElements();
+        if (usuarioPage.getContent().isEmpty()) {
+            return new ResponseEntity<Page<Usuario>>(HttpStatus.NO_CONTENT);
+        } else {
+            long totalPermissoes = usuarioPage.getTotalElements();
+            int nbPagePermissoes = usuarioPage.getNumberOfElements();
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("X-Total-Count", String.valueOf(usuarioPage.getTotalElements()));
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-Total-Count", String.valueOf(usuarioPage.getTotalElements()));
 
-			if (nbPagePermissoes < totalPermissoes) {
-				headers.add("first", buildPageUri(PageRequest.of(0, usuarioPage.getSize())));
-				headers.add("last",
-						buildPageUri(PageRequest.of(usuarioPage.getTotalPages() - 1, usuarioPage.getSize())));
-				if (usuarioPage.hasNext()) {
-					headers.add("next", buildPageUri(usuarioPage.nextPageable()));
-				}
-				if (usuarioPage.hasPrevious()) {
-					headers.add("prev", buildPageUri(usuarioPage.previousPageable()));
-				}
-				return new ResponseEntity<>(usuarioPage, headers, HttpStatus.PARTIAL_CONTENT);
-			} else {
-				return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
-			}
-		}
-	}
+            if (nbPagePermissoes < totalPermissoes) {
+                    headers.add("first", buildPageUri(PageRequest.of(0, usuarioPage.getSize())));
+                    headers.add("last",
+                                    buildPageUri(PageRequest.of(usuarioPage.getTotalPages() - 1, usuarioPage.getSize())));
+                    if (usuarioPage.hasNext()) {
+                            headers.add("next", buildPageUri(usuarioPage.nextPageable()));
+                    }
+                    if (usuarioPage.hasPrevious()) {
+                            headers.add("prev", buildPageUri(usuarioPage.previousPageable()));
+                    }
+                    return new ResponseEntity<>(usuarioPage, headers, HttpStatus.PARTIAL_CONTENT);
+            } else {
+                    return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
+            }
+        }
+    }
 
-	@ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
-	@PostMapping(value = "/usuario/perfis/sistemas")
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
-	public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveUsuarioAndPerfisAndSistemas(
-			@Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection,
-			HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
-			ResourceParameterNullException, ResourceAdministratorNotUpdateException {
+    @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
+    @PostMapping(value = "/usuario/perfis/sistemas")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveUsuarioAndPerfisAndSistemas(
+                    @Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection,
+                    HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
+                    ResourceParameterNullException, ResourceAdministratorNotUpdateException {
 
-		UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjectionSalvo = usuarioService
-				.saveUsuarioAndPerfisAndSistemas(usuarioAndPerfisAndSistemasProjection);
-		publisher.publishEvent(
-				new RecursoCriadoEvent(this, response, usuarioAndPerfisAndSistemasProjectionSalvo.getId()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisAndSistemasProjectionSalvo);
-	}
+        UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjectionSalvo = usuarioService
+                        .saveUsuarioAndPerfisAndSistemas(usuarioAndPerfisAndSistemasProjection);
+        publisher.publishEvent(
+                        new RecursoCriadoEvent(this, response, usuarioAndPerfisAndSistemasProjectionSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisAndSistemasProjectionSalvo);
+    }
 
-	@ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)
-	@GetMapping(value = "/login/{emailOrLogin}")
-	public Usuario findByEmailOrLogin(@PathVariable String emailOrLogin) throws ResourceNotFoundException {
-		return usuarioService.findByEmailOrLogin(emailOrLogin).get();
-	}
+    @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)
+    @GetMapping(value = "/login/{emailOrLogin}")
+    public Usuario findByEmailOrLogin(@PathVariable String emailOrLogin) throws ResourceNotFoundException {
+        return usuarioService.findByEmailOrLogin(emailOrLogin).get();
+    }
 
-	@ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
-	@PostMapping(value = "/usuario/perfis")
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
-	public ResponseEntity<UsuarioAndPerfisProjection> saveUsuarioAndPerfis(
-			@Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
-			ResourceAdministratorNotUpdateException {
+    @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)
+    @GetMapping(value = "/count")
+    public Long countUsuario() throws ResourceNotFoundException {
+        return usuarioService.countUsuario();
+    }
 
-		UsuarioAndPerfisProjection usuarioAndPerfisProjectionSalvo = usuarioService
-				.saveUsuarioAndPerfis(usuarioAndPerfisProjection);
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
-	}
+    @ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
+    @PostMapping(value = "/usuario/perfis")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    public ResponseEntity<UsuarioAndPerfisProjection> saveUsuarioAndPerfis(
+                    @Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
+                    throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+                    ResourceAdministratorNotUpdateException {
 
-	@ApiOperation(value = "Salvar um usuario", response = List.class)
-	@PostMapping()
-	// @PreAuthorize("#oauth2.hasScope('write')")
-	// @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and
-	// #oauth2.hasScope('write')")
-	public ResponseEntity<Usuario> save(@Valid @RequestBody Usuario usuario, HttpServletResponse response)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
-		Usuario usuarioSalva = usuarioService.save(usuario);
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
-	}
+        UsuarioAndPerfisProjection usuarioAndPerfisProjectionSalvo = usuarioService
+                        .saveUsuarioAndPerfis(usuarioAndPerfisProjection);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
+    }
 
-	@ApiOperation(value = "Pesquisa por ID", response = List.class)
-	@GetMapping(value = "/{id}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO') and #oauth2.hasScope('read')")
-	public ResponseEntity<Usuario> findById(@PathVariable Long id) throws ResourceNotFoundException {
-		Optional<Usuario> usuario = usuarioService.findById(id);
-		return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
-	}
+    @ApiOperation(value = "Salvar um usuario", response = List.class)
+    @PostMapping()
+    // @PreAuthorize("#oauth2.hasScope('write')")
+    // @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and
+    // #oauth2.hasScope('write')")
+    public ResponseEntity<Usuario> save(@Valid @RequestBody Usuario usuario, HttpServletResponse response)
+                    throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+        Usuario usuarioSalva = usuarioService.save(usuario);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
+    }
 
-	@ApiOperation(value = "Atualizar o status")
-	@PutMapping(value = "/{id}/ativo")
-	@PreAuthorize("hasAuthority('ROLE_STATUS_USUARIO') and #oauth2.hasScope('write')")
-	public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
-			throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
-		usuarioService.updatePropertyStatus(id, status);
-	}
+    @ApiOperation(value = "Pesquisa por ID", response = List.class)
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO') and #oauth2.hasScope('read')")
+    public ResponseEntity<Usuario> findById(@PathVariable Long id) throws ResourceNotFoundException {
+        Optional<Usuario> usuario = usuarioService.findById(id);
+        return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
+    }
 
-	@ApiOperation(value = "Excluir permissão - Default : Só o administrador poderá fazer essa exclusão fisica.")
-	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_USUARIO') and #oauth2.hasScope('write')")
-	public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
-		usuarioService.deleteById(id);
-	}
+    @ApiOperation(value = "Atualizar o status")
+    @PutMapping(value = "/{id}/ativo")
+    @PreAuthorize("hasAuthority('ROLE_STATUS_USUARIO') and #oauth2.hasScope('write')")
+    public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
+                    throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+        usuarioService.updatePropertyStatus(id, status);
+    }
 
-	// Metodos Privados
-	private String buildPageUri(Pageable page) {
-		return fromUriString("/usuarios").query("page={page}&size={size}")
-				.buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
-	}
+    @ApiOperation(value = "Excluir permissão - Default : Só o administrador poderá fazer essa exclusão fisica.")
+    @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_REMOVER_USUARIO') and #oauth2.hasScope('write')")
+    public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
+            usuarioService.deleteById(id);
+    }
 
-	// private Usuario getUsuarioLogado(HttpServletRequest request) {
-	// Principal principal = request.getUserPrincipal();
-	// return ((UsuarioSistema)principal).getUsuario();
-	// }
+    // Metodos Privados
+    private String buildPageUri(Pageable page) {
+        return fromUriString("/usuarios").query("page={page}&size={size}")
+                        .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
+    }
+
+    // private Usuario getUsuarioLogado(HttpServletRequest request) {
+    // Principal principal = request.getUserPrincipal();
+    // return ((UsuarioSistema)principal).getUsuario();
+    // }
 }

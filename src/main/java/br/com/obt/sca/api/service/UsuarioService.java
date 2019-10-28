@@ -37,191 +37,195 @@ import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 
 //@formatter:off
-@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceException.class })
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
 //@formatter:on
 @Service
 public class UsuarioService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-	@Autowired
-	private UsuarioRepository usuarioRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-	@Autowired
-	private UsuarioPerfilService usuarioPerfilService;
+    @Autowired
+    private UsuarioPerfilService usuarioPerfilService;
 
-	@Autowired
-	private UsuarioSistemaService usuarioSistemaService;
+    @Autowired
+    private UsuarioSistemaService usuarioSistemaService;
 
-	@Autowired
-	private PerfilService perfilService;
+    @Autowired
+    private PerfilService perfilService;
 
-	@Autowired
-	private Mailer mailer;
+    @Autowired
+    private Mailer mailer;
 
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public Usuario save(Usuario usuario)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public Usuario save(Usuario usuario)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
 
-		if ((usuario != null) && (usuario.getId() != null) && (usuario.getId() == 1l)) {
-			throw new ResourceAdministratorNotUpdateException("O usuário administrador não pode ser alterado!");
-		}
+        if ((usuario != null) && (usuario.getId() != null) && (usuario.getId() == 1l)) {
+            throw new ResourceAdministratorNotUpdateException("O usuário administrador não pode ser alterado!");
+        }
 
-		// Criptografando a senha.
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        // Criptografando a senha.
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		if ((usuario != null) && (usuario.getId() != null)) {
-			Optional<Usuario> usuarioBanco = this.findById(usuario.getId());
+        if ((usuario != null) && (usuario.getId() != null)) {
+            Optional<Usuario> usuarioBanco = this.findById(usuario.getId());
 
-			usuarioBanco.get().setSenha(encoder.encode(usuario.getSenha()));
+            usuarioBanco.get().setSenha(encoder.encode(usuario.getSenha()));
 
-			// Setando os campos que são alterados na tela.
-			usuarioBanco.get().setLogin(usuario.getLogin());
-			usuarioBanco.get().setEmail(usuario.getEmail());
-			usuarioBanco.get().setStatus(usuario.getStatus());
+            // Setando os campos que são alterados na tela.
+            usuarioBanco.get().setLogin(usuario.getLogin());
+            usuarioBanco.get().setEmail(usuario.getEmail());
+            usuarioBanco.get().setStatus(usuario.getStatus());
 
-			if (StringUtils.isBlank(usuario.getTipoAutenticacao().getLabel())) {
-				usuarioBanco.get().setTipoAutenticacao(TipoAutenticacao.SCA);
-			}
+            if (StringUtils.isBlank(usuario.getTipoAutenticacao().getLabel())) {
+                usuarioBanco.get().setTipoAutenticacao(TipoAutenticacao.SCA);
+            }
 
-			BeanUtils.copyProperties(usuarioBanco.get(), usuario, "id");
-		}
+            BeanUtils.copyProperties(usuarioBanco.get(), usuario, "id");
+        }
 
-		logger.info("antes de salvar usuário.");
-		Usuario usuarioSalvo = usuario;
-		if (usuario != null) {
-			if (usuario.getTipoAutenticacao() == null) {
-				usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
-			}
-			usuario.setSenha(encoder.encode(usuario.getSenha()));
-			usuarioSalvo = usuarioRepository.save(usuario);
-		}
+        logger.info("antes de salvar usuário.");
+        Usuario usuarioSalvo = usuario;
+        if (usuario != null) {
+            if (usuario.getTipoAutenticacao() == null) {
+                usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
+            }
+            usuario.setSenha(encoder.encode(usuario.getSenha()));
+            usuarioSalvo = usuarioRepository.save(usuario);
+        }
 
-		logger.info("depois de salvar usuário.");
+        logger.info("depois de salvar usuário.");
 
-		ExecutorService executorService = Executors.newFixedThreadPool(5);
-		ThreadEnviarEmail task = new ThreadEnviarEmail(this, usuarioSalvo);
-		executorService.execute(task);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ThreadEnviarEmail task = new ThreadEnviarEmail(this, usuarioSalvo);
+        executorService.execute(task);
 
-		return usuarioSalvo;
+        return usuarioSalvo;
 
-	}
+    }
 
-	// @Async("threadPoolTaskExecutor")
-	public void enviarEmailUsuario(Usuario usuario) throws ResourceNotFoundException {
+    // @Async("threadPoolTaskExecutor")
+    public void enviarEmailUsuario(Usuario usuario) throws ResourceNotFoundException {
 
-		System.out.println("Thread :" + Thread.currentThread().getName());
+        System.out.println("Thread :" + Thread.currentThread().getName());
 
-		Optional<Usuario> usuarioBanco = findById(usuario.getId());
+        Optional<Usuario> usuarioBanco = findById(usuario.getId());
 
-		List<String> emails = new ArrayList<String>();
-		emails.add("marcelo.nobre@outerboxtech.com.br");
-		emails.add("jose.silva@outerboxtech.com.br");
-		emails.add("vinicius.assis@outerboxtech.com.br");
+        List<String> emails = new ArrayList<String>();
+        emails.add("marcelo.nobre@outerboxtech.com.br");
+        emails.add("jose.silva@outerboxtech.com.br");
+        emails.add("vinicius.assis@outerboxtech.com.br");
 
-		Map<String, Object> variaveis = new HashMap<>();
-		variaveis.put("emails", emails);
+        Map<String, Object> variaveis = new HashMap<>();
+        variaveis.put("emails", emails);
 
-		logger.info("antes de enviar o email.");
-		mailer.enviarEmailConfirmacaoDePermissaoCadastrada(emails,
-				"Usuario : " + usuarioBanco.get().getLogin() + " cadastrado com sucesso!",
-				"mail/aviso-usuario-cadastrado", variaveis);
-		logger.info("Envio de e-mail de aviso concluído.");
+        logger.info("antes de enviar o email.");
+        mailer.enviarEmailConfirmacaoDePermissaoCadastrada(emails,
+                "Usuario : " + usuarioBanco.get().getLogin() + " cadastrado com sucesso!",
+                "mail/aviso-usuario-cadastrado", variaveis);
+        logger.info("Envio de e-mail de aviso concluído.");
 
-	}
+    }
 
-	@Transactional(readOnly = false)
-	public void updatePropertyStatus(Long idUsuario, Boolean status)
-			throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+    @Transactional(readOnly = false)
+    public void updatePropertyStatus(Long idUsuario, Boolean status)
+            throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
 
-		if ((idUsuario != null) && (idUsuario == 1l)) {
-			throw new ResourceAdministratorNotUpdateException("O status do administrador não pode ser alterado!");
-		} else {
-			if (idUsuario != null) {
-				Optional<Usuario> usuarioBanco = findById(idUsuario);
-				Usuario usuario = usuarioBanco.get();
-				usuario.setStatus(status);
-				usuarioRepository.save(usuario);
-			}
-		}
+        if ((idUsuario != null) && (idUsuario == 1l)) {
+            throw new ResourceAdministratorNotUpdateException("O status do administrador não pode ser alterado!");
+        } else {
+            if (idUsuario != null) {
+                Optional<Usuario> usuarioBanco = findById(idUsuario);
+                Usuario usuario = usuarioBanco.get();
+                usuario.setStatus(status);
+                usuarioRepository.save(usuario);
+            }
+        }
 
-	}
+    }
 
-	@Transactional(readOnly = false)
-	public void deleteById(Long id) throws ResourceNotFoundException {
+    @Transactional(readOnly = false)
+    public void deleteById(Long id) throws ResourceNotFoundException {
 
-		validatefindByIdExists(id);
-		usuarioRepository.deleteById(id);
+        validatefindByIdExists(id);
+        usuarioRepository.deleteById(id);
 
-	}
+    }
 
-	public Page<Usuario> findByNomeContaining(String nome, Pageable pageable) {
-		return usuarioRepository.findByNomeContaining(nome, pageable);
-	}
+    public Page<Usuario> findByNomeContaining(String nome, Pageable pageable) {
+        return usuarioRepository.findByNomeContaining(nome, pageable);
+    }
 
-	public Optional<Usuario> findById(Long id) throws ResourceNotFoundException {
-		Optional<Usuario> usuarioBanco = usuarioRepository.findById(id);
-		if (!usuarioBanco.isPresent()) {
-			throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
-		}
-		return usuarioBanco;
-	}
+    public Long countUsuario() {
+        return usuarioRepository.count();
+    }
 
-	public Optional<Usuario> findByEmailOrLogin(String emailOrLogin) {
-		return usuarioRepository.findByEmailOrLogin(emailOrLogin);
-	}
+    public Optional<Usuario> findById(Long id) throws ResourceNotFoundException {
+        Optional<Usuario> usuarioBanco = usuarioRepository.findById(id);
+        if (!usuarioBanco.isPresent()) {
+            throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
+        }
+        return usuarioBanco;
+    }
 
-	@Transactional(readOnly = false)
-	public UsuarioAndPerfisProjection saveUsuarioAndPerfis(UsuarioAndPerfisProjection usuarioAndPerfisProjection)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
-			ResourceAdministratorNotUpdateException {
+    public Optional<Usuario> findByEmailOrLogin(String emailOrLogin) {
+        return usuarioRepository.findByEmailOrLogin(emailOrLogin);
+    }
 
-		Usuario usuario = new Usuario();
-		BeanUtils.copyProperties(usuarioAndPerfisProjection, usuario, "idsPerfis");
-		Usuario usuarioSalvo = save(usuario);
+    @Transactional(readOnly = false)
+    public UsuarioAndPerfisProjection saveUsuarioAndPerfis(UsuarioAndPerfisProjection usuarioAndPerfisProjection)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
 
-		usuarioPerfilService.saveUsuarioPerfilIDS(usuarioSalvo, usuarioAndPerfisProjection.getIdsPerfis());
+        Usuario usuario = new Usuario();
+        BeanUtils.copyProperties(usuarioAndPerfisProjection, usuario, "idsPerfis");
+        Usuario usuarioSalvo = save(usuario);
 
-		Set<Long> idSistemas = new TreeSet<>();
-		for (Long idPerfil : usuarioAndPerfisProjection.getIdsPerfis()) {
+        usuarioPerfilService.saveUsuarioPerfilIDS(usuarioSalvo, usuarioAndPerfisProjection.getIdsPerfis());
 
-			Optional<Perfil> perfilBanco = perfilService.findById(idPerfil);
-			idSistemas.add(perfilBanco.get().getSistema().getId());
+        Set<Long> idSistemas = new TreeSet<>();
+        for (Long idPerfil : usuarioAndPerfisProjection.getIdsPerfis()) {
 
-		}
-		if (!idSistemas.isEmpty()) {
-			usuarioSistemaService.saveUsuarioSistemaIDS(usuarioSalvo, idSistemas);
-		}
+            Optional<Perfil> perfilBanco = perfilService.findById(idPerfil);
+            idSistemas.add(perfilBanco.get().getSistema().getId());
 
-		return usuarioAndPerfisProjection;
+        }
+        if (!idSistemas.isEmpty()) {
+            usuarioSistemaService.saveUsuarioSistemaIDS(usuarioSalvo, idSistemas);
+        }
 
-	}
+        return usuarioAndPerfisProjection;
 
-	@Transactional(readOnly = false)
-	public UsuarioAndPerfisAndSistemasProjection saveUsuarioAndPerfisAndSistemas(
-			UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
-			ResourceAdministratorNotUpdateException {
+    }
 
-		Usuario usuario = new Usuario();
-		BeanUtils.copyProperties(usuarioAndPerfisAndSistemasProjection, usuario, "idsPerfis", "idsSistemas");
-		Usuario usuarioSalvo = save(usuario);
+    @Transactional(readOnly = false)
+    public UsuarioAndPerfisAndSistemasProjection saveUsuarioAndPerfisAndSistemas(
+            UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
 
-		usuarioPerfilService.saveUsuarioPerfilIDS(usuarioSalvo, usuarioAndPerfisAndSistemasProjection.getIdsPerfis());
+        Usuario usuario = new Usuario();
+        BeanUtils.copyProperties(usuarioAndPerfisAndSistemasProjection, usuario, "idsPerfis", "idsSistemas");
+        Usuario usuarioSalvo = save(usuario);
 
-		usuarioSistemaService.saveUsuarioSistemaIDS(usuarioSalvo,
-				usuarioAndPerfisAndSistemasProjection.getIdsSistemas());
+        usuarioPerfilService.saveUsuarioPerfilIDS(usuarioSalvo, usuarioAndPerfisAndSistemasProjection.getIdsPerfis());
 
-		return usuarioAndPerfisAndSistemasProjection;
+        usuarioSistemaService.saveUsuarioSistemaIDS(usuarioSalvo,
+                usuarioAndPerfisAndSistemasProjection.getIdsSistemas());
 
-	}
+        return usuarioAndPerfisAndSistemasProjection;
 
-	// Metodos Privados
-	public void validatefindByIdExists(Long id) throws ResourceNotFoundException {
-		Optional<Usuario> usuarioBanco = this.findById(id);
-		if (!usuarioBanco.isPresent()) {
-			throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
-		}
-	}
+    }
+
+    // Metodos Privados
+    public void validatefindByIdExists(Long id) throws ResourceNotFoundException {
+        Optional<Usuario> usuarioBanco = this.findById(id);
+        if (!usuarioBanco.isPresent()) {
+            throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
+        }
+    }
 
 }
