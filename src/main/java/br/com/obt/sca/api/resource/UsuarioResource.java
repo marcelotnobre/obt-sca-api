@@ -38,6 +38,7 @@ import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateExcept
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
+import br.com.obt.sca.api.util.OffsetBasedPageRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -98,6 +99,18 @@ public class UsuarioResource {
                     return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
             }
         }
+    }
+    
+    @ApiOperation(value = "Lista dos usuarios paginada", response = List.class)
+    @GetMapping(value = "/paginacao/{page}/{limit}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    public List<Usuario> findAll(
+                    @RequestParam(required = false, defaultValue = "id") String sort,
+                    @RequestParam(required = false, defaultValue = "asc") String order,
+                    @PathVariable int page,
+                    @PathVariable int limit,
+                    @PageableDefault(size = 10) Pageable pageable) {
+        return usuarioService.findAll(PageRequest.of(page, limit)).getContent();
     }
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)

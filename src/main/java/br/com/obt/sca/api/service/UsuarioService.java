@@ -158,6 +158,10 @@ public class UsuarioService {
     public Page<Usuario> findByNomeContaining(String nome, Pageable pageable) {
         return usuarioRepository.findByNomeContaining(nome, pageable);
     }
+    
+    public Page<Usuario> findAll(Pageable pageable) {
+        return usuarioRepository.findAll(pageable);
+    }
 
     public Long countUsuario() {
         return usuarioRepository.count();
