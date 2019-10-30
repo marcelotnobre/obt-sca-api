@@ -18,8 +18,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 	@Query("SELECT U FROM Usuario U where (U.login like %?1%)")
 	public Page<Usuario> findByNomeContaining(String login, Pageable pageable);
-
-	
+        
+        @Query("SELECT U FROM Usuario U where (U.login like %?1% AND U.email like %?2%)")
+	public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable);
+        
+        @Query("SELECT U FROM Usuario U where (U.login like %?1% or U.email like %?1%)")
+	public Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable);
 	
 	
 	//@formatter:on

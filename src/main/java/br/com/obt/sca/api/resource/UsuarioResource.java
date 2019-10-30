@@ -101,16 +101,28 @@ public class UsuarioResource {
         }
     }
     
-    @ApiOperation(value = "Lista dos usuarios paginada", response = List.class)
+    @ApiOperation(value = "Lista paginada de usuarios", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
     public List<Usuario> findAll(
                     @RequestParam(required = false, defaultValue = "id") String sort,
                     @RequestParam(required = false, defaultValue = "asc") String order,
+                    @RequestParam(required = false) String login,
+                    @RequestParam(required = false) String email,
                     @PathVariable int page,
                     @PathVariable int limit,
                     @PageableDefault(size = 10) Pageable pageable) {
-        return usuarioService.findAll(PageRequest.of(page, limit)).getContent();
+        
+        PageRequest pageRequest = PageRequest.of(page, limit,
+                        Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+        
+        if(login != null && email != null) {
+            return usuarioService.findByEmailAndLogin(login, email, pageable).getContent();
+        } else if(login != null || email != null) {
+            return usuarioService.findByEmailOrLogin((login != null ? login : email), pageRequest).getContent();
+        } else {
+            return usuarioService.findAll(pageRequest).getContent();
+        }
     }
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
