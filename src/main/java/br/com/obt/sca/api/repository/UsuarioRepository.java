@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import br.com.obt.sca.api.model.Usuario;
+import br.com.obt.sca.api.resource.filter.BaseFilter;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	//@formatter:off
@@ -24,6 +26,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         
         @Query("SELECT U FROM Usuario U where (U.login like %?1% or U.email like %?1%)")
 	public Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable);
+        
+        public Page<Usuario> findAll(Specification<Usuario> spec, Pageable pageable);
 	
 	
 	//@formatter:on

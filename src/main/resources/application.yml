@@ -34,8 +34,8 @@ spring:
 # PROFILES
 spring:
       profiles:
-#            active: oauth-security,dev 
-              active: basic-security,dev   
+            active: oauth-security,dev 
+        #      active: basic-security,dev   
 
 # Acessando o banco de dados local - mysql
 ---

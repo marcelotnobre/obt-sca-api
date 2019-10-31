@@ -33,6 +33,8 @@ import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.resource.filter.SearchCriteria;
+import br.com.obt.sca.api.resource.filter.UsuarioFilter;
 import br.com.obt.sca.api.service.UsuarioService;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
@@ -43,6 +45,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.data.jpa.domain.Specification;
 
 @Api(value = "usuarios", description = "Serviço de usuarios")
 @ApiResponses(value = { @ApiResponse(code = 200, message = "Lista de usuarios executado com sucesso"),
@@ -116,13 +119,20 @@ public class UsuarioResource {
         PageRequest pageRequest = PageRequest.of(page, limit,
                         Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
         
+        UsuarioFilter spec1 = new UsuarioFilter(new SearchCriteria("login", ":", login));
+        UsuarioFilter spec2 = new UsuarioFilter(new SearchCriteria("email", ":", email));
+        Specification spec = Specification.where(spec1).and(spec2);
+        
+         return usuarioService.findAll(spec, pageRequest).getContent();
+        
+        /*
         if(login != null && email != null) {
             return usuarioService.findByEmailAndLogin(login, email, pageable).getContent();
         } else if(login != null || email != null) {
             return usuarioService.findByEmailOrLogin((login != null ? login : email), pageRequest).getContent();
         } else {
             return usuarioService.findAll(pageRequest).getContent();
-        }
+        }*/
     }
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)

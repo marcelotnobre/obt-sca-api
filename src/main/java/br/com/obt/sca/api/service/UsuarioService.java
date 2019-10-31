@@ -30,11 +30,13 @@ import br.com.obt.sca.api.model.enumeration.TipoAutenticacao;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
 import br.com.obt.sca.api.repository.UsuarioRepository;
+import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
+import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
@@ -161,6 +163,10 @@ public class UsuarioService {
     
     public Page<Usuario> findAll(Pageable pageable) {
         return usuarioRepository.findAll(pageable);
+    }
+    
+    public Page<Usuario> findAll(Specification<Usuario> spec,Pageable pageable) {
+        return usuarioRepository.findAll(spec, pageable);
     }
     
     public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable) {
