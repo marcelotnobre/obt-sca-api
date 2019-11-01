@@ -17,23 +17,25 @@ public class BaseFilter<T> implements Specification<T> {
 
     private SearchCriteria criteria;
 
-    public BaseFilter(SearchCriteria criteria) {
-        this.criteria = criteria;
+    public BaseFilter(String chave, String operacao, Object valor) {
+        this.criteria = new SearchCriteria(chave, operacao, valor);
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        if(criteria.getValue() != null) {
-            if (criteria.getOperation().equalsIgnoreCase(">")) {
-                return builder.greaterThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-            } else if (criteria.getOperation().equalsIgnoreCase("<")) {
-                return builder.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-            } else if (criteria.getOperation().equalsIgnoreCase(":")) {
-                if (root.get(criteria.getKey()).getJavaType() == String.class) {
-                    return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
-                } else {
-                    return builder.equal(root.get(criteria.getKey()), criteria.getValue());
+        if (criteria.getValor() != null) {
+            if (root.get(criteria.getChave()).getJavaType() == String.class) {
+                if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.CONTAINS)) {
+                    return builder.like(root.<String>get(criteria.getChave()), "%" + criteria.getValor() + "%");
+                } else if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.START_WITH)) {
+                    return builder.like(root.<String>get(criteria.getChave()), "%" + criteria.getValor());
+                } else if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.END_WITH)) {
+                    return builder.like(root.<String>get(criteria.getChave()), criteria.getValor() + "%");
+                } else if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.EQUALS)) {
+                    return builder.equal(root.get(criteria.getChave()), "" + criteria.getValor());
                 }
+            } else if (root.get(criteria.getChave()).getJavaType() == Boolean.class) {
+                return builder.equal(root.get(criteria.getChave()), criteria.getValor());
             }
         }
         return null;

@@ -33,14 +33,13 @@ import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
-import br.com.obt.sca.api.resource.filter.UsuarioFilter;
 import br.com.obt.sca.api.service.UsuarioService;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
-import br.com.obt.sca.api.util.OffsetBasedPageRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -112,6 +111,7 @@ public class UsuarioResource {
                     @RequestParam(required = false, defaultValue = "asc") String order,
                     @RequestParam(required = false) String login,
                     @RequestParam(required = false) String email,
+                    @RequestParam(required = false) Boolean status,
                     @PathVariable int page,
                     @PathVariable int limit,
                     @PageableDefault(size = 10) Pageable pageable) {
@@ -119,9 +119,9 @@ public class UsuarioResource {
         PageRequest pageRequest = PageRequest.of(page, limit,
                         Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
         
-        UsuarioFilter spec1 = new UsuarioFilter(new SearchCriteria("login", ":", login));
-        UsuarioFilter spec2 = new UsuarioFilter(new SearchCriteria("email", ":", email));
-        Specification spec = Specification.where(spec1).and(spec2);
+        Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
+                .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
         
          return usuarioService.findAll(spec, pageRequest).getContent();
         

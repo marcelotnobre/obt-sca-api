@@ -11,14 +11,19 @@ import lombok.Setter;
 @Setter
 public class SearchCriteria {
 
-    private String key;
-    private String operation;
-    private Object value;
+    public static final String EQUALS = "equals";
+    public static final String CONTAINS = "contains";
+    public static final String START_WITH = "startWith";
+    public static final String END_WITH = "endWith";
+    
+    private String chave;
+    private String operacao;
+    private Object valor;
 
-    public SearchCriteria(String key, String operation, Object value) {
-        this.key = key;
-        this.operation = operation;
-        this.value = value;
+    public SearchCriteria(String chave, String operacao, Object valor) {
+        this.chave = chave;
+        this.operacao = operacao;
+        this.valor = valor;
     }
 
 }
