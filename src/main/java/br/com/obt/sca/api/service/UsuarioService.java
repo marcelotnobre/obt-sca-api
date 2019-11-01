@@ -169,6 +169,10 @@ public class UsuarioService {
         return usuarioRepository.findAll(spec, pageable);
     }
     
+    public Long countAll(Specification<Usuario> spec) {
+        return usuarioRepository.count(spec);
+    }
+    
     public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable) {
         return usuarioRepository.findByEmailAndLogin(login, email, pageable);
     }

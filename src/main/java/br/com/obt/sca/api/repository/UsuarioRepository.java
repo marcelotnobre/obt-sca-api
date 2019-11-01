@@ -28,7 +28,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	public Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable);
         
         public Page<Usuario> findAll(Specification<Usuario> spec, Pageable pageable);
-	
+        
+        public Long count(Specification<Usuario> spec);
 	
 	//@formatter:on
 

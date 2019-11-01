@@ -113,8 +113,7 @@ public class UsuarioResource {
                     @RequestParam(required = false) String email,
                     @RequestParam(required = false) Boolean status,
                     @PathVariable int page,
-                    @PathVariable int limit,
-                    @PageableDefault(size = 10) Pageable pageable) {
+                    @PathVariable int limit) {
         
         PageRequest pageRequest = PageRequest.of(page, limit,
                         Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
@@ -124,15 +123,23 @@ public class UsuarioResource {
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
         
          return usuarioService.findAll(spec, pageRequest).getContent();
+    }
+    
+    @ApiOperation(value = "Retorna a quantidade de usuários de acordo com os filtros", response = List.class)
+    @GetMapping(value = "/countall/")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    public Long countAll(
+                    @RequestParam(required = false) String login,
+                    @RequestParam(required = false) String email,
+                    @RequestParam(required = false) Boolean status) {
         
-        /*
-        if(login != null && email != null) {
-            return usuarioService.findByEmailAndLogin(login, email, pageable).getContent();
-        } else if(login != null || email != null) {
-            return usuarioService.findByEmailOrLogin((login != null ? login : email), pageRequest).getContent();
-        } else {
-            return usuarioService.findAll(pageRequest).getContent();
-        }*/
+        Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
+                .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+        
+        Long retorno = usuarioService.countAll(spec);
+        
+        return retorno;
     }
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
