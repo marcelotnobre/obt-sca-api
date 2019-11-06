@@ -204,9 +204,9 @@ public class UsuarioResource {
     }
 
     @ApiOperation(value = "Atualizar o status")
-    @PutMapping(value = "/{id}/ativo")
+    @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_STATUS_USUARIO') and #oauth2.hasScope('write')")
-    public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
+    public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
                     throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
         usuarioService.updatePropertyStatus(id, status);
     }
