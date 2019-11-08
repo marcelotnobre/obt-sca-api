@@ -137,7 +137,7 @@ public class PermissaoResource {
                 Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(whereSistema(nomeSistema))
+                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
                 .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 
@@ -168,7 +168,7 @@ public class PermissaoResource {
             @RequestParam(required = false) Boolean status) {
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(whereSistema(nomeSistema))
+                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
                 .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 
