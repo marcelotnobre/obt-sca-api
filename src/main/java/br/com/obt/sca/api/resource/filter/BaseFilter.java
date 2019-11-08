@@ -1,11 +1,8 @@
 package br.com.obt.sca.api.resource.filter;
 
-import br.com.obt.sca.api.model.Usuario;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import lombok.Getter;
-import lombok.Setter;
 import javax.persistence.criteria.CriteriaQuery;
 import org.springframework.data.jpa.domain.Specification;
 

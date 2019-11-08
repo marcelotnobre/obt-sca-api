@@ -8,14 +8,17 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaQuery;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -45,6 +48,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.persistence.criteria.Path;
+import static org.springframework.http.RequestEntity.get;
 
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
@@ -122,6 +127,8 @@ public class PermissaoResource {
             @RequestParam(required = false, defaultValue = "id") String sort,
             @RequestParam(required = false, defaultValue = "asc") String order,
             @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String nomeSistema,
             @RequestParam(required = false) Boolean status,
             @PathVariable int page,
             @PathVariable int limit) {
@@ -130,9 +137,25 @@ public class PermissaoResource {
                 Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
+                .and(whereSistema(nomeSistema))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 
         return permissaoService.findAll(spec, pageRequest).getContent();
+    }
+
+    private Specification<Permissao> whereSistema(String nomeSistema) {
+        return new Specification<Permissao>() {
+            @Override
+            public Predicate toPredicate(Root<Permissao> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                if (nomeSistema != null) {
+                    Path pathSistema = root.join("sistema");
+                    Path editoraNome = pathSistema.get("nome");
+                    return cb.like(editoraNome, "%" + nomeSistema + "%");
+                }
+                return null;
+            }
+        };
     }
 
     @ApiOperation(value = "Retorna a quantidade de permissões de acordo com os filtros", response = List.class)
@@ -140,9 +163,13 @@ public class PermissaoResource {
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO')")
     public Long countAll(
             @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String nomeSistema,
             @RequestParam(required = false) Boolean status) {
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
+                .and(whereSistema(nomeSistema))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 
         Long retorno = permissaoService.countAll(spec);
