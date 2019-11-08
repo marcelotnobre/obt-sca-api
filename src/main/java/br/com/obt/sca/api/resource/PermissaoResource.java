@@ -14,10 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.CriteriaQuery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -48,8 +44,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import javax.persistence.criteria.Path;
-import static org.springframework.http.RequestEntity.get;
 
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
@@ -144,20 +138,6 @@ public class PermissaoResource {
         return permissaoService.findAll(spec, pageRequest).getContent();
     }
 
-    private Specification<Permissao> whereSistema(String nomeSistema) {
-        return new Specification<Permissao>() {
-            @Override
-            public Predicate toPredicate(Root<Permissao> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
-                if (nomeSistema != null) {
-                    Path pathSistema = root.join("sistema");
-                    Path editoraNome = pathSistema.get("nome");
-                    return cb.like(editoraNome, "%" + nomeSistema + "%");
-                }
-                return null;
-            }
-        };
-    }
-
     @ApiOperation(value = "Retorna a quantidade de permissões de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO')")
@@ -198,7 +178,7 @@ public class PermissaoResource {
     }
 
     @ApiOperation(value = "Atualizar o status")
-    @PutMapping(value = "/{id}/ativo")
+    @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_STATUS_PERMISSAO') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {
@@ -229,4 +209,24 @@ public class PermissaoResource {
         return fromUriString("/permissoes").query("page={page}&size={size}")
                 .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
     }
+
+    /**
+     * Não apagar
+     *
+     *
+     */
+    /*
+    private Specification<Permissao> whereSistema(String nomeSistema) {
+        return new Specification<Permissao>() {
+            @Override
+            public Predicate toPredicate(Root<Permissao> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                if (nomeSistema != null) {
+                    Path pathSistema = root.join("sistema");
+                    Path editoraNome = pathSistema.get("nome");
+                    return cb.like(editoraNome, "%" + nomeSistema + "%");
+                }
+                return null;
+            }
+        };
+    }*/
 }
