@@ -47,12 +47,16 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.data.jpa.domain.Specification;
 
 @Api(value = "usuarios", description = "Serviço de usuarios")
-@ApiResponses(value = { @ApiResponse(code = 200, message = "Lista de usuarios executado com sucesso"),
-		@ApiResponse(code = 201, message = "Usuario cadastrado com sucesso"),
-		@ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado"),
-		@ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso"),
-		@ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito"),
-		@ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado") })
+@ApiResponses(
+        value = {
+            @ApiResponse(code = 200, message = "Lista de usuarios executado com sucesso")
+            ,@ApiResponse(code = 201, message = "Usuario cadastrado com sucesso")
+            ,@ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado")
+            ,@ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso")
+            ,@ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito")
+            ,@ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
+        }
+)
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioResource {
@@ -67,13 +71,13 @@ public class UsuarioResource {
     @GetMapping(value = "/paginacao")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
     public ResponseEntity<Page<Usuario>> findByNomeContainingPagination(
-                    @RequestParam(required = false, defaultValue = "") String nome,
-                    @RequestParam(required = false, defaultValue = "id") String sort,
-                    @RequestParam(required = false, defaultValue = "asc") String order,
-                    @PageableDefault(size = 10) Pageable pageable) {
+            @RequestParam(required = false, defaultValue = "") String nome,
+            @RequestParam(required = false, defaultValue = "id") String sort,
+            @RequestParam(required = false, defaultValue = "asc") String order,
+            @PageableDefault(size = 10) Pageable pageable) {
 
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                        Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
         Page<Usuario> usuarioPage = usuarioService.findByNomeContaining(nome, pageRequest);
 
@@ -87,58 +91,58 @@ public class UsuarioResource {
             headers.add("X-Total-Count", String.valueOf(usuarioPage.getTotalElements()));
 
             if (nbPagePermissoes < totalPermissoes) {
-                    headers.add("first", buildPageUri(PageRequest.of(0, usuarioPage.getSize())));
-                    headers.add("last",
-                                    buildPageUri(PageRequest.of(usuarioPage.getTotalPages() - 1, usuarioPage.getSize())));
-                    if (usuarioPage.hasNext()) {
-                            headers.add("next", buildPageUri(usuarioPage.nextPageable()));
-                    }
-                    if (usuarioPage.hasPrevious()) {
-                            headers.add("prev", buildPageUri(usuarioPage.previousPageable()));
-                    }
-                    return new ResponseEntity<>(usuarioPage, headers, HttpStatus.PARTIAL_CONTENT);
+                headers.add("first", buildPageUri(PageRequest.of(0, usuarioPage.getSize())));
+                headers.add("last",
+                        buildPageUri(PageRequest.of(usuarioPage.getTotalPages() - 1, usuarioPage.getSize())));
+                if (usuarioPage.hasNext()) {
+                    headers.add("next", buildPageUri(usuarioPage.nextPageable()));
+                }
+                if (usuarioPage.hasPrevious()) {
+                    headers.add("prev", buildPageUri(usuarioPage.previousPageable()));
+                }
+                return new ResponseEntity<>(usuarioPage, headers, HttpStatus.PARTIAL_CONTENT);
             } else {
-                    return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
+                return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
             }
         }
     }
-    
+
     @ApiOperation(value = "Lista paginada de usuarios", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
     public List<Usuario> findAll(
-                    @RequestParam(required = false, defaultValue = "id") String sort,
-                    @RequestParam(required = false, defaultValue = "asc") String order,
-                    @RequestParam(required = false) String login,
-                    @RequestParam(required = false) String email,
-                    @RequestParam(required = false) Boolean status,
-                    @PathVariable int page,
-                    @PathVariable int limit) {
-        
+            @RequestParam(required = false, defaultValue = "id") String sort,
+            @RequestParam(required = false, defaultValue = "asc") String order,
+            @RequestParam(required = false) String login,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean status,
+            @PathVariable int page,
+            @PathVariable int limit) {
+
         PageRequest pageRequest = PageRequest.of(page, limit,
-                        Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-        
+                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+
         Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
                 .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-        
-         return usuarioService.findAll(spec, pageRequest).getContent();
+
+        return usuarioService.findAll(spec, pageRequest).getContent();
     }
-    
+
     @ApiOperation(value = "Retorna a quantidade de usuários de acordo com os filtros", response = List.class)
-    @GetMapping(value = "/countall/")
+    @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
     public Long countAll(
-                    @RequestParam(required = false) String login,
-                    @RequestParam(required = false) String email,
-                    @RequestParam(required = false) Boolean status) {
-        
+            @RequestParam(required = false) String login,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean status) {
+
         Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
                 .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-        
+
         Long retorno = usuarioService.countAll(spec);
-        
+
         return retorno;
     }
 
@@ -146,14 +150,14 @@ public class UsuarioResource {
     @PostMapping(value = "/usuario/perfis/sistemas")
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
     public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveUsuarioAndPerfisAndSistemas(
-                    @Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection,
-                    HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
-                    ResourceParameterNullException, ResourceAdministratorNotUpdateException {
+            @Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection,
+            HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
+            ResourceParameterNullException, ResourceAdministratorNotUpdateException {
 
         UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjectionSalvo = usuarioService
-                        .saveUsuarioAndPerfisAndSistemas(usuarioAndPerfisAndSistemasProjection);
+                .saveUsuarioAndPerfisAndSistemas(usuarioAndPerfisAndSistemasProjection);
         publisher.publishEvent(
-                        new RecursoCriadoEvent(this, response, usuarioAndPerfisAndSistemasProjectionSalvo.getId()));
+                new RecursoCriadoEvent(this, response, usuarioAndPerfisAndSistemasProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisAndSistemasProjectionSalvo);
     }
 
@@ -173,12 +177,12 @@ public class UsuarioResource {
     @PostMapping(value = "/usuario/perfis")
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
     public ResponseEntity<UsuarioAndPerfisProjection> saveUsuarioAndPerfis(
-                    @Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
-                    throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
-                    ResourceAdministratorNotUpdateException {
+            @Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
 
         UsuarioAndPerfisProjection usuarioAndPerfisProjectionSalvo = usuarioService
-                        .saveUsuarioAndPerfis(usuarioAndPerfisProjection);
+                .saveUsuarioAndPerfis(usuarioAndPerfisProjection);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
     }
@@ -189,7 +193,7 @@ public class UsuarioResource {
     // @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and
     // #oauth2.hasScope('write')")
     public ResponseEntity<Usuario> save(@Valid @RequestBody Usuario usuario, HttpServletResponse response)
-                    throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
         Usuario usuarioSalva = usuarioService.save(usuario);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
@@ -207,7 +211,7 @@ public class UsuarioResource {
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_STATUS_USUARIO') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
-                    throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
         usuarioService.updatePropertyStatus(id, status);
     }
 
@@ -215,13 +219,13 @@ public class UsuarioResource {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_REMOVER_USUARIO') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
-            usuarioService.deleteById(id);
+        usuarioService.deleteById(id);
     }
 
     // Metodos Privados
     private String buildPageUri(Pageable page) {
         return fromUriString("/usuarios").query("page={page}&size={size}")
-                        .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
+                .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
     }
 
     // private Usuario getUsuarioLogado(HttpServletRequest request) {
