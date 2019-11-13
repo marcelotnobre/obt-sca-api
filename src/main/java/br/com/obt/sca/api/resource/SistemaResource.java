@@ -104,8 +104,15 @@ public class SistemaResource {
             }
         }
     }
-    
-    @ApiOperation(value = "Lista paginada de permissões", response = List.class)
+
+    @ApiOperation(value = "Lista de sistemas", response = List.class)
+    @GetMapping(value = "/findAll")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    public List<Sistema> findAll() {
+        return sistemaService.findAll();
+    }
+
+    @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
     public List<Sistema> findAll(

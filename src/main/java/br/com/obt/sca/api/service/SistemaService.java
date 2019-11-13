@@ -16,6 +16,7 @@ import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
@@ -70,6 +71,10 @@ public class SistemaService {
         validatefindByIdExists(id);
         sistemaRepository.deleteById(id);
 
+    }
+    
+    public List<Sistema> findAll() {
+        return sistemaRepository.findAll();
     }
 
     public Page<Sistema> findAll(Specification<Sistema> spec, Pageable pageable) {
