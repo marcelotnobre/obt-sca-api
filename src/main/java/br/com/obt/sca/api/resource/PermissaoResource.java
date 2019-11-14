@@ -204,6 +204,12 @@ public class PermissaoResource {
         return permissaoService.findByPermissoesDoUsuario(usuarioId);
     }
 
+    @ApiOperation(value = " Permissões por nome da permissão e usuario", response = List.class)
+    @GetMapping(value = "/ativos/{permissao}/{idUsuario}")
+    public List<Permissao> findByPermissoesDoUsuario(@PathVariable String permissao, @PathVariable Long idUsuario) throws ResourceNotFoundException {
+        return permissaoService.findPermissoes(permissao, idUsuario);
+    }
+
     // Metodos Privados
     private String buildPageUri(Pageable page) {
         return fromUriString("/permissoes").query("page={page}&size={size}")

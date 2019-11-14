@@ -113,7 +113,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<Object> handleMaxUploadSizeExceededException(HttpServletRequest req,
 			MaxUploadSizeExceededException ex) throws Exception {
-		String error = "Tamanhp máximo do arquivo excedido.";
+		String error = "Tamanho máximo do arquivo excedido.";
 		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
 	}
 

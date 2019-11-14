@@ -124,6 +124,14 @@ public class PermissaoService {
         return permissaoBanco;
     }
 
+    public List<Permissao> findPermissoes(String nomePermissao, Long idUsuario) throws ResourceNotFoundException {
+        List<Permissao> permissoes = permissaoRepository.findPermissoes(nomePermissao, idUsuario);
+        if (permissoes.isEmpty()) {
+            throw new ResourceNotFoundException("Permissão " + nomePermissao + " do usuário não foi encontrada. ");
+        }
+        return permissoes;
+    }
+
     // Metodos Privados
     private void validatefindByIdExists(Long id) throws ResourceNotFoundException {
         Optional<Permissao> permissaoBanco = this.findById(id);
