@@ -96,6 +96,10 @@ public class SistemaService {
         }
         return sistemaBanco;
     }
+    
+    public Sistema findByNomeEquals(String nome) throws ResourceNotFoundException {
+        return sistemaRepository.findByNomeEquals(nome);
+    }
 
     // Metodos Privados
     private void validatefindByIdExists(Long id) throws ResourceNotFoundException {

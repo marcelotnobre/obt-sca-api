@@ -15,6 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 public interface SistemaRepository extends JpaRepository<Sistema, Long> {
 
     public Page<Sistema> findByNomeContainingAndStatusEquals(String nome, Boolean status, Pageable pageable);
+    
+    Sistema findByNomeEquals(String nome);
 
     public List<Sistema> findByStatusTrue();
 

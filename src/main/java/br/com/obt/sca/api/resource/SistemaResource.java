@@ -162,6 +162,15 @@ public class SistemaResource {
     }
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
+    @GetMapping(value = "/nome/{nome}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA') and #oauth2.hasScope('read')")
+    public ResponseEntity<Sistema> getSistemasPorNome(@PathVariable String nome)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException {
+        Sistema sistemaSalva = sistemaService.findByNomeEquals(nome);
+        return ResponseEntity.status(HttpStatus.CREATED).body(sistemaSalva);
+    }
+
+    @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA') and #oauth2.hasScope('read')")
     public ResponseEntity<Sistema> findById(@PathVariable Long id) throws ResourceNotFoundException {
