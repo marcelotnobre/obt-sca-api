@@ -72,9 +72,13 @@ public class SistemaService {
         sistemaRepository.deleteById(id);
 
     }
-    
+
     public List<Sistema> findAll() {
         return sistemaRepository.findAll();
+    }
+
+    public List<Sistema> findAllByUsuario(Long idUsuario) {
+        return sistemaRepository.findAllByUsuario(idUsuario);
     }
 
     public Page<Sistema> findAll(Specification<Sistema> spec, Pageable pageable) {
@@ -96,7 +100,7 @@ public class SistemaService {
         }
         return sistemaBanco;
     }
-    
+
     public Sistema findByNomeEquals(String nome) throws ResourceNotFoundException {
         return sistemaRepository.findByNomeEquals(nome);
     }

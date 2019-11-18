@@ -112,6 +112,13 @@ public class SistemaResource {
         return sistemaService.findAll();
     }
 
+    @ApiOperation(value = "Lista de sistemas", response = List.class)
+    @GetMapping(value = "/findAll/{idUsuario}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    public List<Sistema> findAllByUsuario(@PathVariable Long idUsuario) {
+        return sistemaService.findAllByUsuario(idUsuario);
+    }
+
     @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
