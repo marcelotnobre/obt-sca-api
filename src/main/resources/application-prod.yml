@@ -49,9 +49,14 @@ spring:
 # Ambiente DESENVOLVIMENTO - SCA - kinghost
     -
       name: desenvolvimento
-      url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech01?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
-      username: outerboxtech01
-      password: fabricadesenv1234
+      #banco kinghost
+      #url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech01?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
+      #username: outerboxtech01
+      #password: fabricadesenv1234
+      #jawsdb heroku
+      url: jdbc:mysql://kf3k4aywsrp0d2is.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/ki2u8foaybvd5km3?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      username: s43272bdxi39c8wv
+      password: ma2dcc1lbo66oz8o
     profiles:
         active: oauth-security
 
