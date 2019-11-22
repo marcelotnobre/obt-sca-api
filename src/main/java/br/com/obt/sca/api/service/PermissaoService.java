@@ -132,6 +132,14 @@ public class PermissaoService {
         return permissoes;
     }
 
+    public Permissao findPermissaoPorSistema(String nomePermissao, Long idSistema) throws ResourceNotFoundException {
+        Permissao permissao = permissaoRepository.findPermissaoPorSistema(nomePermissao, idSistema);
+        if (permissao == null) {
+            throw new ResourceNotFoundException("Permissão " + nomePermissao + " por sistema não foi encontrada. ");
+        }
+        return permissao;
+    }
+
     // Metodos Privados
     private void validatefindByIdExists(Long id) throws ResourceNotFoundException {
         Optional<Permissao> permissaoBanco = this.findById(id);
