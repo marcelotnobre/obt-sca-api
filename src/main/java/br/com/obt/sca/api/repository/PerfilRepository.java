@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.obt.sca.api.model.Perfil;
+import br.com.obt.sca.api.model.Permissao;
 import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
 
@@ -29,5 +31,9 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long> {
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.status = true ", nativeQuery = true)
     List<Perfil> findByPerfisDoUsuario(@Param("usuarioid") Long usuarioid);
+
+    Page<Perfil> findAll(Specification<Perfil> spec, Pageable pageable);
+
+    Long count(Specification<Perfil> spec);
 
 }

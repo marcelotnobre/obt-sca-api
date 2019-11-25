@@ -22,6 +22,7 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
@@ -99,6 +100,14 @@ public class PerfilService {
 
     public Page<Perfil> findByAll(Pageable pageable) {
         return perfilRepository.findAll(pageable);
+    }
+    
+    public Page<Perfil> findAll(Specification<Perfil> spec, Pageable pageable) {
+        return perfilRepository.findAll(spec, pageable);
+    }
+    
+    public Long countAll(Specification<Perfil> spec) {
+        return perfilRepository.count(spec);
     }
     
     public List<Perfil> findByPerfisDoUsuario(Long idUsuario) throws ResourceNotFoundException {

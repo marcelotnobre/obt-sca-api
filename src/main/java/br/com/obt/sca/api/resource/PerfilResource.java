@@ -2,16 +2,21 @@ package br.com.obt.sca.api.resource;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
+import br.com.obt.sca.api.model.Perfil;
+import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
+import br.com.obt.sca.api.service.PerfilService;
+import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import java.util.List;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
+import br.com.obt.sca.api.resource.filter.BaseFilter;
+import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -28,15 +33,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
-import br.com.obt.sca.api.model.Perfil;
+import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.projections.GenericoPinkListProjection;
-import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
-import br.com.obt.sca.api.service.PerfilService;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
-import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -98,6 +99,49 @@ public class PerfilResource {
                 return new ResponseEntity<Page<Perfil>>(perfisPage, headers, HttpStatus.OK);
             }
         }
+    }
+    
+    @ApiOperation(value = "Lista paginada de perfis", response = List.class)
+    @GetMapping(value = "/paginacao/{page}/{limit}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
+    public List<Permissao> findAll(
+            @RequestParam(required = false, defaultValue = "id") String sort,
+            @RequestParam(required = false, defaultValue = "asc") String order,
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String nomeSistema,
+            @RequestParam(required = false) Boolean status,
+            @PathVariable int page,
+            @PathVariable int limit) {
+
+        PageRequest pageRequest = PageRequest.of(page, limit,
+                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+
+        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
+                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+
+        return perfilService.findAll(spec, pageRequest).getContent();
+    }
+    
+    @ApiOperation(value = "Retorna a quantidade de perfis de acordo com os filtros", response = List.class)
+    @GetMapping(value = "/count/all/")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
+    public Long countAll(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String nomeSistema,
+            @RequestParam(required = false) Boolean status) {
+
+        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
+                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+
+        Long retorno = perfilService.countAll(spec);
+
+        return retorno;
     }
 
     @ApiOperation(value = "Salvar uma perfil", response = List.class)
