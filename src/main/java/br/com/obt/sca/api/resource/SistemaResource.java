@@ -194,7 +194,7 @@ public class SistemaResource {
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_STATUS_SISTEMA') and #oauth2.hasScope('write')")
-    public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
+    public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {
         sistemaService.updatePropertyStatus(id, status);
     }

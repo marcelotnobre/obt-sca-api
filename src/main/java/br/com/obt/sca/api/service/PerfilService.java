@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.obt.sca.api.model.Perfil;
-import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.projections.GenericoPinkListProjection;
 import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
@@ -45,22 +44,6 @@ public class PerfilService {
         perfilPermissaoService.salvarPermissoesIDs(perfilAndPermissoesProjection.getId(), perfilAndPermissoesProjection.getIdsPermissoes());
 
         return perfilAndPermissoesProjection;
-    }
-
-    // @formatter:off
-    @Transactional(readOnly = false)
-    public PerfilAndPermissoesProjection savePerfilAndPermissions(
-            PerfilAndPermissoesProjection perfilAndPermissoesProjection)
-            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
-
-        Perfil perfil = new Perfil();
-        BeanUtils.copyProperties(perfilAndPermissoesProjection, perfil, "idsPermissoes");
-        Perfil perfilSalvo = save(perfil);
-
-        perfilPermissaoService.savePerfilPermissionsIDs(perfilSalvo, perfilAndPermissoesProjection.getIdsPermissoes());
-
-        return perfilAndPermissoesProjection;
-
     }
 
     @Transactional(readOnly = false)

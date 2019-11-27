@@ -58,11 +58,7 @@ public class SistemaService {
 
     @Transactional(readOnly = false)
     public void updatePropertyStatus(Long id, Boolean status) throws ResourceNotFoundException {
-        Optional<Sistema> sistemaBanco = findById(id);
-
-        Sistema sistema = sistemaBanco.get();
-        sistema.setStatus(status);
-        sistemaRepository.save(sistema);
+        sistemaRepository.updateStatusSistema(id, status);
     }
 
     @Transactional(readOnly = false)
