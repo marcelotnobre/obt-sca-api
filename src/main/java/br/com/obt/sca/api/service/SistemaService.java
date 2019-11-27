@@ -17,6 +17,7 @@ import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
@@ -75,6 +76,15 @@ public class SistemaService {
 
     public List<Sistema> findAllByUsuario(Long idUsuario) {
         return sistemaRepository.findAllByUsuario(idUsuario);
+    }
+
+    public List<Long> findAllIdsByUsuario(Long idUsuario) {
+        List<Sistema> sistemas = sistemaRepository.findAllByUsuario(idUsuario);
+
+        List<Long> ids = sistemas.stream()
+                .map(Sistema::getId)
+                .collect(Collectors.toList());
+        return ids;
     }
 
     public Page<Sistema> findAll(Specification<Sistema> spec, Pageable pageable) {

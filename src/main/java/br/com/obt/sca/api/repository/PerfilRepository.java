@@ -22,6 +22,19 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long> {
             + " and P.status = true ", nativeQuery = true)
     public <T> Collection<T> findByUsuarioPerfilSelectedStatusTrue(@Param("usuarioid") Long usuarioid, Class<T> type);
 
+    @Query(value = "SELECT distinct P.id, P.nome FROM perfil P where EXISTS  "
+            + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
+            + " and P.sistema_id IN (:sistemas) "
+            + " and P.status = true ", nativeQuery = true)
+    public <T> Collection<T> findByUsuarioPerfilSistemaSelectedStatusTrue(@Param("usuarioid") Long usuarioid, @Param("sistemas") List<Long> sistemas, Class<T> type);
+
+    
+    @Query(value = "SELECT distinct P.id, P.nome FROM perfil P where NOT EXISTS  "
+            + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
+            + " and P.sistema_id IN(:sistemas) "
+            + " and P.status = true ", nativeQuery = true)
+    public <T> Collection<T> findByUsuarioPerfilSistemaAvailableStatusTrue(@Param("usuarioid") Long usuarioid, @Param("sistemas") List<Long> sistemas, Class<T> type);
+    
     @Query(value = "SELECT P.id, P.nome FROM perfil P where NOT EXISTS  "
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.status = true ", nativeQuery = true)

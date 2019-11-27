@@ -36,7 +36,10 @@ public class PerfilService {
 
     @Autowired
     private PerfilPermissaoService perfilPermissaoService;
-    
+
+    @Autowired
+    private SistemaService sistemaService;
+
     @Transactional(readOnly = false)
     public PerfilAndPermissoesProjection salvarPermissoes(PerfilAndPermissoesProjection perfilAndPermissoesProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
@@ -93,15 +96,15 @@ public class PerfilService {
     public Page<Perfil> findByAll(Pageable pageable) {
         return perfilRepository.findAll(pageable);
     }
-    
+
     public Page<Perfil> findAll(Specification<Perfil> spec, Pageable pageable) {
         return perfilRepository.findAll(spec, pageable);
     }
-    
+
     public Long countAll(Specification<Perfil> spec) {
         return perfilRepository.count(spec);
     }
-    
+
     public List<Perfil> findByPerfisDoUsuario(Long idUsuario) throws ResourceNotFoundException {
         List<Perfil> perfisBanco = perfilRepository.findByPerfisDoUsuario(idUsuario);
         if (perfisBanco.isEmpty()) {
@@ -119,21 +122,21 @@ public class PerfilService {
     }
 
     public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilAvailableStatusTrue(Long usuarioid) {
-        return perfilRepository.findByUsuarioPerfilAvailableStatusTrue(usuarioid, IDAndNomeGenericoProjection.class);
+        return perfilRepository.findByUsuarioPerfilSistemaAvailableStatusTrue(usuarioid, sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
     }
 
     public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilSelectedStatusTrue(Long usuarioid) {
-        return perfilRepository.findByUsuarioPerfilSelectedStatusTrue(usuarioid, IDAndNomeGenericoProjection.class);
+        return perfilRepository.findByUsuarioPerfilSistemaSelectedStatusTrue(usuarioid, sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
     }
 
-    public GenericoPinkListProjection findByPerfilPinkListProjection(Long perfilid) {
+    public GenericoPinkListProjection findByPerfilPinkListProjection(Long idUsuario) {
 
         GenericoPinkListProjection perfisPinkListProjection = new GenericoPinkListProjection();
 
         Collection<IDAndNomeGenericoProjection> perfisSelecionadas = this
-                .findByUsuarioPerfilSelectedStatusTrue(perfilid);
+                .findByUsuarioPerfilSelectedStatusTrue(idUsuario);
         Collection<IDAndNomeGenericoProjection> perfisDisponiveis = this
-                .findByUsuarioPerfilAvailableStatusTrue(perfilid);
+                .findByUsuarioPerfilAvailableStatusTrue(idUsuario);
 
         perfisPinkListProjection.setRegistrosDisponiveis(perfisDisponiveis);
         perfisPinkListProjection.setRegistrosSelecionados(perfisSelecionadas);
