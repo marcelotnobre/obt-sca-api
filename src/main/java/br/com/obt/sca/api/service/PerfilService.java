@@ -37,6 +37,15 @@ public class PerfilService {
 
     @Autowired
     private PerfilPermissaoService perfilPermissaoService;
+    
+    @Transactional(readOnly = false)
+    public PerfilAndPermissoesProjection salvarPermissoes(PerfilAndPermissoesProjection perfilAndPermissoesProjection)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+
+        perfilPermissaoService.salvarPermissoesIDs(perfilAndPermissoesProjection.getId(), perfilAndPermissoesProjection.getIdsPermissoes());
+
+        return perfilAndPermissoesProjection;
+    }
 
     // @formatter:off
     @Transactional(readOnly = false)

@@ -19,89 +19,101 @@ import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 
 //@formatter:off
-@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceException.class })
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
 //@formatter:on
 @Service
 public class PerfilPermissaoService {
 
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(PerfilPermissaoService.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(PerfilPermissaoService.class);
+    @Autowired
+    private PerfilPermissaoRepository perfilPermissaoRepository;
 
-	@Autowired
-	private PerfilPermissaoRepository perfilPermissaoRepository;
+    @Transactional(readOnly = false)
+    public void deleteByPerfilPermissao(Long idPerfil, Long idPermissao)
+            throws ResourceNotFoundException, ResourceParameterNullException {
+        validatePerfilPermissao(idPerfil, idPermissao);
+        perfilPermissaoRepository.deleteByPerfilPermissao(idPerfil, idPermissao);
+    }
 
-	@Transactional(readOnly = false)
-	public void deleteByPerfilPermissao(Long idPerfil, Long idPermissao)
-			throws ResourceNotFoundException, ResourceParameterNullException {
-		validatePerfilPermissao(idPerfil, idPermissao);
-		perfilPermissaoRepository.deleteByPerfilPermissao(idPerfil, idPermissao);
-	}
+    @Transactional(readOnly = false)
+    public PerfilPermissao save(PerfilPermissao perfilPermissao)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-	@Transactional(readOnly = false)
-	public PerfilPermissao save(PerfilPermissao perfilPermissao)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+        Long idPerfil = perfilPermissao.getPerfilPermissaoPK().getPerfil().getId();
+        Long idPermissao = perfilPermissao.getPerfilPermissaoPK().getPermissao().getId();
 
-		Long idPerfil = perfilPermissao.getPerfilPermissaoPK().getPerfil().getId();
-		Long idPermissao = perfilPermissao.getPerfilPermissaoPK().getPermissao().getId();
+        validatePerfilPermissao(idPerfil, idPermissao);
+        return perfilPermissaoRepository.save(perfilPermissao);
 
-		validatePerfilPermissao(idPerfil, idPermissao);
-		return perfilPermissaoRepository.save(perfilPermissao);
+    }
 
-	}
+    @Transactional(readOnly = false)
+    public List<PerfilPermissao> savePermissions(List<PerfilPermissao> perfilPermissoes)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-	@Transactional(readOnly = false)
-	public List<PerfilPermissao> savePermissions(List<PerfilPermissao> perfilPermissoes)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+        for (PerfilPermissao perfilPermissao : perfilPermissoes) {
+            Long idPerfil = perfilPermissao.getPerfilPermissaoPK().getPerfil().getId();
+            Long idPermissao = perfilPermissao.getPerfilPermissaoPK().getPermissao().getId();
 
-		for (PerfilPermissao perfilPermissao : perfilPermissoes) {
-			Long idPerfil = perfilPermissao.getPerfilPermissaoPK().getPerfil().getId();
-			Long idPermissao = perfilPermissao.getPerfilPermissaoPK().getPermissao().getId();
+            validatePerfilPermissao(idPerfil, idPermissao);
+        }
 
-			validatePerfilPermissao(idPerfil, idPermissao);
-		}
+        return perfilPermissaoRepository.saveAll(perfilPermissoes);
 
-		return perfilPermissaoRepository.saveAll(perfilPermissoes);
+    }
 
-	}
+    @Transactional(readOnly = false)
+    public List<PerfilPermissao> salvarPermissoesIDs(Long idPerfil, Set<Long> ids)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-	@Transactional(readOnly = false)
-	public List<PerfilPermissao> savePerfilPermissionsIDs(Perfil perfil, Set<Long> ids)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+        perfilPermissaoRepository.deleteByPerfilPermissoes(idPerfil);
 
-		perfilPermissaoRepository.deleteByPerfilPermissoes(perfil.getId());
+        for (Long idPermissao : ids) {
+            validatePerfilPermissao(idPerfil, idPermissao);
+            perfilPermissaoRepository.savePerfilPermissao(idPerfil, idPermissao);
+        }
+        return new ArrayList<>();
+    }
 
-		// PerfilPermissao perfilPermissao = new PerfilPermissao();
-		// perfilPermissao.setDataHoraCadastro(LocalDateTime.now());
-		// perfilPermissao.setDataHoraAlteracao(LocalDateTime.now());
-		for (Long idPermissao : ids) {
-			validatePerfilPermissao(perfil.getId(), idPermissao);
-			perfilPermissaoRepository.savePerfilPermissao(perfil.getId(), idPermissao);
-		}
+    @Transactional(readOnly = false)
+    public List<PerfilPermissao> savePerfilPermissionsIDs(Perfil perfil, Set<Long> ids)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-		return new ArrayList<PerfilPermissao>();
+        perfilPermissaoRepository.deleteByPerfilPermissoes(perfil.getId());
 
-	}
+        // PerfilPermissao perfilPermissao = new PerfilPermissao();
+        // perfilPermissao.setDataHoraCadastro(LocalDateTime.now());
+        // perfilPermissao.setDataHoraAlteracao(LocalDateTime.now());
+        for (Long idPermissao : ids) {
+            validatePerfilPermissao(perfil.getId(), idPermissao);
+            perfilPermissaoRepository.savePerfilPermissao(perfil.getId(), idPermissao);
+        }
 
-	public Optional<PerfilPermissao> findByIdPerfilIdPermissao(Long idPerfil, Long idPermissao)
-			throws ResourceNotFoundException {
+        return new ArrayList<PerfilPermissao>();
 
-		Optional<PerfilPermissao> perfilPermissaoBanco = perfilPermissaoRepository.findByIdPerfilIdPermissao(idPerfil,
-				idPermissao);
-		if (!perfilPermissaoBanco.isPresent()) {
-			throw new ResourceNotFoundException("O código " + idPerfil + " do perfil e o código " + idPermissao
-					+ " da permissão não foram encontrados. ");
-		}
-		return perfilPermissaoBanco;
-	}
+    }
 
-	// metodos privados
-	private void validatePerfilPermissao(Long idPerfil, Long idPermissao)
-			throws ResourceNotFoundException, ResourceParameterNullException {
+    public Optional<PerfilPermissao> findByIdPerfilIdPermissao(Long idPerfil, Long idPermissao)
+            throws ResourceNotFoundException {
 
-		if ((idPerfil == null) || (idPermissao == 0)) {
-			throw new ResourceParameterNullException("Parametros invalidos");
-		}
+        Optional<PerfilPermissao> perfilPermissaoBanco = perfilPermissaoRepository.findByIdPerfilIdPermissao(idPerfil,
+                idPermissao);
+        if (!perfilPermissaoBanco.isPresent()) {
+            throw new ResourceNotFoundException("O código " + idPerfil + " do perfil e o código " + idPermissao
+                    + " da permissão não foram encontrados. ");
+        }
+        return perfilPermissaoBanco;
+    }
 
-	}
+    // metodos privados
+    private void validatePerfilPermissao(Long idPerfil, Long idPermissao)
+            throws ResourceNotFoundException, ResourceParameterNullException {
+
+        if ((idPerfil == null) || (idPermissao == 0)) {
+            throw new ResourceParameterNullException("Parametros invalidos");
+        }
+
+    }
 
 }

@@ -100,7 +100,7 @@ public class PerfilResource {
             }
         }
     }
-    
+
     @ApiOperation(value = "Lista paginada de perfis", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
@@ -124,7 +124,7 @@ public class PerfilResource {
 
         return perfilService.findAll(spec, pageRequest).getContent();
     }
-    
+
     @ApiOperation(value = "Retorna a quantidade de perfis de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
@@ -158,12 +158,12 @@ public class PerfilResource {
     @PostMapping(value = "/perfil/permissoes")
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PERFIL') and #oauth2.hasScope('write')")
     public ResponseEntity<PerfilAndPermissoesProjection> saveAndPermissions(
-            @Valid @RequestBody PerfilAndPermissoesProjection perfilAndPermissoesProjection,
+            @RequestBody PerfilAndPermissoesProjection perfilAndPermissoesProjection,
             HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
         PerfilAndPermissoesProjection perfilAndPermissoesProjectionSalvo = perfilService
-                .savePerfilAndPermissions(perfilAndPermissoesProjection);
+                .salvarPermissoes(perfilAndPermissoesProjection);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, perfilAndPermissoesProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(perfilAndPermissoesProjectionSalvo);
     }
