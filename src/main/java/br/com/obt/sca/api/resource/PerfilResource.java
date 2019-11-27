@@ -177,7 +177,7 @@ public class PerfilResource {
     }
 
     @ApiOperation(value = "Atualizar o status")
-    @PutMapping(value = "/{id}/ativo")
+    @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_STATUS_PERFIL') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {

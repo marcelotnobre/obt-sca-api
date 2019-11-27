@@ -31,8 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
+import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import br.com.obt.sca.api.service.UsuarioService;
@@ -197,6 +199,20 @@ public class UsuarioResource {
         Usuario usuarioSalva = usuarioService.save(usuario);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
+    }
+    
+    @ApiOperation(value = "Salvar um usuario e suas permissões", response = List.class)
+    @PostMapping(value = "/usuario/sistemas")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    public ResponseEntity<UsuarioAndSistemasProjection> saveAndSistemas(
+            @RequestBody UsuarioAndSistemasProjection usuarioAndSistemasProjection,
+            HttpServletResponse response)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+
+        UsuarioAndSistemasProjection usuarioAndSistemasProjectionSalvo = usuarioService
+                .salvarSistemas(usuarioAndSistemasProjection);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndSistemasProjectionSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndSistemasProjectionSalvo);
     }
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)

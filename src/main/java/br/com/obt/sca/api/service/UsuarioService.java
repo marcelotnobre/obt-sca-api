@@ -29,6 +29,7 @@ import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.model.enumeration.TipoAutenticacao;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.repository.UsuarioRepository;
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
@@ -107,6 +108,15 @@ public class UsuarioService {
 
         return usuarioSalvo;
 
+    }
+    
+    @Transactional(readOnly = false)
+    public UsuarioAndSistemasProjection salvarSistemas(UsuarioAndSistemasProjection usuarioAndSistemasProjection)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+
+        usuarioSistemaService.salvarSistemasIDs(usuarioAndSistemasProjection.getId(), usuarioAndSistemasProjection.getIdsSistemas());
+
+        return usuarioAndSistemasProjection;
     }
 
     // @Async("threadPoolTaskExecutor")
