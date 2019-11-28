@@ -123,6 +123,14 @@ public class PermissaoService {
         }
         return permissaoBanco;
     }
+    
+    public List<Permissao> findByPermissoesDoPerfil(Long idPerfil) throws ResourceNotFoundException {
+        List<Permissao> permissaoBanco = permissaoRepository.findByPermissoesDoPerfil(idPerfil);
+        if (permissaoBanco.isEmpty()) {
+            throw new ResourceNotFoundException("O código " + idPerfil + " do perfil não foi encontrada. ");
+        }
+        return permissaoBanco;
+    }
 
     public List<Permissao> findPermissoes(String nomePermissao, Long idUsuario) throws ResourceNotFoundException {
         List<Permissao> permissoes = permissaoRepository.findPermissoes(nomePermissao, idUsuario);

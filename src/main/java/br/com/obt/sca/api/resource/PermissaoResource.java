@@ -207,6 +207,12 @@ public class PermissaoResource {
         return permissaoService.findPermissoes(permissao, idUsuario);
     }
 
+    @ApiOperation(value = " Permissões  ", response = List.class)
+    @GetMapping(value = "/ativos/perfil/{idPerfil}")
+    public List<Permissao> findByPermissoesDoPerfil(@PathVariable Long idPerfil) throws ResourceNotFoundException {
+        return permissaoService.findByPermissoesDoPerfil(idPerfil);
+    }
+
     @ApiOperation(value = " Permissões por nome da permissão e usuario", response = List.class)
     @GetMapping(value = "/ativos/sistema/{permissao}/{idSistema}")
     public Permissao findPermissaoPorSistema(@PathVariable String permissao, @PathVariable Long idSistema) throws ResourceNotFoundException {

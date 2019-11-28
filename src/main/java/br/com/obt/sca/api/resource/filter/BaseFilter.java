@@ -44,6 +44,8 @@ public class BaseFilter<T> implements Specification<T> {
                     }
                 } else if (root.get(criteria.getChave()).getJavaType() == Boolean.class) {
                     return builder.equal(pathCampo, criteria.getValor());
+                } else if (root.get(criteria.getChave()).getJavaType() == Long.class) {
+                    return builder.equal(pathCampo, criteria.getValor());
                 }
 
             } else if (root.get(criteria.getChave()).getJavaType() == String.class) {

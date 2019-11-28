@@ -109,7 +109,7 @@ public class PerfilResource {
             @RequestParam(required = false, defaultValue = "asc") String order,
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String nomeSistema,
+            @RequestParam(required = false) String idSistema,
             @RequestParam(required = false) Boolean status,
             @PathVariable int page,
             @PathVariable int limit) {
@@ -118,7 +118,7 @@ public class PerfilResource {
                 Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
+                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
                 .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 
@@ -131,11 +131,11 @@ public class PerfilResource {
     public Long countAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String nomeSistema,
+            @RequestParam(required = false) String idSistema,
             @RequestParam(required = false) Boolean status) {
 
         Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("nome", SearchCriteria.CONTAINS, nomeSistema, "sistema"))
+                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
                 .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
 

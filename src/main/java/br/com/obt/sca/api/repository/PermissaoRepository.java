@@ -38,14 +38,24 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
             + "				inner join perfil_permissao on (usuario_perfil.perfil_id =perfil_permissao.perfil_id) "
             + "	where perfil_permissao.permissao_id = permissao.id and (usuario.id = :id) )", nativeQuery = true)
     public List<Permissao> findByPermissoesDoUsuario(@Param("id") Long id);
-    
+
+    @Query(value = ""
+            + "SELECT * from permissao where EXISTS "
+            + "("
+            + "	select perfil_permissao.permissao_id from usuario_perfil "
+            + "	inner join perfil on perfil.id = usuario_perfil.perfil_id "
+            + "	inner join perfil_permissao on (usuario_perfil.perfil_id =perfil_permissao.perfil_id) "
+            + "	where perfil_permissao.permissao_id = permissao.id and (perfil.id = :idPerfil) "
+            + ")", nativeQuery = true)
+    List<Permissao> findByPermissoesDoPerfil(@Param("idPerfil") Long idPerfil);
+
     @Query(value = "SELECT * from permissao where EXISTS "
             + "			( select perfil_permissao.permissao_id from usuario_perfil "
             + "				inner join usuario on (usuario.id = usuario_perfil.usuario_id) "
             + "				inner join perfil_permissao on (usuario_perfil.perfil_id =perfil_permissao.perfil_id) "
             + "	where perfil_permissao.permissao_id = permissao.id and (usuario.id = :idUsuario) and (permissao.nome = :nomePermissao) )", nativeQuery = true)
     public List<Permissao> findPermissoes(@Param("nomePermissao") String nomePermissao, @Param("idUsuario") Long idUsuario);
-    
+
     @Query(value = "select P.* from permissao P WHERE P.SISTEMA_ID = :idSistema and P.nome = :nomePermissao", nativeQuery = true)
     Permissao findPermissaoPorSistema(@Param("nomePermissao") String nomePermissao, @Param("idSistema") Long idSistema);
 
