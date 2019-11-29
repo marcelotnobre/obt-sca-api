@@ -40,7 +40,7 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
             + " inner join usuario on usuario.id = usuario_perfil.usuario_id"
             + " where 1=1"
             + " and usuario.id = :idUsuario"
-            + " and perfil.datahorafinalvigencia >= now()", nativeQuery = true)
+            + " and (perfil.datahorafinalvigencia is null or perfil.datahorafinalvigencia >= now())", nativeQuery = true)
     public List<Permissao> findByPermissoesDoUsuario(@Param("idUsuario") Long idUsuario);
 
     @Query(value = ""
