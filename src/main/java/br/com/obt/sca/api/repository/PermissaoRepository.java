@@ -53,11 +53,15 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
             + ")", nativeQuery = true)
     List<Permissao> findByPermissoesDoPerfil(@Param("idPerfil") Long idPerfil);
 
-    @Query(value = "SELECT * from permissao where EXISTS "
-            + "			( select perfil_permissao.permissao_id from usuario_perfil "
-            + "				inner join usuario on (usuario.id = usuario_perfil.usuario_id) "
-            + "				inner join perfil_permissao on (usuario_perfil.perfil_id =perfil_permissao.perfil_id) "
-            + "	where perfil_permissao.permissao_id = permissao.id and (usuario.id = :idUsuario) and (permissao.nome = :nomePermissao) )", nativeQuery = true)
+    @Query(value = ""
+            + " select permissao.* from permissao"
+            + " inner join perfil_permissao on perfil_permissao.permissao_id = permissao.id"
+            + " inner join usuario_perfil on usuario_perfil.perfil_id = perfil_permissao.perfil_id"
+            + " inner join perfil on usuario_perfil.perfil_id = perfil.id"
+            + " where 1=1"
+            + " and usuario_perfil.usuario_id = :idUsuario"
+            + " and permissao.nome = :nomePermissao"
+            + " and (perfil.datahorafinalvigencia is null or perfil.datahorafinalvigencia >= now())", nativeQuery = true)
     public List<Permissao> findPermissoes(@Param("nomePermissao") String nomePermissao, @Param("idUsuario") Long idUsuario);
 
     @Query(value = "select P.* from permissao P WHERE P.SISTEMA_ID = :idSistema and P.nome = :nomePermissao", nativeQuery = true)
