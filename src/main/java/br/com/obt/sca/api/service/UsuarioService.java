@@ -143,7 +143,7 @@ public class UsuarioService {
 
         Map<String, Object> variaveis = new HashMap<>();
         variaveis.put("emails", emails);
-        variaveis.put("url", property.getUrlApiScaClient() + "/recuperar_senha/token?" + token);
+        variaveis.put("url", property.getUrlApiScaClient() + "/recuperar_senha.jsf?token=" + token);
 
         logger.info("antes de enviar o email.");
         mailer.enviarEmailConfirmacaoDePermissaoCadastrada(emails,
