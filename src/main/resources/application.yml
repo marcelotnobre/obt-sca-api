@@ -107,11 +107,13 @@ spring:
        
 # Variaveis do properties da aplicacao     
 outerboxtech:
+  origin-permitida: http://localhost:8090
+    
   mail:
     host: smtp.outerboxtech.com.br
     port: 587
-    username: fabrica@outerboxtech.com.br
-    password: f@br!c@1234
+    username: luiz.lima@outerboxtech.com.br
+    password: 123456@luiz
   s3:
     access-key-id: AKXAIGKHGQxEK6MAG7BD
     secret-access-key: asdasd

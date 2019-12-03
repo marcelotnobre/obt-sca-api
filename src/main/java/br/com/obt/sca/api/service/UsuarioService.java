@@ -1,5 +1,6 @@
 package br.com.obt.sca.api.service;
 
+import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,12 @@ public class UsuarioService {
     @Autowired
     private Mailer mailer;
 
+    @Autowired
+    private OuterBoxTechSCAApiProperty property;
+
+    @Autowired
+    private TokenService tokenService;
+
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public Usuario save(Usuario usuario)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
@@ -109,7 +116,7 @@ public class UsuarioService {
         return usuarioSalvo;
 
     }
-    
+
     @Transactional(readOnly = false)
     public UsuarioAndSistemasProjection salvarSistemas(UsuarioAndSistemasProjection usuarioAndSistemasProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
@@ -127,17 +134,21 @@ public class UsuarioService {
         Optional<Usuario> usuarioBanco = findById(usuario.getId());
 
         List<String> emails = new ArrayList<String>();
-        emails.add("marcelo.nobre@outerboxtech.com.br");
-        emails.add("jose.silva@outerboxtech.com.br");
-        emails.add("vinicius.assis@outerboxtech.com.br");
+        emails.add("luizedutl@gmail.com");
+        //emails.add("marcelo.nobre@outerboxtech.com.br");
+        //emails.add("jose.silva@outerboxtech.com.br");
+        //emails.add("vinicius.assis@outerboxtech.com.br");
+
+        String token = tokenService.criarToken(usuarioBanco.get().getLogin());
 
         Map<String, Object> variaveis = new HashMap<>();
         variaveis.put("emails", emails);
+        variaveis.put("url", property.getOriginPermitida() + "/recuperar_senha/token?" + token);
 
         logger.info("antes de enviar o email.");
         mailer.enviarEmailConfirmacaoDePermissaoCadastrada(emails,
                 "Usuario : " + usuarioBanco.get().getLogin() + " cadastrado com sucesso!",
-                "mail/aviso-usuario-cadastrado", variaveis);
+                "mail/email-recuperacao-senha", variaveis);
         logger.info("Envio de e-mail de aviso concluído.");
 
     }
@@ -170,23 +181,23 @@ public class UsuarioService {
     public Page<Usuario> findByNomeContaining(String nome, Pageable pageable) {
         return usuarioRepository.findByNomeContaining(nome, pageable);
     }
-    
+
     public Page<Usuario> findAll(Pageable pageable) {
         return usuarioRepository.findAll(pageable);
     }
-    
-    public Page<Usuario> findAll(Specification<Usuario> spec,Pageable pageable) {
+
+    public Page<Usuario> findAll(Specification<Usuario> spec, Pageable pageable) {
         return usuarioRepository.findAll(spec, pageable);
     }
-    
+
     public Long countAll(Specification<Usuario> spec) {
         return usuarioRepository.count(spec);
     }
-    
+
     public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable) {
         return usuarioRepository.findByEmailAndLogin(login, email, pageable);
     }
-    
+
     public Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable) {
         return usuarioRepository.findByEmailOrLogin(emailOrLogin, pageable);
     }

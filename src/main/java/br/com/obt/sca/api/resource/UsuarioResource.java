@@ -163,6 +163,20 @@ public class UsuarioResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisAndSistemasProjectionSalvo);
     }
 
+    @ApiOperation(value = "Recuperação de senha", response = List.class)
+    @PostMapping(value = "/senha/email")
+    public ResponseEntity<String> enviarEmailUsuario(
+            @Valid @RequestBody Long idUsuario,
+            HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
+            ResourceParameterNullException, ResourceAdministratorNotUpdateException {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(idUsuario);
+        usuarioService.enviarEmailUsuario(usuario);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Email enviado com sucesso!");
+    }
+
     @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)
     @GetMapping(value = "/login/{emailOrLogin}")
     public Usuario findByEmailOrLogin(@PathVariable String emailOrLogin) throws ResourceNotFoundException {
@@ -200,7 +214,7 @@ public class UsuarioResource {
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
     }
-    
+
     @ApiOperation(value = "Salvar um usuario e suas permissões", response = List.class)
     @PostMapping(value = "/usuario/sistemas")
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
