@@ -108,6 +108,7 @@ spring:
 # Variaveis do properties da aplicacao     
 outerboxtech:
   origin-permitida: http://localhost:8090
+  url-api-sca-client: http://localhost:8080
     
   mail:
     host: smtp.outerboxtech.com.br

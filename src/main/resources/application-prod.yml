@@ -30,6 +30,7 @@ spring:
 # Variaveis do properties da aplicacao     
 outerboxtech:
   origin-permitida: https://obt-sca-web.herokuapp.com
+  url-api-sca-client: https://obt-sca-web.herokuapp.com
   
   seguranca:
     enable-https: true

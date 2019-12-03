@@ -5,120 +5,130 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("outerboxtech")
 public class OuterBoxTechSCAApiProperty {
 
-	private String originPermitida = "*";
+    private String originPermitida = "*";
 
-	private final Seguranca seguranca = new Seguranca();
+    private String UrlApiScaClient = "http://localhost:8080";
 
-	private final Mail mail = new Mail();
+    private final Seguranca seguranca = new Seguranca();
 
-	private final S3 s3 = new S3();
+    private final Mail mail = new Mail();
 
-	public S3 getS3() {
-		return s3;
-	}
+    private final S3 s3 = new S3();
 
-	public Mail getMail() {
-		return mail;
-	}
+    public S3 getS3() {
+        return s3;
+    }
 
-	public Seguranca getSeguranca() {
-		return seguranca;
-	}
+    public Mail getMail() {
+        return mail;
+    }
 
-	public String getOriginPermitida() {
-		return originPermitida;
-	}
+    public Seguranca getSeguranca() {
+        return seguranca;
+    }
 
-	public void setOriginPermitida(String originPermitida) {
-		this.originPermitida = originPermitida;
-	}
+    public String getOriginPermitida() {
+        return originPermitida;
+    }
 
-	public static class S3 {
+    public void setOriginPermitida(String originPermitida) {
+        this.originPermitida = originPermitida;
+    }
 
-		private String accessKeyId;
+    public String getUrlApiScaClient() {
+        return UrlApiScaClient;
+    }
 
-		private String secretAccessKey;
+    public void setUrlApiScaClient(String urlApiScaClient) {
+        UrlApiScaClient = urlApiScaClient;
+    }
 
-		private String bucket = "aw-algamoney-arquivos";
+    public static class S3 {
 
-		public String getBucket() {
-			return bucket;
-		}
+        private String accessKeyId;
 
-		public void setBucket(String bucket) {
-			this.bucket = bucket;
-		}
+        private String secretAccessKey;
 
-		public String getAccessKeyId() {
-			return accessKeyId;
-		}
+        private String bucket = "aw-algamoney-arquivos";
 
-		public void setAccessKeyId(String accessKeyId) {
-			this.accessKeyId = accessKeyId;
-		}
+        public String getBucket() {
+            return bucket;
+        }
 
-		public String getSecretAccessKey() {
-			return secretAccessKey;
-		}
+        public void setBucket(String bucket) {
+            this.bucket = bucket;
+        }
 
-		public void setSecretAccessKey(String secretAccessKey) {
-			this.secretAccessKey = secretAccessKey;
-		}
-	}
+        public String getAccessKeyId() {
+            return accessKeyId;
+        }
 
-	public static class Seguranca {
+        public void setAccessKeyId(String accessKeyId) {
+            this.accessKeyId = accessKeyId;
+        }
 
-		private boolean enableHttps;
+        public String getSecretAccessKey() {
+            return secretAccessKey;
+        }
 
-		public boolean isEnableHttps() {
-			return enableHttps;
-		}
+        public void setSecretAccessKey(String secretAccessKey) {
+            this.secretAccessKey = secretAccessKey;
+        }
+    }
 
-		public void setEnableHttps(boolean enableHttps) {
-			this.enableHttps = enableHttps;
-		}
-	}
+    public static class Seguranca {
 
-	public static class Mail {
+        private boolean enableHttps;
 
-		private String host;
+        public boolean isEnableHttps() {
+            return enableHttps;
+        }
 
-		private Integer port;
+        public void setEnableHttps(boolean enableHttps) {
+            this.enableHttps = enableHttps;
+        }
+    }
 
-		private String username;
+    public static class Mail {
 
-		private String password;
+        private String host;
 
-		public String getHost() {
-			return host;
-		}
+        private Integer port;
 
-		public void setHost(String host) {
-			this.host = host;
-		}
+        private String username;
 
-		public Integer getPort() {
-			return port;
-		}
+        private String password;
 
-		public void setPort(Integer port) {
-			this.port = port;
-		}
+        public String getHost() {
+            return host;
+        }
 
-		public String getUsername() {
-			return username;
-		}
+        public void setHost(String host) {
+            this.host = host;
+        }
 
-		public void setUsername(String username) {
-			this.username = username;
-		}
+        public Integer getPort() {
+            return port;
+        }
 
-		public String getPassword() {
-			return password;
-		}
+        public void setPort(Integer port) {
+            this.port = port;
+        }
 
-		public void setPassword(String password) {
-			this.password = password;
-		}
-	}
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 }
