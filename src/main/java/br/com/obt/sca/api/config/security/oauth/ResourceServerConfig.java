@@ -14,32 +14,33 @@ import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecur
 @Configuration
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-	// @formatter:off
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-				.antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", 
-				"/configuration/**",  "/swagger-ui.html", "/webjars/**", "/actuator/**")
-				.permitAll()
-				// acessos públicos
-				.antMatchers("/usuarios/login/","/usuarios/login/*").permitAll()
-				.antMatchers("/permissoes/ativos/","/permissoes/ativos/*").permitAll()
-				.and()
-			.authorizeRequests()
-				.anyRequest().authenticated()
-				.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.csrf().disable();
-	}
-	// @formatter:on
+    // @formatter:off
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                        "/configuration/**", "/swagger-ui.html", "/webjars/**", "/actuator/**")
+                .permitAll()
+                // acessos públicos
+                .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
+                .antMatchers("/usuarios/senha/email/", "/usuarios/senha/email/*").permitAll()
+                .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
+                .and()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .csrf().disable();
+    }
+    // @formatter:on
 
-	@Override
-	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-		resources.stateless(true);
-	}
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.stateless(true);
+    }
 
-	@Bean
-	public MethodSecurityExpressionHandler createExpressionHandler() {
-		return new OAuth2MethodSecurityExpressionHandler();
-	}
+    @Bean
+    public MethodSecurityExpressionHandler createExpressionHandler() {
+        return new OAuth2MethodSecurityExpressionHandler();
+    }
 }

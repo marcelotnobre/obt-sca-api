@@ -16,34 +16,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	// @formatter:off
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-		   // acessos públicos
-			.antMatchers("/usuarios/login/","/usuarios/login/*").permitAll()
-			.antMatchers("/permissoes/ativos/","/permissoes/ativos/*").permitAll()
-			.anyRequest().authenticated()
-			.and()
-			.httpBasic()
-			.and()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.csrf().disable();
-	}
-	// @formatter:on	
+    // @formatter:off
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                // acessos públicos
+                .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
+                .antMatchers("/usuarios/senha/email", "/usuarios/senha/email/*").permitAll()
+                .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf().disable();
+    }
+    // @formatter:on	
 }

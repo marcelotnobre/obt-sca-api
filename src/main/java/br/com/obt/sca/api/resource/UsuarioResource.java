@@ -164,10 +164,8 @@ public class UsuarioResource {
     }
 
     @ApiOperation(value = "Recuperação de senha", response = List.class)
-    @PostMapping(value = "/senha/email")
-    public ResponseEntity<String> enviarEmailUsuario(
-            @Valid @RequestBody Long idUsuario,
-            HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
+    @GetMapping(value = "/senha/email/{idUsuario}")
+    public ResponseEntity<String> enviarEmailUsuario(@PathVariable Long idUsuario) throws ResourceAlreadyExistsException, ResourceNotFoundException,
             ResourceParameterNullException, ResourceAdministratorNotUpdateException {
 
         Usuario usuario = new Usuario();
