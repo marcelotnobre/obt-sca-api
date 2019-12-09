@@ -3,6 +3,7 @@ package br.com.obt.sca.api.config.security.basic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +36,6 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // acessos públicos
                 .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
-                .antMatchers("/usuarios/senha/email", "/usuarios/senha/email/*").permitAll()
                 .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
                 .anyRequest().authenticated()
                 .and()

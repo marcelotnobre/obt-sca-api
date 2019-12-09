@@ -3,6 +3,7 @@ package br.com.obt.sca.api.config.security.oauth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,11 +20,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
-                        "/configuration/**", "/swagger-ui.html", "/webjars/**", "/actuator/**")
+                        "/configuration/**", "/swagger-ui.html", "/webjars/**", "/actuator/**",
+                        "/usuarios/usuario/senha/**")
                 .permitAll()
                 // acessos públicos
                 .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
-                .antMatchers("/usuarios/senha/email/", "/usuarios/senha/email/*").permitAll()
                 .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
                 .and()
                 .authorizeRequests()

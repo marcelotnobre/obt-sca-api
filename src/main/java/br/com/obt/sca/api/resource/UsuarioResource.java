@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
-import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
@@ -46,6 +45,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Map;
 import org.springframework.data.jpa.domain.Specification;
 
 @Api(value = "usuarios", description = "Serviço de usuarios")
@@ -164,8 +164,8 @@ public class UsuarioResource {
     }
 
     @ApiOperation(value = "Recuperação de senha", response = List.class)
-    @GetMapping(value = "/senha/email/{idUsuario}")
-    public ResponseEntity<String> enviarEmailUsuario(@PathVariable Long idUsuario) throws ResourceAlreadyExistsException, ResourceNotFoundException,
+    @PostMapping(value = "/usuario/senha/email")
+    public ResponseEntity<String> enviarEmailUsuario(@Valid @RequestBody Long idUsuario) throws ResourceAlreadyExistsException, ResourceNotFoundException,
             ResourceParameterNullException, ResourceAdministratorNotUpdateException {
 
         Usuario usuario = new Usuario();
@@ -173,6 +173,17 @@ public class UsuarioResource {
         usuarioService.enviarEmailUsuario(usuario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Email enviado com sucesso!");
+    }
+    
+    @ApiOperation(value = "Alterar senha", response = List.class)
+    @PostMapping(value = "/usuario/senha/alterar")
+    public ResponseEntity<String> alterarSenha(@Valid @RequestBody Map<String, String> mapValores)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
+        String senha = mapValores.get("senha");
+        String token = mapValores.get("token");
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body("Senha alterada com sucesso!");
     }
 
     @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)
