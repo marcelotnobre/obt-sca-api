@@ -20,14 +20,14 @@ public class TokenService {
 
     public final String SECRET_KEY = "outerboxtech";
 
-    public String criarToken(String login) {
+    public String criarToken(Long idUsuario) {
         String token = null;
         Calendar expiresAt = Calendar.getInstance();
         expiresAt.add(Calendar.HOUR, 12);
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             token = JWT.create()
-                    .withIssuer(login)
+                    .withIssuer("" + idUsuario)
                     .withExpiresAt(expiresAt.getTime())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
@@ -36,11 +36,10 @@ public class TokenService {
         return token;
     }
 
-    public DecodedJWT verify(String token, String login) {
+    public DecodedJWT verify(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(login)
                     .build(); //Reusable verifier instance
             return verifier.verify(token);
         } catch (JWTCreationException exception) {
@@ -48,9 +47,8 @@ public class TokenService {
         return null;
     }
 
-    public boolean isExpirou(String token, String login) {
+    public boolean isExpirou(Date dataExpiracao) {
         try {
-            Date dataExpiracao = verify(token, login).getExpiresAt();
             Date dataAtual = new Date();
 
             Calendar cal = Calendar.getInstance();

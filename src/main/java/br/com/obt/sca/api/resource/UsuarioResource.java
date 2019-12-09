@@ -183,6 +183,8 @@ public class UsuarioResource {
         String senha = mapValores.get("senha");
         String token = mapValores.get("token");
         
+        usuarioService.alterarSenha(senha, token);
+        
         return ResponseEntity.status(HttpStatus.CREATED).body("Senha alterada com sucesso!");
     }
 

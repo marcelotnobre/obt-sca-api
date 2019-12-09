@@ -38,6 +38,7 @@ import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
@@ -134,12 +135,12 @@ public class UsuarioService {
         Optional<Usuario> usuarioBanco = findById(usuario.getId());
 
         List<String> emails = new ArrayList<String>();
-        emails.add("luizedutl@gmail.com");
+        emails.add(usuario.getEmail());
         //emails.add("marcelo.nobre@outerboxtech.com.br");
         //emails.add("jose.silva@outerboxtech.com.br");
         //emails.add("vinicius.assis@outerboxtech.com.br");
 
-        String token = tokenService.criarToken(usuarioBanco.get().getLogin());
+        String token = tokenService.criarToken(usuarioBanco.get().getId());
 
         Map<String, Object> variaveis = new HashMap<>();
         variaveis.put("emails", emails);
@@ -151,6 +152,23 @@ public class UsuarioService {
                 "mail/email-recuperacao-senha", variaveis);
         logger.info("Envio de e-mail de aviso concluído.");
 
+    }
+
+    @Transactional(readOnly = false)
+    public void alterarSenha(String senha, String token)
+            throws ResourceNotFoundException {
+        DecodedJWT decoded = tokenService.verify(token);
+
+        boolean expirou = tokenService.isExpirou(decoded.getExpiresAt());
+
+        if (!expirou) {
+            Long idUsuario = Long.parseLong(decoded.getIssuer());
+
+            Optional<Usuario> usuarioBanco = findById(idUsuario);
+            Usuario usuario = usuarioBanco.get();
+            usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
+            usuarioRepository.save(usuario);
+        }
     }
 
     @Transactional(readOnly = false)
@@ -224,10 +242,11 @@ public class UsuarioService {
             ResourceAdministratorNotUpdateException {
 
         Usuario usuario = new Usuario();
-        BeanUtils.copyProperties(usuarioAndPerfisProjection, usuario, "idsPerfis");
-        Usuario usuarioSalvo = save(usuario);
+        usuario.setId(usuarioAndPerfisProjection.getId());
+        //BeanUtils.copyProperties(usuarioAndPerfisProjection, usuario, "idsPerfis");
+        //Usuario usuarioSalvo = save(usuario);
 
-        usuarioPerfilService.saveUsuarioPerfilIDS(usuarioSalvo, usuarioAndPerfisProjection.getIdsPerfis());
+        usuarioPerfilService.saveUsuarioPerfilIDS(usuario, usuarioAndPerfisProjection.getIdsPerfis());
 
         Set<Long> idSistemas = new TreeSet<>();
         for (Long idPerfil : usuarioAndPerfisProjection.getIdsPerfis()) {
@@ -237,7 +256,7 @@ public class UsuarioService {
 
         }
         if (!idSistemas.isEmpty()) {
-            usuarioSistemaService.saveUsuarioSistemaIDS(usuarioSalvo, idSistemas);
+            usuarioSistemaService.saveUsuarioSistemaIDS(usuario, idSistemas);
         }
 
         return usuarioAndPerfisProjection;
