@@ -135,7 +135,7 @@ public class UsuarioService {
         Optional<Usuario> usuarioBanco = findById(usuario.getId());
 
         List<String> emails = new ArrayList<String>();
-        emails.add(usuario.getEmail());
+        emails.add(usuarioBanco.get().getEmail());
         //emails.add("marcelo.nobre@outerboxtech.com.br");
         //emails.add("jose.silva@outerboxtech.com.br");
         //emails.add("vinicius.assis@outerboxtech.com.br");
