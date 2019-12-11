@@ -33,7 +33,7 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
     public <T> Collection<T> findByPermissaoPerfilAvailableStatusTrue(@Param("perfilid") Long perfilid, Class<T> type);
 
     @Query(value = ""
-            + " SELECT permissao.*, perfil.datahorafinalvigencia from permissao"
+            + " SELECT distinct permissao.*, perfil.datahorafinalvigencia from permissao"
             + " inner join perfil_permissao on permissao.id = perfil_permissao.permissao_id"
             + " inner join perfil on perfil.id = perfil_permissao.perfil_id"
             + " inner join usuario_perfil on usuario_perfil.perfil_id = perfil.id"

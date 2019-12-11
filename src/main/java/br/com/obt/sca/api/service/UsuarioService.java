@@ -77,14 +77,18 @@ public class UsuarioService {
         if ((usuario != null) && (usuario.getId() != null) && (usuario.getId() == 1l)) {
             throw new ResourceAdministratorNotUpdateException("O usuário administrador não pode ser alterado!");
         }
+        
+        String senha = usuario.getSenha();
+        
+        boolean isMesmaSenha = false;
 
         // Criptografando a senha.
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         if ((usuario != null) && (usuario.getId() != null)) {
             Optional<Usuario> usuarioBanco = this.findById(usuario.getId());
-
-            usuarioBanco.get().setSenha(encoder.encode(usuario.getSenha()));
+            
+            isMesmaSenha = usuarioBanco.get().getSenha().equals(usuario.getSenha());
 
             // Setando os campos que são alterados na tela.
             usuarioBanco.get().setLogin(usuario.getLogin());
@@ -104,7 +108,11 @@ public class UsuarioService {
             if (usuario.getTipoAutenticacao() == null) {
                 usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
             }
-            usuario.setSenha(encoder.encode(usuario.getSenha()));
+            
+            //se nao e a mesma senha, salva.
+            if(!isMesmaSenha) {
+                usuario.setSenha(encoder.encode(senha));
+            }
             usuarioSalvo = usuarioRepository.save(usuario);
         }
 
