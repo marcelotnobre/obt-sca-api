@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.model.UsuarioSistema;
+import br.com.obt.sca.api.repository.UsuarioPerfilRepository;
 import br.com.obt.sca.api.repository.UsuarioSistemaRepository;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
@@ -29,6 +30,9 @@ public class UsuarioSistemaService {
 
     @Autowired
     private UsuarioSistemaRepository usuarioSistemaRepository;
+
+    @Autowired
+    private UsuarioPerfilRepository usuarioPerfilRepository;
 
     @Transactional(readOnly = false)
     public void deleteByUsuarioSistema(Long idUsuario, Long idSistema)
@@ -53,6 +57,13 @@ public class UsuarioSistemaService {
         for (Long idSistemas : ids) {
             usuarioSistemaRepository.saveUsuarioSistema(idUsuario, idSistemas);
         }
+
+        List<Long> idPerfis = usuarioPerfilRepository.findByUsuarioSistema(idUsuario, ids);
+
+        if (idPerfis != null && !idPerfis.isEmpty()) {
+            usuarioPerfilRepository.deleteByUsuarioPerfil(idUsuario, idPerfis);
+        }
+
         return new ArrayList<>();
     }
 
