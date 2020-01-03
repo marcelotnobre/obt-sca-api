@@ -44,13 +44,11 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
     public List<Permissao> findByPermissoesDoUsuario(@Param("idUsuario") Long idUsuario);
 
     @Query(value = ""
-            + "SELECT * from permissao where EXISTS "
-            + "("
-            + "	select perfil_permissao.permissao_id from usuario_perfil "
-            + "	inner join perfil on perfil.id = usuario_perfil.perfil_id "
-            + "	inner join perfil_permissao on (usuario_perfil.perfil_id =perfil_permissao.perfil_id) "
-            + "	where perfil_permissao.permissao_id = permissao.id and (perfil.id = :idPerfil) "
-            + ")", nativeQuery = true)
+            + " SELECT permissao.* FROM permissao"
+            + " INNER JOIN perfil_permissao ON permissao.id = perfil_permissao.permissao_id"
+            + " WHERE 1=1"
+            + " AND permissao.status = true"
+            + " AND perfil_permissao.perfil_id = :idPerfil", nativeQuery = true)
     List<Permissao> findByPermissoesDoPerfil(@Param("idPerfil") Long idPerfil);
 
     @Query(value = ""
