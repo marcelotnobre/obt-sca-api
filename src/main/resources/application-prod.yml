@@ -54,6 +54,10 @@ spring:
       #url: jdbc:mysql://mysql.outerboxtech.com.br/outerboxtech01?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8
       #username: outerboxtech01
       #password: fabricadesenv1234
+      #docker-machine
+      #url: jdbc:mysql://sca-mysql:3306/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      #username: outerboxtech
+      #password: outerboxtech
       #jawsdb heroku
       url: jdbc:mysql://kf3k4aywsrp0d2is.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/ki2u8foaybvd5km3?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
       username: s43272bdxi39c8wv
