@@ -29,8 +29,12 @@ spring:
 
 # Variaveis do properties da aplicacao     
 outerboxtech:
-  origin-permitida: https://obt-sca-web.herokuapp.com
-  url-api-sca-client: https://obt-sca-web.herokuapp.com
+  #docker
+  origin-permitida: http://64.225.7.183:8080
+  url-api-sca-client: http://64.225.7.183:8080
+  #heroku
+  #origin-permitida: https://obt-sca-web.herokuapp.com
+  #url-api-sca-client: https://obt-sca-web.herokuapp.com
   
   seguranca:
     enable-https: true
@@ -55,13 +59,13 @@ spring:
       #username: outerboxtech01
       #password: fabricadesenv1234
       #docker-machine
-      #url: jdbc:mysql://sca-mysql:3306/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-      #username: outerboxtech
-      #password: outerboxtech
+      url: jdbc:mysql://db-mysql:3306/sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      username: outerboxtech
+      password: outerboxtech
       #jawsdb heroku
-      url: jdbc:mysql://kf3k4aywsrp0d2is.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/ki2u8foaybvd5km3?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-      username: s43272bdxi39c8wv
-      password: ma2dcc1lbo66oz8o
+      #url: jdbc:mysql://kf3k4aywsrp0d2is.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/ki2u8foaybvd5km3?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      #username: s43272bdxi39c8wv
+      #password: ma2dcc1lbo66oz8o
     profiles:
         active: oauth-security
 
