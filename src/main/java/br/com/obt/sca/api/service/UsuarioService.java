@@ -94,6 +94,7 @@ public class UsuarioService {
             usuarioBanco.get().setLogin(usuario.getLogin());
             usuarioBanco.get().setEmail(usuario.getEmail());
             usuarioBanco.get().setStatus(usuario.getStatus());
+            usuarioBanco.get().setTipoAutenticacao(usuario.getTipoAutenticacao());
 
             if (StringUtils.isBlank(usuario.getTipoAutenticacao().getLabel())) {
                 usuarioBanco.get().setTipoAutenticacao(TipoAutenticacao.SCA);
