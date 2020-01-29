@@ -1,4 +1,9 @@
 node {
+
+   stage('Clone Repository') {
+        // Get some code from a GitHub repository
+        git 'https://github.com/fabricaOuterbox/obt-sca-api.git'
+   }
    
    stage('Build Maven') {
         sh "mvn clean package"
