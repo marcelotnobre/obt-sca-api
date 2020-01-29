@@ -5,4 +5,4 @@
 - tudo ok, só executar.
 
 ## Digital Ocean - Funcionamento
-http://www.desenvolvimento.outerboxtech.com.br:8090
+http://www.desenvolvimento.outerboxtech.com.br:8090/swagger-ui.html
