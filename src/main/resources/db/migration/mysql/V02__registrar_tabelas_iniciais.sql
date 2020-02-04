@@ -5,9 +5,8 @@ INSERT INTO usuario
     (id, email, login, tipoAutenticacao, senha, status) 
 values 
     (1, 'admin@algamoney.com','admin', 'SCA', '$2a$10$X607ZPhQ4EgGNaYKt3n4SONjIv9zc.VMWdEuhCuba7oLAL5IvcL5.', true),
-    (2, 'vinicius.assis@outerboxtech.com.br', 'vinicius.assis', 'SCA', '$2a$10$Npqf/KXuA6Po74moWCvREuX2sxpEzL4dJ4QXPQABLPR94nF7sYFFK', true),
-    (3, 'jose.silva@outerboxtech.com.br', 'jose.silva', 'SCA', '$2a$10$JJ0bA6DcfjoanXUEXnqGsudL88LpdQZ8wixKOuwHIxOeWHwMvJMGm', true),
-    (4, 'marcelo.nobre@outerboxtech.com.br', 'marcelo.nobre', 'SCA', '$2a$10$/7wDyFFIyYtaHuAywvXwgu5VH6WVI4T17vEqN3ggZNt2syPYSIGE.', true);
+    (2, 'bruno.santos@outerboxtech.com.br', 'jose.silva', 'SCA', '$2a$10$JJ0bA6DcfjoanXUEXnqGsudL88LpdQZ8wixKOuwHIxOeWHwMvJMGm', true),
+    (3, 'marcelo.nobre@outerboxtech.com.br', 'marcelo.nobre', 'SCA', '$2a$10$/7wDyFFIyYtaHuAywvXwgu5VH6WVI4T17vEqN3ggZNt2syPYSIGE.', true);
 
 -- sistema
 INSERT INTO sistema 
