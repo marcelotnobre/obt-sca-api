@@ -3,7 +3,6 @@ package br.com.obt.sca.api.config.security.oauth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,7 +25,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 // acessos públicos
                 .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
                 .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
-                .and()
+		.antMatchers("/usuarios/acesso/", "/usuarios/acesso/*").permitAll()
+		.and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()

@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.service;
 
-import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +17,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+
+import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 import br.com.obt.sca.api.config.threadexecutor.ThreadEnviarEmail;
 import br.com.obt.sca.api.mail.Mailer;
 import br.com.obt.sca.api.model.Perfil;
@@ -32,14 +35,11 @@ import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProject
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.repository.UsuarioRepository;
-import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
@@ -243,6 +243,10 @@ public class UsuarioService {
 
     public Optional<Usuario> findByEmailOrLogin(String emailOrLogin) {
         return usuarioRepository.findByEmailOrLogin(emailOrLogin);
+    }
+    
+    public Optional<Usuario> findByLogin(String login) {
+	return usuarioRepository.findByLogin(login);
     }
 
     @Transactional(readOnly = false)

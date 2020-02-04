@@ -3,6 +3,7 @@ package br.com.obt.sca.api.resource;
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,8 +47,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.Map;
-import org.springframework.data.jpa.domain.Specification;
 
 @Api(value = "usuarios", description = "Serviço de usuarios")
 @ApiResponses(
@@ -64,7 +64,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class UsuarioResource {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioService  usuarioService;
 
     @Autowired
     private ApplicationEventPublisher publisher;
@@ -192,6 +192,12 @@ public class UsuarioResource {
     @GetMapping(value = "/login/{emailOrLogin}")
     public Usuario findByEmailOrLogin(@PathVariable String emailOrLogin) throws ResourceNotFoundException {
         return usuarioService.findByEmailOrLogin(emailOrLogin).get();
+    }
+
+    @ApiOperation(value = "Consulta Login - Usuário autenticação")
+    @GetMapping(value = "/acesso/{login}")
+    public Usuario findByLogin(@PathVariable String login) throws ResourceNotFoundException {
+	return usuarioService.findByLogin(login).get();
     }
 
     @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)

@@ -1,24 +1,26 @@
 package br.com.obt.sca.api.service;
 
-import br.com.obt.sca.api.model.Sistema;
-import br.com.obt.sca.api.repository.SistemaRepository;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.obt.sca.api.model.Sistema;
 import br.com.obt.sca.api.projections.GenericoPinkListProjection;
 import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
+import br.com.obt.sca.api.repository.SistemaRepository;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.data.jpa.domain.Specification;
 
 //@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
