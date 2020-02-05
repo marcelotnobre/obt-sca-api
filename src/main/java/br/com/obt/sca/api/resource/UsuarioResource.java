@@ -71,7 +71,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Listar dos usuarios paginada por nome", response = List.class)
     @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
     public ResponseEntity<Page<Usuario>> findByNomeContainingPagination(
             @RequestParam(required = false, defaultValue = "") String nome,
             @RequestParam(required = false, defaultValue = "id") String sort,
@@ -111,7 +111,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Lista paginada de usuarios", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
     public List<Usuario> findAll(
             @RequestParam(required = false, defaultValue = "id") String sort,
             @RequestParam(required = false, defaultValue = "asc") String order,
@@ -133,7 +133,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Retorna a quantidade de usuários de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
     public Long countAll(
             @RequestParam(required = false) String login,
             @RequestParam(required = false) String email,
@@ -150,7 +150,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
     @PostMapping(value = "/usuario/perfis/sistemas")
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
     public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveUsuarioAndPerfisAndSistemas(
             @Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisAndSistemasProjection,
             HttpServletResponse response) throws ResourceAlreadyExistsException, ResourceNotFoundException,
@@ -208,7 +208,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
     @PostMapping(value = "/usuario/perfis")
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
     public ResponseEntity<UsuarioAndPerfisProjection> saveUsuarioAndPerfis(
             @Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
@@ -223,7 +223,7 @@ public class UsuarioResource {
     @ApiOperation(value = "Salvar um usuario", response = List.class)
     @PostMapping()
     // @PreAuthorize("#oauth2.hasScope('write')")
-    // @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and
+    // @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and
     // #oauth2.hasScope('write')")
     public ResponseEntity<Usuario> save(@Valid @RequestBody Usuario usuario, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
@@ -234,7 +234,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Salvar um usuario e suas permissões", response = List.class)
     @PostMapping(value = "/usuario/sistemas")
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_USUARIO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
     public ResponseEntity<UsuarioAndSistemasProjection> saveAndSistemas(
             @RequestBody UsuarioAndSistemasProjection usuarioAndSistemasProjection,
             HttpServletResponse response)
@@ -248,7 +248,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_USUARIO') and #oauth2.hasScope('read')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('read')")
     public ResponseEntity<Usuario> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Usuario> usuario = usuarioService.findById(id);
         return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
@@ -256,7 +256,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
-    @PreAuthorize("hasAuthority('ROLE_STATUS_USUARIO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_DESATIVAR_USUARIO') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
         usuarioService.updatePropertyStatus(id, status);
@@ -264,7 +264,7 @@ public class UsuarioResource {
 
     @ApiOperation(value = "Excluir permissão - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_REMOVER_USUARIO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         usuarioService.deleteById(id);
     }

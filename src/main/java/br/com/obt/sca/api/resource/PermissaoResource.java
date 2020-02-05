@@ -65,7 +65,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Listar das permissão paginada por nome , sistema e status", response = List.class)
     @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
     public ResponseEntity<Page<Permissao>> findByNomeContainingPagination(
             @RequestParam(required = false, defaultValue = "") String nome,
             @RequestParam(required = false) Long idSistema,
@@ -113,7 +113,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Lista paginada de permissões", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
     public List<Permissao> findAll(
             @RequestParam(required = false, defaultValue = "id") String sort,
             @RequestParam(required = false, defaultValue = "asc") String order,
@@ -137,7 +137,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Retorna a quantidade de permissões de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
     public Long countAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String descricao,
@@ -157,7 +157,7 @@ public class PermissaoResource {
     @ApiOperation(value = "Salvar uma permissão", response = List.class)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {
         MediaType.APPLICATION_JSON_UTF8_VALUE})
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PERMISSAO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO') and #oauth2.hasScope('write')")
     public ResponseEntity<Permissao> save(@Valid @RequestBody Permissao permissao, HttpServletResponse response,
             UriComponentsBuilder ucBuilder) throws ResourceAlreadyExistsException, ResourceNotFoundException {
 
@@ -168,7 +168,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERMISSAO') and #oauth2.hasScope('read')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO') and #oauth2.hasScope('read')")
     public ResponseEntity<Permissao> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Permissao> permissao = permissaoService.findById(id);
         return permissao.isPresent() ? ResponseEntity.ok(permissao.get()) : ResponseEntity.notFound().build();
@@ -176,7 +176,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
-    @PreAuthorize("hasAuthority('ROLE_STATUS_PERMISSAO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERMISSAO') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {
         permissaoService.updatePropertyStatus(id, status);
@@ -184,7 +184,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Excluir permissão - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_REMOVER_PERMISSAO') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         permissaoService.deleteById(id);
     }

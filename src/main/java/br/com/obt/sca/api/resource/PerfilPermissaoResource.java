@@ -49,7 +49,7 @@ public class PerfilPermissaoResource {
 
 	@ApiOperation(value = "Salvar uma perfil permissao", response = List.class)
 	@PostMapping()
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PERFIL') and #oauth2.hasScope('write')")
+	@PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
 	public ResponseEntity<PerfilPermissao> save(@Valid @RequestBody PerfilPermissao perfilPermissao,
 			HttpServletResponse response)
 			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
@@ -64,7 +64,7 @@ public class PerfilPermissaoResource {
 
 	@ApiOperation(value = "Pesquisa por ID de perdil e ID de Permissao", response = List.class)
 	@GetMapping(value = "/perfil/{idperfil}/permissao/{idpermissao}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL') and #oauth2.hasScope('read')")
+	@PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('read')")
 	public ResponseEntity<PerfilPermissao> findById(@PathVariable Long idperfil, @PathVariable Long idpermissao)
 			throws ResourceNotFoundException {
 		Optional<PerfilPermissao> perfilPermissao = perfilPermissaoService.findByIdPerfilIdPermissao(idperfil,
@@ -75,7 +75,7 @@ public class PerfilPermissaoResource {
 
 	@ApiOperation(value = "Excluir perfil Permissao - Default : Só o administrador poderá fazer essa exclusão fisica.")
 	@DeleteMapping(value = "/perfil/{idperfil}/permissao/{idpermissao}")
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_PERFIL') and #oauth2.hasScope('write')")
+	@PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
 	public void deleteById(@PathVariable Long idperfil, @PathVariable Long idpermissao)
 			throws ResourceNotFoundException, ResourceParameterNullException {
 		perfilPermissaoService.deleteByPerfilPermissao(idperfil, idpermissao);

@@ -64,7 +64,7 @@ public class Permissao extends BaseEntity {
 	@Column(name = "ID", nullable = false)
 	private Long id;
 
-	@ApiModelProperty(notes = "Nome da permissão - deve seguir a seguinte nomeclatura ROLE_ACAO_NOMECLASSEMAIUSCULA. Ex.:  ROLE_CADASTRAR_CATEGORIA")
+	@ApiModelProperty(notes = "Nome da permissão - deve seguir a seguinte nomeclatura ROLE_ACAO_NOMECLASSEMAIUSCULA. Ex.:  ROLE_CRUD_CATEGORIA")
 	@NotNull(message = "O campo nome é obrigatório!")
 	@Size(min = 3, max = 100, message = "O campo nome deve ter o tamanho entre {min} e {max} caractere.")
 	@Column(name = "nome", nullable = false)

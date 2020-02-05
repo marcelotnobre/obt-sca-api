@@ -66,7 +66,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Listar de sistemas paginada por nome", response = List.class)
     @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
     public ResponseEntity<Page<Sistema>> findByNomeContainingPagination(
             @RequestParam(required = false, defaultValue = "") String nome,
             @RequestParam(required = false, defaultValue = "true") Boolean status,
@@ -107,21 +107,21 @@ public class SistemaResource {
 
     @ApiOperation(value = "Lista de sistemas", response = List.class)
     @GetMapping(value = "/findAll")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
     public List<Sistema> findAll() {
         return sistemaService.findAll();
     }
 
     @ApiOperation(value = "Lista de sistemas", response = List.class)
     @GetMapping(value = "/findAll/{idUsuario}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
     public List<Sistema> findAllByUsuario(@PathVariable Long idUsuario) {
         return sistemaService.findAllByUsuario(idUsuario);
     }
 
     @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
     public List<Sistema> findAll(
             @RequestParam(required = false, defaultValue = "id") String sort,
             @RequestParam(required = false, defaultValue = "asc") String order,
@@ -143,7 +143,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Retorna a quantidade de sistemas de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
     public Long countAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String descricao,
@@ -160,7 +160,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Salvar um sistema", response = List.class)
     @PostMapping()
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_SISTEMA') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('write')")
     public ResponseEntity<Sistema> save(@Valid @RequestBody Sistema sistema, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Sistema sistemaSalva = sistemaService.save(sistema);
@@ -170,7 +170,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/nome/{nome}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA') and #oauth2.hasScope('read')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('read')")
     public ResponseEntity<Sistema> getSistemasPorNome(@PathVariable String nome)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Sistema sistemaSalva = sistemaService.findByNomeEquals(nome);
@@ -179,7 +179,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_SISTEMA') and #oauth2.hasScope('read')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('read')")
     public ResponseEntity<Sistema> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Sistema> sistema = sistemaService.findById(id);
         return sistema.isPresent() ? ResponseEntity.ok(sistema.get()) : ResponseEntity.notFound().build();
@@ -193,7 +193,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
-    @PreAuthorize("hasAuthority('ROLE_STATUS_SISTEMA') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_DESATIVAR_SISTEMA') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {
         sistemaService.updatePropertyStatus(id, status);
@@ -201,7 +201,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Excluir sistema - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_REMOVER_SISTEMA') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         sistemaService.deleteById(id);
     }

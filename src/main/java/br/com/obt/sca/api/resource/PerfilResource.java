@@ -64,7 +64,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Listar dos perfis paginada por nome", response = List.class)
     @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
     public ResponseEntity<Page<Perfil>> findByNomeContainingPagination(
             @RequestParam(required = false, defaultValue = "") String nome,
             @RequestParam(required = false, defaultValue = "id") String sort,
@@ -103,7 +103,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Lista paginada de perfis", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
     public List<Permissao> findAll(
             @RequestParam(required = false, defaultValue = "id") String sort,
             @RequestParam(required = false, defaultValue = "asc") String order,
@@ -127,7 +127,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Retorna a quantidade de perfis de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
     public Long countAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String descricao,
@@ -146,7 +146,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Salvar uma perfil", response = List.class)
     @PostMapping()
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PERFIL') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
     public ResponseEntity<Perfil> save(@Valid @RequestBody Perfil perfil, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Perfil perfilSalvo = perfilService.save(perfil);
@@ -156,7 +156,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Salvar um perfil e suas permissões", response = List.class)
     @PostMapping(value = "/perfil/permissoes")
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PERFIL') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
     public ResponseEntity<PerfilAndPermissoesProjection> saveAndPermissions(
             @RequestBody PerfilAndPermissoesProjection perfilAndPermissoesProjection,
             HttpServletResponse response)
@@ -170,7 +170,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PERFIL') and #oauth2.hasScope('read')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('read')")
     public ResponseEntity<Perfil> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Perfil> perfil = perfilService.findById(id);
         return perfil.isPresent() ? ResponseEntity.ok(perfil.get()) : ResponseEntity.notFound().build();
@@ -178,7 +178,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
-    @PreAuthorize("hasAuthority('ROLE_STATUS_PERFIL') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERFIL') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException {
         perfilService.updatePropertyStatus(id, status);
@@ -192,7 +192,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Excluir perfil - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_REMOVER_PERFIL') and #oauth2.hasScope('write')")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         perfilService.deleteById(id);
     }

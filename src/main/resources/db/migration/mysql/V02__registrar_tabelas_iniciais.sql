@@ -17,124 +17,113 @@ values
     (3, 'Sistema de Clinica Odontologica', 'Sistema de Clinica Odontologica', '', '','' ,true),
     (4, 'Sistema de Finaceiro', 'Sistema de Finaceiro', '', '','' ,true);
 
--- permissao
+-- permissao SCA
 INSERT INTO permissao
     (id, nome, descricao, sistema_id, status)
 values
 -- Administrador
     (1, 'ROLE_ADMINISTRADOR', 'Permissão para o administrador', 1,true),
 
--- Paciente
-    (2, 'ROLE_CADASTRAR_PACIENTE', 'Permissão para cadastrar um paciente', 2,true),
-    (3, 'ROLE_REMOVER_PACIENTE', 'Permissão para remover um paciente', 2,true),
-    (4, 'ROLE_PESQUISAR_PACIENTE', 'Permissão para pesquisar um paciente', 2,true),
-    (5, 'ROLE_STATUS_PACIENTE', 'Permissão para pesquisar um paciente', 2,true),
-
 -- Permissao
-    (6, 'ROLE_CADASTRAR_PERMISSAO', 'Permissão para cadastrar uma permissão', 1, true),
-    (7, 'ROLE_PESQUISAR_PERMISSAO', 'Permissão para pesquisar uma permissão', 1,true),
-    (8, 'ROLE_STATUS_PERMISSAO', 'Permissão para bloquear/desbloquear uma permissão', 1,true),
-    (9, 'ROLE_REMOVER_PERMISSAO', 'Permissão para remover uma permissão', 1,true),
+    (2, 'ROLE_CRUD_PERMISSAO', 'Permissão para cadastrar/atualizar/desativar/ativar uma permissão', 1, true),
+    (3, 'ROLE_DESATIVAR_PERMISSAO', 'Permissão para desativar uma permissão', 1,true),
+    (4, 'ROLE_ATIVAR_PERMISSAO', 'Permissão para ativar uma permissão', 1,true),
 
 -- Sistema
-    (10, 'ROLE_CADASTRAR_SISTEMA', 'Permissão para cadastrar um sistema', 1,true),
-    (11, 'ROLE_PESQUISAR_SISTEMA', 'Permissão para pesquisar um sistema', 1,true),
-    (12, 'ROLE_STATUS_SISTEMA', 'Permissão para bloquear/desbloquear um sistema', 1,true),
-    (13, 'ROLE_REMOVER_SISTEMA', 'Permissão para remover um sistema', 1,true),
+    (5, 'ROLE_CRUD_SISTEMA', 'Permissão para cadastrar/atualizar/desativar/ativar um sistema', 1,true),
+    (6, 'ROLE_DESATIVAR_SISTEMA', 'Permissão para desativar um sistema', 1,true),
+    (7, 'ROLE_ATIVAR_SISTEMA', 'Permissão para ativar um sistema', 1,true),
 
 -- Perfil
-    (14, 'ROLE_CADASTRAR_PERFIL', 'Permissão para cadastrar um perfil', 1,true),
-    (15, 'ROLE_PESQUISAR_PERFIL', 'Permissão para pesquisar um perfil', 1,true),
-    (16, 'ROLE_STATUS_PERFIL', 'Permissão para bloquear/desbloquear um perfil', 1,true),
-    (17, 'ROLE_REMOVER_PERFIL', 'Permissão para remover um perfil', 1,true),
-
--- Atributo
-    (18, 'ROLE_CADASTRAR_ATRIBUTO', 'Permissão para cadastrar um atributo', 2,true),
-    (19, 'ROLE_PESQUISAR_ATRIBUTO', 'Permissão para pesquisar um atributo', 2,true),
-    (20, 'ROLE_STATUS_ATRIBUTO', 'Permissão para bloquear/desbloquear um atributo', 2,true),
-    (21, 'ROLE_REMOVER_ATRIBUTO', 'Permissão para remover um atributo.(Administrador)', 2,true),
-
--- Dominio
-    (22, 'ROLE_CADASTRAR_DOMINIO', 'Permissão para cadastrar um dominio', 2,true),
-    (23, 'ROLE_PESQUISAR_DOMINIO', 'Permissão para pesquisar um dominio', 2,true),
-    (24, 'ROLE_STATUS_DOMINIO', 'Permissão para bloquear/desbloquear um dominio', 2,true),
-    (25, 'ROLE_REMOVER_DOMINIO', 'Permissão para remover um dominio. (Administrador)', 2,true),
+    (8, 'ROLE_CRUD_PERFIL', 'Permissão para cadastrar/atualizar/desativar/ativar um perfil', 1,true),
+    (9, 'ROLE_DESATIVAR_PERFIL', 'Permissão para desativar um perfil', 1,true),
+    (10, 'ROLE_ATIVAR_PERFIL', 'Permissão para ativar um perfil', 1,true),
 
 -- Usuario
-    (26, 'ROLE_CADASTRAR_USUARIO', 'Permissão para cadastrar um usuário', 1,true),
-    (27, 'ROLE_PESQUISAR_USUARIO', 'Permissão para pesquisar um usuário', 1,true),
-    (28, 'ROLE_STATUS_USUARIO', 'Permissão para bloquear/desbloquear um usuário', 1,true),
-    (29, 'ROLE_REMOVER_USUARIO', 'Permissão para remover um usuário', 1,true),
+    (11, 'ROLE_CRUD_USUARIO', 'Permissão para cadastrar/atualizar/desativar/ativar um usuário', 1,true),
+    (12, 'ROLE_DESATIVAR_USUARIO', 'Permissão para desativar um usuário', 1,true),
+    (13, 'ROLE_ATIVAR_USUARIO', 'Permissão para ativar um usuário', 1,true);
+
+
+-- permissao CLINICA
+INSERT INTO permissao
+    (id, nome, descricao, sistema_id, status)
+values
+-- Paciente
+    (14, 'ROLE_CRUD_PACIENTE', 'Permissão para cadastrar/atualizar/desativar/ativar um paciente', 2, true),
+    (15, 'ROLE_DESATIVAR_PACIENTE', 'Permissão para desativar um paciente', 2, true),
+    (16, 'ROLE_ATIVAR_PACIENTE', 'Permissão para ativar um paciente', 2, true),
+
+-- Atributo
+    (17, 'ROLE_CRUD_ATRIBUTO', 'Permissão para cadastrar/atualizar/desativar/ativar um atributo', 2, true),
+    (18, 'ROLE_DESATIVAR_ATRIBUTO', 'Permissão para desativar um atributo', 2, true),
+    (19, 'ROLE_ATIVAR_ATRIBUTO', 'Permissão para ativar um atributo', 2, true),
+
+-- Dominio
+    (20, 'ROLE_CRUD_DOMINIO', 'Permissão para cadastrar/atualizar/desativar/ativar um dominio', 2, true),
+    (21, 'ROLE_DESATIVAR_DOMINIO', 'Permissão para desativar um dominio', 2, true),
+    (22, 'ROLE_ATIVAR_DOMINIO', 'Permissão para ativar um dominio', 2, true),
 
 -- Especialidade
-    (30, 'ROLE_CADASTRAR_ESPECIALIDADE', 'Permissão para cadastrar uma especialidade', 2,true),
-    (31, 'ROLE_PESQUISAR_ESPECIALIDADE', 'Permissão para pesquisar uma especialidade', 2,true),
-    (32, 'ROLE_STATUS_ESPECIALIDADE', 'Permissão para bloquear/desbloquear uma especialidade', 2,true),
-    (33, 'ROLE_REMOVER_ESPECIALIDADE', 'Permissão para remover uma especialidade', 2,true),
+    (23, 'ROLE_CRUD_ESPECIALIDADE', 'Permissão para cadastrar/atualizar/desativar/ativar uma especialidade', 2, true),
+    (24, 'ROLE_DESATIVAR_ESPECIALIDADE', 'Permissão para desativar uma especialidade', 2, true),
+    (25, 'ROLE_ATIVAR_ESPECIALIDADE', 'Permissão para ativar uma especialidade', 2, true),
 
 -- Empresa
-    (34, 'ROLE_CADASTRAR_CONSULTORIO', 'Permissão para cadastrar uma consutório', 2,true),
-    (35, 'ROLE_PESQUISAR_CONSULTORIO', 'Permissão para pesquisar uma consutório', 2,true),
-    (36, 'ROLE_STATUS_CONSULTORIO', 'Permissão para bloquear/desbloquear uma consutório', 2,true),
-    (37, 'ROLE_REMOVER_CONSULTORIO', 'Permissão para remover uma consutório', 2,true),
+    (26, 'ROLE_CRUD_CONSULTORIO', 'Permissão para cadastrar/atualizar/desativar/ativar um consutório', 2, true),
+    (27, 'ROLE_DESATIVAR_CONSULTORIO', 'Permissão para desativar um consutório', 2, true),
+    (28, 'ROLE_ATIVAR_CONSULTORIO', 'Permissão para ativar um consutório', 2, true),
 
 -- Profissional
-    (38, 'ROLE_CADASTRAR_PROFISSIONAL', 'Permissão para cadastrar uma profissional', 2,true),
-    (39, 'ROLE_PESQUISAR_PROFISSIONAL', 'Permissão para pesquisar uma profissional', 2,true),
-    (40, 'ROLE_STATUS_PROFISSIONAL', 'Permissão para bloquear/desbloquear uma profissional', 2,true),
-    (41, 'ROLE_REMOVER_PROFISSIONAL', 'Permissão para remover uma profissional', 2,true),
+    (29, 'ROLE_CRUD_PROFISSIONAL', 'Permissão para cadastrar/atualizar/desativar/ativar uma profissional', 2, true),
+    (30, 'ROLE_DESATIVAR_PROFISSIONAL', 'Permissão para desativar um profissional', 2, true),
+    (31, 'ROLE_ATIVAR_PROFISSIONAL', 'Permissão para ativar um profissional', 2, true),
 
 -- Funcionario
-    (42, 'ROLE_CADASTRAR_FUNCIONARIO', 'Permissão para cadastrar uma funcionario', 2,true),
-    (43, 'ROLE_PESQUISAR_FUNCIONARIO', 'Permissão para pesquisar uma funcionario', 2,true),
-    (44, 'ROLE_STATUS_FUNCIONARIO', 'Permissão para bloquear/desbloquear uma funcionario', 2,true),
-    (45, 'ROLE_REMOVER_FUNCIONARIO', 'Permissão para remover uma funcionario', 2,true),
+    (32, 'ROLE_CRUD_FUNCIONARIO', 'Permissão para cadastrar/atualizar/desativar/ativar uma funcionario', 2, true),
+    (33, 'ROLE_DESATIVAR_FUNCIONARIO', 'Permissão para desativar um funcionario', 2, true),
+    (34, 'ROLE_ATIVAR_FUNCIONARIO', 'Permissão para ativar um funcionario', 2, true),
 
 -- Funcionario
-    (46, 'ROLE_CADASTRAR_CONVENIO', 'Permissão para cadastrar uma convenio', 2,true),
-    (47, 'ROLE_PESQUISAR_CONVENIO', 'Permissão para pesquisar uma convenio', 2,true),
-    (48, 'ROLE_STATUS_CONVENIO', 'Permissão para bloquear/desbloquear uma convenio', 2,true),
-    (49, 'ROLE_REMOVER_CONVENIO', 'Permissão para remover uma convenio', 2,true),
+    (35, 'ROLE_CRUD_CONVENIO', 'Permissão para cadastrar/atualizar/desativar/ativar uma convenio', 2, true),
+    (36, 'ROLE_DESATIVAR_CONVENIO', 'Permissão para desativar um convenio', 2, true),
+    (37, 'ROLE_ATIVAR_CONVENIO', 'Permissão para ativar um convenio', 2, true),
 
 -- Agendamento
-    (50, 'ROLE_CADASTRAR_AGENDAMENTO', 'Permissão para cadastrar uma agendamento', 2,true),
-    (51, 'ROLE_PESQUISAR_AGENDAMENTO', 'Permissão para pesquisar uma agendamento', 2,true),
-    (52, 'ROLE_STATUS_AGENDAMENTO', 'Permissão para bloquear/desbloquear uma agendamento', 2,true),
-    (53, 'ROLE_REMOVER_AGENDAMENTO', 'Permissão para remover uma agendamento', 2,true),
+    (38, 'ROLE_CRUD_AGENDAMENTO', 'Permissão para cadastrar/atualizar/desativar/ativar uma agendamento', 2, true),
+    (39, 'ROLE_DESATIVAR_AGENDAMENTO', 'Permissão para desativar um agendamento', 2, true),
+    (40, 'ROLE_ATIVAR_AGENDAMENTO', 'Permissão para ativar um agendamento', 2, true),
 
 -- Cargo
-    (54, 'ROLE_CADASTRAR_CARGO', 'Permissão para cadastrar um cargo', 2,true),
-    (55, 'ROLE_PESQUISAR_CARGO', 'Permissão para pesquisar um cargo', 2,true),
-    (56, 'ROLE_STATUS_CARGO', 'Permissão para bloquear/desbloquear um cargo', 2,true),
-    (57, 'ROLE_REMOVER_CARGO', 'Permissão para remover um cargo', 2,true),
+    (41, 'ROLE_CRUD_CARGO', 'Permissão para cadastrar/atualizar/desativar/ativar um cargo', 2, true),
+    (42, 'ROLE_DESATIVAR_CARGO', 'Permissão para desativar um cargo', 2, true),
+    (43, 'ROLE_ATIVAR_CARGO', 'Permissão para ativar um cargo', 2, true),
 
 -- Profissão
-    (58, 'ROLE_CADASTRAR_PROFISSAO', 'Permissão para cadastrar umaprofissão', 2,true),
-    (59, 'ROLE_PESQUISAR_PROFISSAO', 'Permissão para pesquisar umaprofissão', 2,true),
-    (60, 'ROLE_STATUS_PROFISSAO', 'Permissão para bloquear/desbloquear uma profissão', 2,true),
-    (61, 'ROLE_REMOVER_PROFISSAO', 'Permissão para remover umaprofissão', 2,true),
+    (44, 'ROLE_CRUD_PROFISSAO', 'Permissão para cadastrar/atualizar/desativar/ativar uma profissão', 2, true),
+    (45, 'ROLE_DESATIVAR_PROFISSAO', 'Permissão para desativar uma profissão', 2, true),
+    (46, 'ROLE_ATIVAR_PROFISSAO', 'Permissão para ativar uma profissão', 2, true),
 
 -- Procedimento
-    (62, 'ROLE_CADASTRAR_PROCEDIMENTO', 'Permissão para cadastrar um procedimento', 2,true),
-    (63, 'ROLE_PESQUISAR_PROCEDIMENTO', 'Permissão para pesquisar um procedimento', 2,true),
-    (64, 'ROLE_STATUS_PROCEDIMENTO', 'Permissão para bloquear/desbloquear um procedimento', 2,true),
-    (65, 'ROLE_REMOVER_PROCEDIMENTO', 'Permissão para remover um procedimento', 2,true),
+    (47, 'ROLE_CRUD_PROCEDIMENTO', 'Permissão para cadastrar/atualizar/desativar/ativar um procedimento', 2, true),
+    (48, 'ROLE_DESATIVAR_PROCEDIMENTO', 'Permissão para desativar um procedimento', 2, true),
+    (49, 'ROLE_ATIVAR_PROCEDIMENTO', 'Permissão para ativar um procedimento', 2, true),
 
 -- Estatistica
-    (66, 'ROLE_VISUALIZAR_ESTATISTICA', 'Permissão para visualizar a estatistica', 2,true);
+    (50, 'ROLE_VISUALIZAR_ESTATISTICA', 'Permissão para visualizar a estatistica', 2, true);
     
 -- menu
 INSERT INTO permissao
     (id, nome, descricao, sistema_id, status)
 values
-    (67, 'ROLE_VISUALIZAR_MENU_BIOMETRIA', 'Permissão para o menu de biometria', 1,true),
-    (68, 'ROLE_VISUALIZAR_MENU_AUTENTICACAO_BIOMETRIA', 'Permissão para visualizar o menu de autenticação por biometria', 1,true),
-    (69, 'ROLE_VISUALIZAR_MENU_RELATORIO', 'Permissão para visualizar o menu de relatório', 1,true),
-    (70, 'ROLE_VISUALIZAR_MENU_RELATORIO_USUARIO', 'Permissão para visualizar o relatório de usuário', 1,true),
-    (71, 'ROLE_VISUALIZAR_MENU_RELATORIO_ESTATISTICA', 'Permissão para visualizar o relatório de estatística', 1,true),
-    (72, 'ROLE_VISUALIZAR_MENU_LOG', 'Permissão para visualizar o menu de log', 1,true),
-    (73, 'ROLE_VISUALIZAR_MENU_LOG_REGISTRO_USUARIO_LOGIN', 'Permissão para visualizar o menu de log do usuário', 1,true),
-    (74, 'ROLE_VISUALIZAR_DASHBOARD_ESTATISTICA', 'Permissão para visualizar a dashboard de estatística', 1,true);
+    (51, 'ROLE_VISUALIZAR_MENU_BIOMETRIA', 'Permissão para o menu de biometria', 1,true),
+    (52, 'ROLE_VISUALIZAR_MENU_AUTENTICACAO_BIOMETRIA', 'Permissão para visualizar o menu de autenticação por biometria', 1,true),
+    (53, 'ROLE_VISUALIZAR_MENU_RELATORIO', 'Permissão para visualizar o menu de relatório', 1,true),
+    (54, 'ROLE_VISUALIZAR_MENU_RELATORIO_USUARIO', 'Permissão para visualizar o relatório de usuário', 1,true),
+    (55, 'ROLE_VISUALIZAR_MENU_RELATORIO_ESTATISTICA', 'Permissão para visualizar o relatório de estatística', 1,true),
+    (56, 'ROLE_VISUALIZAR_MENU_LOG', 'Permissão para visualizar o menu de log', 1,true),
+    (57, 'ROLE_VISUALIZAR_MENU_LOG_REGISTRO_USUARIO_LOGIN', 'Permissão para visualizar o menu de log do usuário', 1,true),
+    (58, 'ROLE_VISUALIZAR_DASHBOARD_ESTATISTICA', 'Permissão para visualizar a dashboard de estatística', 1,true);
 
 -- Perfil
 INSERT INTO perfil 
@@ -208,46 +197,28 @@ values
     (1, 55),
     (1, 56),
     (1, 57),
-    (1, 58),
-    (1, 59),
-    (1, 60),
-    (1, 61),
-    (1, 62),
-    (1, 63),
-    (1, 64),
-    (1, 65),
-    (1, 66),
-    (1, 67),
-    (1, 68),
-    (1, 69),
-    (1, 70),
-    (1, 71),
-    (1, 72),
-    (1, 73),
-    (1, 74);
+    (1, 58);
 
 -- Perfil Usuario - Gestor
 INSERT INTO perfil_permissao
     (perfil_id, permissao_id) 
 values
-    (2, 2),
-    (2, 3),
-    (2, 4),
-    (2, 5),
-    (2, 50),
-    (2, 51),
-    (2, 52),
-    (2, 53),
-    (2, 66);
+    (2, 14),
+    (2, 15),
+    (2, 16),
+    (2, 38),
+    (2, 39),
+    (2, 40),
+    (2, 50);
 
 -- Perfil Usuario - Recepcionista
 INSERT INTO perfil_permissao 
     (perfil_id, permissao_id)
 values
-    (3, 7),
-    (3, 8),
-    (3, 9),
-    (3, 10);
+    (3, 2),
+    (3, 3),
+    (3, 4),
+    (3, 5);
 
 -- Usuario Perfil
 INSERT INTO usuario_perfil 
