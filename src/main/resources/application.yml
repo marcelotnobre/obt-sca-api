@@ -58,7 +58,7 @@ spring:
         name: desenvolvimento
         url: jdbc:mysql://localhost/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
         username: root
-        password: 
+        password: root
        
     jpa:   
         hibernate:
@@ -193,9 +193,17 @@ spring:
     admin:
       client:
         instance:
-          service-base-url: "https://obt-sca-api.herokuapp.com"
-          management-base-url: "https://obt-sca-api.herokuapp.com"
+#          OceanDigital - Tem que verificar a URL
+#          service-base-url: "https://obt-sca-api.herokuapp.com"
+#          management-base-url: "https://obt-sca-api.herokuapp.com"
+  
+#       localhost
+          service-base-url: "http://localhost:8090"
+          management-base-url: "http://localhost:8090"
           name: "SCA-API"
-        url: "https://obt-sba.herokuapp.com"
+#          OceanDigital - Tem que verificar a URL
+#        url: "https://obt-sba.herokuapp.com"
+#       localhost
+        url: "http://localhost:8093"
         username: "admin"
         password: "Out3rb0x_sb@"
