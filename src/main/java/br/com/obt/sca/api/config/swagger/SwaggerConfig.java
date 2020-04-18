@@ -67,7 +67,7 @@ public class SwaggerConfig {
 				"Sistema de controle de acesso.",
 				"1.0.0",
 				"Terms of service",
-				new Contact("Vinícius Assis", "www.outerboxtech.com.br", "vinicius@outerbox.tech"),
+				new Contact("Marcelo", "www.outerboxtech.com.br", "marcelo.nobre@outerboxtech"),
 				"CopyRights",
 				"API license URL", Collections.emptyList());
 	}

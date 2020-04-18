@@ -66,9 +66,9 @@ values
     (22, 'ROLE_ATIVAR_CONSULTORIO', 'Permissão para ativar um consutório', 2, true),
 
 -- Profissional
-    (23, 'ROLE_CRUD_DENTISTA', 'Permissão para cadastrar/atualizar/desativar/ativar um dentista', 2, true),
-    (24, 'ROLE_DESATIVAR_DENTISTA', 'Permissão para desativar um dentista', 2, true),
-    (25, 'ROLE_ATIVAR_DENTISTA', 'Permissão para ativar um dentista', 2, true),
+    (23, 'ROLE_CRUD_PROFISSIONAL', 'Permissão para cadastrar/atualizar/desativar/ativar um profissional', 2, true),
+    (24, 'ROLE_DESATIVAR_PROFISSIONAL', 'Permissão para desativar um profissional', 2, true),
+    (25, 'ROLE_ATIVAR_PROFISSIONAL', 'Permissão para ativar um profissional', 2, true),
 
 -- Convenio
     (26, 'ROLE_CRUD_CONVENIO', 'Permissão para cadastrar/atualizar/desativar/ativar uma convenio', 2, true),
@@ -146,9 +146,7 @@ values
     (1, 'Administrador', 'Administrador do Sistema', 1, true),
     (2, 'Gestor', 'Gestor do Sistema',1, true),
     (3, 'Recepcionista', 'Recepcionista',1, true),
-    (4, 'Médico', 'Médico',1, true),
-    (5, 'Psicologo', 'Psicologo',1, true),
-    (6, 'Dentista', 'Dentista',1, true);
+    (4, 'Profissional', 'Médico, Dentista, Psicólogo, etc.',1, true);
 
 -- Perfil do Administrador
 INSERT INTO perfil_permissao 
