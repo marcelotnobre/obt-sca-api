@@ -1,25 +1,32 @@
 pipeline {
     agent any
     stages {
-        stage ('Compile Stage') {
+        stage ('Build') {
             steps {
                 withMaven(maven : 'Maven') {
                     sh 'mvn clean compile'
                 }
             }
         }
-        stage ('Testing Stage') {
+        stage ('Test') {
             steps {
                 withMaven(maven : 'Maven') {
                     sh 'mvn test'
                 }
             }
         }
-        stage ('Install Stage') {
+        stage ('Deploy') {
+			environment {
+                PROJETO_GIT = env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
+            }
             steps {
                 withMaven(maven : 'Maven') {
                     sh 'mvn install'
                 }
+				
+				sh 'cp "/var/lib/jenkins/workspace/$PROJETO_GIT/target/$PROJETO_GIT.jar /home/projetos/$PROJETO_GIT/deploy"'
+				
+				sh 'nohup java -jar -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar >  /home/projetos/$PROJETO_GIT/deploy/server-prod.log 2>&1 &'
             }
         }
     }
