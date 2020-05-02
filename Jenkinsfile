@@ -1,32 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
-			steps {
-				echo 'Building...'
-				mkdir -p '/home/deploy'
-				
-				echo 'Update branch...'
-				if [ -d /home/deploy/obt-sca-api ]; then
-					cd '/home/deploy/obt-sca-api'
-					git pull
-				else
-				   cd '/home/deploy'
-				   git clone https://github.com/fabricaOuterbox/obt-sca-api.git
-				   cd '/home/deploy/obt-sca-api'
-				fi
-				
-				mvn clean package
+        stage ('Compile Stage') {
+            steps {
+                withMaven(maven : 'Maven') {
+                    bat 'mvn clean compile'
+                }
             }
         }
-        stage('Test') {
+        stage ('Testing Stage') {
             steps {
-                echo 'Testing...'
+                withMaven(maven : 'Maven') {
+                    bat 'mvn test'
+                }
             }
         }
-		stage('Deploy') {
+        stage ('Install Stage') {
             steps {
-                echo 'Deploy...'
+                withMaven(maven : 'Maven') {
+                    bat 'mvn install'
+                }
             }
         }
     }
