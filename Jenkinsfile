@@ -28,9 +28,9 @@ pipeline {
 				
 				sh 'cp "/var/lib/jenkins/workspace/$PROJETO_GIT/target/$PROJETO_GIT.jar" "/home/projetos/$PROJETO_GIT/deploy"'
 
-				sh "ps -ef | grep 'java -jar -Dserver.port=8090 -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar' | grep -v grep | awk '{ print $2 }' | xargs --no-run-if-empty kill"
+                sh "ps -ef | grep 'java -jar -Dspring.profiles.active=oauth-security,prod /home/projetos/\$PROJETO_GIT/deploy/\$PROJETO_GIT.jar' | grep -v grep | awk '{ print \$2 }' | xargs --no-run-if-empty kill"
 
-				sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar -Dserver.port=8090 -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar >  /home/projetos/$PROJETO_GIT/deploy/server-prod.log 2>&1 &'
+				sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar >  /home/projetos/$PROJETO_GIT/deploy/server-prod.log 2>&1 &'
             }
         }
     }
