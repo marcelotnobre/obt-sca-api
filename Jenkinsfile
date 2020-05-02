@@ -17,7 +17,7 @@ pipeline {
         }
         stage ('Deploy') {
 			environment {
-                PROJETO_GIT = env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
+                PROJETO_GIT = env.GIT_URL.replaceAll('https://github.com/fabricaOuterbox/', '').replaceAll('.git', '')
             }
             steps {
                 withMaven(maven : 'Maven') {
