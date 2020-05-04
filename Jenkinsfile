@@ -28,8 +28,6 @@ pipeline {
 				
 				sh 'cp "/var/lib/jenkins/workspace/$PROJETO_GIT/target/$PROJETO_GIT.jar" "/home/projetos/$PROJETO_GIT/deploy"'
 
-                sh 'fuser -k -n tcp 8090'
-
 				sh 'JENKINS_NODE_COOKIE=dontKillMe_$PROJETO_GIT nohup java -jar -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar >  /home/projetos/$PROJETO_GIT/deploy/server-prod.log 2>&1 &'
             }
         }
