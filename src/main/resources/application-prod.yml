@@ -150,11 +150,11 @@ spring:
     admin:
       client:
         instance:
-          service-base-url: "http://www.desenvolvimento.outerboxtech.com.br:8090"
-          management-base-url: "http://www.desenvolvimento.outerboxtech.com.br:8090"
+          service-base-url: "http://64.225.7.183:8090"
+          management-base-url: "http://64.225.7.183:8090"
           name: "SCA-API"
         url:
-          "http://www.desenvolvimento.outerboxtech.com.br:8093"
+          "http://64.225.7.183:8093"
         username: "admin"
         password: "Out3rb0x_sb@"
 
