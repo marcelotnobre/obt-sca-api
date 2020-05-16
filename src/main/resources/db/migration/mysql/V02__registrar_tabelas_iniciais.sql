@@ -138,6 +138,15 @@ values
 -- Pessoa
     (62, 'ROLE_CRUD_PESSOA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa', 5, true),
     (63, 'ROLE_CRUD_PESSOA_JURIDICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa', 5, true);
+
+-- permissao CLINICA
+INSERT INTO permissao
+    (id, nome, descricao, sistema_id, status)
+values
+-- Clinica
+    (64, 'ROLE_CRUD_CLINICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma clinica', 5, true),
+    (65, 'ROLE_DESATIVAR_CLINICA', 'Permissão para desativar uma clinica', 5, true),
+    (66, 'ROLE_ATIVAR_CLINICA', 'Permissão para ativar uma clinica', 5, true);
     
 -- Perfil
 INSERT INTO perfil 
@@ -214,7 +223,10 @@ values
     (1, 60),
     (1, 61),
     (1, 62),
-    (1, 63);
+    (1, 63),
+    (1, 64),
+    (1, 65),
+    (1, 66);
 
 -- Perfil Usuario - Gestor
 INSERT INTO perfil_permissao
