@@ -44,7 +44,8 @@ public class PerfilService {
     public PerfilAndPermissoesProjection salvarPermissoes(PerfilAndPermissoesProjection perfilAndPermissoesProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-        perfilPermissaoService.salvarPermissoesIDs(perfilAndPermissoesProjection.getId(), perfilAndPermissoesProjection.getIdsPermissoes());
+        perfilPermissaoService.salvarPermissoesIDs(perfilAndPermissoesProjection.getId(),
+                perfilAndPermissoesProjection.getIdsPermissoes());
 
         return perfilAndPermissoesProjection;
     }
@@ -122,11 +123,25 @@ public class PerfilService {
     }
 
     public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilAvailableStatusTrue(Long usuarioid) {
-        return perfilRepository.findByUsuarioPerfilSistemaAvailableStatusTrue(usuarioid, sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
+        return perfilRepository.findByUsuarioPerfilSistemaAvailableStatusTrue(usuarioid,
+                sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
     }
 
     public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilSelectedStatusTrue(Long usuarioid) {
-        return perfilRepository.findByUsuarioPerfilSistemaSelectedStatusTrue(usuarioid, sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
+        return perfilRepository.findByUsuarioPerfilSistemaSelectedStatusTrue(usuarioid,
+                sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
+    }
+
+    // FOR PICKLIST
+    public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilAvailableStatusTrueForPicklist(Long usuarioid) {
+        return perfilRepository.findByUsuarioPerfilSistemaAvailableStatusTrueForPicklist(usuarioid,
+                sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
+    }
+
+    // FOR PICKLIST
+    public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilSelectedStatusTrueForPicklist(Long usuarioid) {
+        return perfilRepository.findByUsuarioPerfilSistemaSelectedStatusTrueForPicklist(usuarioid,
+                sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
     }
 
     public GenericoPinkListProjection findByPerfilPinkListProjection(Long idUsuario) {
@@ -134,9 +149,9 @@ public class PerfilService {
         GenericoPinkListProjection perfisPinkListProjection = new GenericoPinkListProjection();
 
         Collection<IDAndNomeGenericoProjection> perfisSelecionadas = this
-                .findByUsuarioPerfilSelectedStatusTrue(idUsuario);
+                .findByUsuarioPerfilSelectedStatusTrueForPicklist(idUsuario);
         Collection<IDAndNomeGenericoProjection> perfisDisponiveis = this
-                .findByUsuarioPerfilAvailableStatusTrue(idUsuario);
+                .findByUsuarioPerfilAvailableStatusTrueForPicklist(idUsuario);
 
         perfisPinkListProjection.setRegistrosDisponiveis(perfisDisponiveis);
         perfisPinkListProjection.setRegistrosSelecionados(perfisSelecionadas);
