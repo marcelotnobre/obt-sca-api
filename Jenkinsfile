@@ -30,7 +30,7 @@ pipeline {
 				
 				sh 'fuser -k 8090/tcp || true'
 				
-				build job: 'obt-sca-web', propagate: true, wait: true
+				build job: 'obt-clinica-web', propagate: true, wait: true
 
 				sh 'JENKINS_NODE_COOKIE=dontKillMe_$PROJETO_GIT nohup java -jar -Dspring.profiles.active=oauth-security,prod /home/projetos/$PROJETO_GIT/deploy/$PROJETO_GIT.jar >  /home/projetos/$PROJETO_GIT/deploy/server-prod.log 2>&1 &'
             }
