@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.obt.sca.api.model.Permissao;
+import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import org.springframework.data.jpa.domain.Specification;
 
-public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
+public interface PermissaoRepository extends GenericRepository<Permissao, Long> {
 
     public Page<Permissao> findByNomeContainingAndStatusEquals(String nome, Boolean status, Pageable pageable);
 
@@ -64,9 +64,5 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
 
     @Query(value = "select P.* from permissao P WHERE P.SISTEMA_ID = :idSistema and P.nome = :nomePermissao", nativeQuery = true)
     Permissao findPermissaoPorSistema(@Param("nomePermissao") String nomePermissao, @Param("idSistema") Long idSistema);
-
-    public Page<Permissao> findAll(Specification<Permissao> spec, Pageable pageable);
-
-    public Long count(Specification<Permissao> spec);
 
 }

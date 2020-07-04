@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,17 +34,17 @@ import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProject
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.repository.UsuarioRepository;
+import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
+import br.com.obt.sca.api.service.superclass.GenericService;
 
-//@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
-//@formatter:on
 @Service
-public class UsuarioService {
+public class UsuarioService extends GenericService<Usuario> {
 
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
@@ -70,16 +69,22 @@ public class UsuarioService {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    public UsuarioService(GenericRepository<Usuario, Long> repository) {
+        super(repository);
+    }
+
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    @Override
     public Usuario save(Usuario usuario)
-            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceAlreadyExistsException, ResourceNotFoundException {
 
         if ((usuario != null) && (usuario.getId() != null) && (usuario.getId() == 1l)) {
-            throw new ResourceAdministratorNotUpdateException("O usuário administrador não pode ser alterado!");
+            throw new ResourceNotFoundException("O usuário administrador não pode ser alterado!");
         }
-        
+
         String senha = usuario.getSenha();
-        
+
         boolean isMesmaSenha = false;
 
         // Criptografando a senha.
@@ -87,7 +92,7 @@ public class UsuarioService {
 
         if ((usuario != null) && (usuario.getId() != null)) {
             Optional<Usuario> usuarioBanco = this.findById(usuario.getId());
-            
+
             isMesmaSenha = usuarioBanco.get().getSenha().equals(usuario.getSenha());
 
             // Setando os campos que são alterados na tela.
@@ -109,9 +114,9 @@ public class UsuarioService {
             if (usuario.getTipoAutenticacao() == null) {
                 usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
             }
-            
+
             //se nao e a mesma senha, salva.
-            if(!isMesmaSenha) {
+            if (!isMesmaSenha) {
                 usuario.setSenha(encoder.encode(senha));
             }
             usuarioSalvo = usuarioRepository.save(usuario);
@@ -181,11 +186,12 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void updatePropertyStatus(Long idUsuario, Boolean status)
-            throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceNotFoundException {
 
         if ((idUsuario != null) && (idUsuario == 1l)) {
-            throw new ResourceAdministratorNotUpdateException("O status do administrador não pode ser alterado!");
+            throw new ResourceNotFoundException("O status do administrador não pode ser alterado!");
         } else {
             if (idUsuario != null) {
                 Optional<Usuario> usuarioBanco = findById(idUsuario);
@@ -194,31 +200,10 @@ public class UsuarioService {
                 usuarioRepository.save(usuario);
             }
         }
-
-    }
-
-    @Transactional(readOnly = false)
-    public void deleteById(Long id) throws ResourceNotFoundException {
-
-        validatefindByIdExists(id);
-        usuarioRepository.deleteById(id);
-
     }
 
     public Page<Usuario> findByNomeContaining(String nome, Pageable pageable) {
         return usuarioRepository.findByNomeContaining(nome, pageable);
-    }
-
-    public Page<Usuario> findAll(Pageable pageable) {
-        return usuarioRepository.findAll(pageable);
-    }
-
-    public Page<Usuario> findAll(Specification<Usuario> spec, Pageable pageable) {
-        return usuarioRepository.findAll(spec, pageable);
-    }
-
-    public Long countAll(Specification<Usuario> spec) {
-        return usuarioRepository.count(spec);
     }
 
     public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable) {
@@ -233,20 +218,12 @@ public class UsuarioService {
         return usuarioRepository.count();
     }
 
-    public Optional<Usuario> findById(Long id) throws ResourceNotFoundException {
-        Optional<Usuario> usuarioBanco = usuarioRepository.findById(id);
-        if (!usuarioBanco.isPresent()) {
-            throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
-        }
-        return usuarioBanco;
-    }
-
     public Optional<Usuario> findByEmailOrLogin(String emailOrLogin) {
         return usuarioRepository.findByEmailOrLogin(emailOrLogin);
     }
-    
+
     public Optional<Usuario> findByLogin(String login) {
-	return usuarioRepository.findByLogin(login);
+        return usuarioRepository.findByLogin(login);
     }
 
     @Transactional(readOnly = false)
@@ -271,9 +248,7 @@ public class UsuarioService {
         if (!idSistemas.isEmpty()) {
             usuarioSistemaService.saveUsuarioSistemaIDS(usuario, idSistemas);
         }
-
         return usuarioAndPerfisProjection;
-
     }
 
     @Transactional(readOnly = false)
@@ -295,12 +270,9 @@ public class UsuarioService {
 
     }
 
-    // Metodos Privados
-    public void validatefindByIdExists(Long id) throws ResourceNotFoundException {
-        Optional<Usuario> usuarioBanco = this.findById(id);
-        if (!usuarioBanco.isPresent()) {
-            throw new ResourceNotFoundException("O código " + id + " do usuário não foi encontrado. ");
-        }
+    @Override
+    public Optional<Usuario> updateFields(Optional<Usuario> beanBanco, Usuario bean) {
+        return beanBanco;
     }
 
 }

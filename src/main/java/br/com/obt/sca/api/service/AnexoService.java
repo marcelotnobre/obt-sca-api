@@ -6,12 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.obt.sca.api.service.exception.ServiceException;
 
-//@formatter:off
 @Transactional(
-			   propagation = Propagation.REQUIRED,  
-			   rollbackFor = { ServiceException.class }
-			  )
-//@formatter:on
+        propagation = Propagation.REQUIRED,
+        rollbackFor = {ServiceException.class}
+)
 @Service
 public class AnexoService {
 

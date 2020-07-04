@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecur
 @Configuration
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    // @formatter:off
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -25,15 +24,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 // acessos públicos
                 .antMatchers("/usuarios/login/", "/usuarios/login/*").permitAll()
                 .antMatchers("/permissoes/ativos/", "/permissoes/ativos/*").permitAll()
-		.antMatchers("/usuarios/acesso/", "/usuarios/acesso/*").permitAll()
-		.and()
+                .antMatchers("/usuarios/acesso/", "/usuarios/acesso/*").permitAll()
+                .and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .csrf().disable();
     }
-    // @formatter:on
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {

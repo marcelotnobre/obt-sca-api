@@ -29,11 +29,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig { 
-	// @formatter:off
-	@Bean
-	public Docket api_SCA() {
-		
+public class SwaggerConfig {
+
+    @Bean
+    public Docket api_SCA() {
+
 //		 //Adding Header
 //        ParameterBuilder aParameterBuilder = new ParameterBuilder();
 //        new ParameterBuilder().name("tenantId")
@@ -45,54 +45,52 @@ public class SwaggerConfig {
 //
 //        java.util.List<Parameter> aParameters = new ArrayList<>();
 //        aParameters.add(aParameterBuilder.build());             // add parameter
-		
-		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("br.com.obt.sca.api.resource")).paths(PathSelectors.any())
-				.build()
-				.groupName("obt-sca-api")
-				.apiInfo(apiInfo())
-				.securitySchemes(Arrays.asList(apiKey()))
-				.securityContexts(Arrays.asList(securityContext()));
+        return new Docket(DocumentationType.SWAGGER_2).select()
+                .apis(RequestHandlerSelectors.basePackage("br.com.obt.sca.api.resource")).paths(PathSelectors.any())
+                .build()
+                .groupName("obt-sca-api")
+                .apiInfo(apiInfo())
+                .securitySchemes(Arrays.asList(apiKey()))
+                .securityContexts(Arrays.asList(securityContext()));
 //			    .globalOperationParameters(aParameters);
-	}
-	
-
-	@Bean
-    public SecurityScheme apiKey() {
-       return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
     }
 
-	private ApiInfo apiInfo() {
-		return new ApiInfo("Sistema de Controle de Acesso - API",
-				"Sistema de controle de acesso.",
-				"1.0.0",
-				"Terms of service",
-				new Contact("Marcelo", "www.outerboxtech.com.br", "marcelo.nobre@outerboxtech"),
-				"CopyRights",
-				"API license URL", Collections.emptyList());
-	}
+    @Bean
+    public SecurityScheme apiKey() {
+        return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
+    }
 
-	private SecurityContext securityContext() {
-		return SecurityContext.builder()
-				.securityReferences(Arrays.asList(new SecurityReference("apiKey", scopes())))
-				.forPaths(PathSelectors.any()).build();
-	}
+    private ApiInfo apiInfo() {
+        return new ApiInfo("Sistema de Controle de Acesso - API",
+                "Sistema de controle de acesso.",
+                "1.0.0",
+                "Terms of service",
+                new Contact("Marcelo", "www.outerboxtech.com.br", "marcelo.nobre@outerboxtech"),
+                "CopyRights",
+                "API license URL", Collections.emptyList());
+    }
 
-	private AuthorizationScope[] scopes() {
-		AuthorizationScope[] scopes = { 
-				new AuthorizationScope("read", "for read operations"),
-				new AuthorizationScope("write", "for write operations") 
-			};
-		return scopes;
-	}
-	
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(Arrays.asList(new SecurityReference("apiKey", scopes())))
+                .forPaths(PathSelectors.any()).build();
+    }
+
+    private AuthorizationScope[] scopes() {
+        AuthorizationScope[] scopes = {
+            new AuthorizationScope("read", "for read operations"),
+            new AuthorizationScope("write", "for write operations")
+        };
+        return scopes;
+    }
+
     @Component
     @Primary
     public class CustomObjectMapper extends ObjectMapper {
 
         private static final long serialVersionUID = 1L;
 
-		public CustomObjectMapper() {
+        public CustomObjectMapper() {
             setSerializationInclusion(JsonInclude.Include.NON_NULL);
             configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -100,6 +98,5 @@ public class SwaggerConfig {
             enable(SerializationFeature.INDENT_OUTPUT);
         }
     }
-	// @formatter:on
 
 }

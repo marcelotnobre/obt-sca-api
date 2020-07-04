@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Permissao;
-import br.com.obt.sca.api.projections.GenericoPinkListProjection;
+import br.com.obt.sca.api.projections.GenericoPickListProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import io.swagger.annotations.Api;
@@ -45,12 +45,12 @@ import io.swagger.annotations.ApiResponses;
 
 @Api(value = "perfis", description = "Serviço de perfis")
 @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "Lista de perfis executada com sucesso")
-    ,@ApiResponse(code = 201, message = "Pefil cadastrado com sucesso")
-    ,@ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado")
-    ,@ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso")
-    ,@ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito")
-    ,@ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
+    @ApiResponse(code = 200, message = "Lista de perfis executada com sucesso"),
+    @ApiResponse(code = 201, message = "Pefil cadastrado com sucesso"),
+    @ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado"),
+    @ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso"),
+    @ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito"),
+    @ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
 })
 @RestController
 @RequestMapping("/perfis")
@@ -180,7 +180,7 @@ public class PerfilResource {
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERFIL') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
-            throws ResourceNotFoundException {
+            throws ResourceNotFoundException, ResourceAlreadyExistsException {
         perfilService.updatePropertyStatus(id, status);
     }
 
@@ -199,9 +199,9 @@ public class PerfilResource {
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao usuário ", response = List.class)
     @GetMapping(value = "/ativos/picklist")
-    public GenericoPinkListProjection findByPermissaoPinkListProjection(
+    public GenericoPickListProjection findByPermissaoPinkListProjection(
             @RequestParam(required = false) Long usuarioid) {
-        return perfilService.findByPerfilPinkListProjection(usuarioid);
+        return perfilService.findByPerfilPickListProjection(usuarioid);
     }
 
     // Metodos Privados

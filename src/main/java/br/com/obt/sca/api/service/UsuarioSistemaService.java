@@ -19,12 +19,10 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 
-//@formatter:off
 @Transactional(
         propagation = Propagation.REQUIRED,
         rollbackFor = {ServiceException.class}
 )
-//@formatter:on
 @Service
 public class UsuarioSistemaService {
 
@@ -45,7 +43,6 @@ public class UsuarioSistemaService {
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
         return usuarioSistemaRepository.saveAll(usuariosSistemas);
-
     }
 
     @Transactional(readOnly = false)
@@ -79,9 +76,7 @@ public class UsuarioSistemaService {
         for (Long idSistemas : ids) {
             usuarioSistemaRepository.saveUsuarioSistema(usuario.getId(), idSistemas);
         }
-
-        return new ArrayList<UsuarioSistema>();
-
+        return new ArrayList<>();
     }
 
     public Optional<UsuarioSistema> findByIdUsuarioIdSistemaId(Long idUsuario, Long idSistema)

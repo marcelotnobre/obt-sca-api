@@ -2,35 +2,29 @@ package br.com.obt.sca.api.service;
 
 import java.util.Collection;
 import java.util.Optional;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.obt.sca.api.model.Perfil;
-import br.com.obt.sca.api.projections.GenericoPinkListProjection;
+import br.com.obt.sca.api.projections.GenericoPickListProjection;
 import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
 import br.com.obt.sca.api.repository.PerfilRepository;
+import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
+import br.com.obt.sca.api.service.superclass.GenericService;
 import java.util.List;
-import org.springframework.data.jpa.domain.Specification;
 
-//@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
-//@formatter:on
 @Service
-public class PerfilService {
+public class PerfilService extends GenericService<Perfil> {
 
-    // private static final Logger logger =
-    // LoggerFactory.getLogger(PerfilService.class);
     @Autowired
     private PerfilRepository perfilRepository;
 
@@ -39,6 +33,22 @@ public class PerfilService {
 
     @Autowired
     private SistemaService sistemaService;
+
+    @Autowired
+    public PerfilService(GenericRepository<Perfil, Long> repository) {
+        super(repository);
+    }
+
+    @Override
+    public Optional<Perfil> updateFields(Optional<Perfil> perfilBanco, Perfil perfil) {
+        // Setando os campos que são alterados na tela.
+        perfilBanco.get().setNome(perfil.getNome());
+        perfilBanco.get().setDescricao(perfil.getDescricao());
+        perfilBanco.get().setSistema(perfil.getSistema());
+        perfilBanco.get().setDataHoraFinalVigencia(perfil.getDataHoraFinalVigencia());
+        perfilBanco.get().setStatus(perfil.getStatus());
+        return perfilBanco;
+    }
 
     @Transactional(readOnly = false)
     public PerfilAndPermissoesProjection salvarPermissoes(PerfilAndPermissoesProjection perfilAndPermissoesProjection)
@@ -50,60 +60,8 @@ public class PerfilService {
         return perfilAndPermissoesProjection;
     }
 
-    @Transactional(readOnly = false)
-    public Perfil save(Perfil perfil) throws ResourceAlreadyExistsException, ResourceNotFoundException {
-
-        if ((perfil != null) && (perfil.getId() != null)) {
-            Optional<Perfil> perfilBanco = this.findById(perfil.getId());
-            // Setando os campos que são alterados na tela.
-            perfilBanco.get().setNome(perfil.getNome());
-            perfilBanco.get().setDescricao(perfil.getDescricao());
-            perfilBanco.get().setSistema(perfil.getSistema());
-            perfilBanco.get().setDataHoraFinalVigencia(perfil.getDataHoraFinalVigencia());
-            perfilBanco.get().setStatus(perfil.getStatus());
-
-            BeanUtils.copyProperties(perfilBanco.get(), perfil, "id");
-        }
-
-        if (perfil != null) {
-            return perfilRepository.save(perfil);
-        }
-
-        return perfil;
-
-    }
-    // @formatter:on
-
-    @Transactional(readOnly = false)
-    public void updatePropertyStatus(Long id, Boolean status) throws ResourceNotFoundException {
-        Optional<Perfil> perfilBanco = findById(id);
-
-        Perfil perfil = perfilBanco.get();
-        perfil.setStatus(status);
-        perfilRepository.save(perfil);
-    }
-
-    @Transactional(readOnly = false)
-    public void deleteById(Long id) throws ResourceNotFoundException {
-        validatefindByIdExists(id);
-        perfilRepository.deleteById(id);
-
-    }
-
     public Page<Perfil> findByNomeContaining(String nome, Pageable pageable) {
         return perfilRepository.findByNomeContaining(nome, pageable);
-    }
-
-    public Page<Perfil> findByAll(Pageable pageable) {
-        return perfilRepository.findAll(pageable);
-    }
-
-    public Page<Perfil> findAll(Specification<Perfil> spec, Pageable pageable) {
-        return perfilRepository.findAll(spec, pageable);
-    }
-
-    public Long countAll(Specification<Perfil> spec) {
-        return perfilRepository.count(spec);
     }
 
     public List<Perfil> findByPerfisDoUsuario(Long idUsuario) throws ResourceNotFoundException {
@@ -112,14 +70,6 @@ public class PerfilService {
             throw new ResourceNotFoundException("O código " + idUsuario + " do usuário não foi encontrado. ");
         }
         return perfisBanco;
-    }
-
-    public Optional<Perfil> findById(Long id) throws ResourceNotFoundException {
-        Optional<Perfil> perfilBanco = perfilRepository.findById(id);
-        if (!perfilBanco.isPresent()) {
-            throw new ResourceNotFoundException("O código " + id + " do perfil não foi encontrado. ");
-        }
-        return perfilBanco;
     }
 
     public Collection<IDAndNomeGenericoProjection> findByUsuarioPerfilAvailableStatusTrue(Long usuarioid) {
@@ -144,27 +94,19 @@ public class PerfilService {
                 sistemaService.findAllIdsByUsuario(usuarioid), IDAndNomeGenericoProjection.class);
     }
 
-    public GenericoPinkListProjection findByPerfilPinkListProjection(Long idUsuario) {
+    public GenericoPickListProjection findByPerfilPickListProjection(Long idUsuario) {
 
-        GenericoPinkListProjection perfisPinkListProjection = new GenericoPinkListProjection();
+        GenericoPickListProjection perfisPickListProjection = new GenericoPickListProjection();
 
         Collection<IDAndNomeGenericoProjection> perfisSelecionadas = this
                 .findByUsuarioPerfilSelectedStatusTrueForPicklist(idUsuario);
         Collection<IDAndNomeGenericoProjection> perfisDisponiveis = this
                 .findByUsuarioPerfilAvailableStatusTrueForPicklist(idUsuario);
 
-        perfisPinkListProjection.setRegistrosDisponiveis(perfisDisponiveis);
-        perfisPinkListProjection.setRegistrosSelecionados(perfisSelecionadas);
+        perfisPickListProjection.setRegistrosDisponiveis(perfisDisponiveis);
+        perfisPickListProjection.setRegistrosSelecionados(perfisSelecionadas);
 
-        return perfisPinkListProjection;
-    }
-
-    // Metodos Privados
-    private void validatefindByIdExists(Long id) throws ResourceNotFoundException {
-        Optional<Perfil> perfilBanco = this.findById(id);
-        if (!perfilBanco.isPresent()) {
-            throw new ResourceNotFoundException("O código " + id + " do perfil não foi encontrado. ");
-        }
+        return perfisPickListProjection;
     }
 
 }

@@ -51,12 +51,12 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "usuarios", description = "Serviço de usuarios")
 @ApiResponses(
         value = {
-            @ApiResponse(code = 200, message = "Lista de usuarios executado com sucesso")
-            ,@ApiResponse(code = 201, message = "Usuario cadastrado com sucesso")
-            ,@ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado")
-            ,@ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso")
-            ,@ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito")
-            ,@ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
+            @ApiResponse(code = 200, message = "Lista de usuarios executado com sucesso"),
+            @ApiResponse(code = 201, message = "Usuario cadastrado com sucesso"),
+            @ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado"),
+            @ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso"),
+            @ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito"),
+            @ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
         }
 )
 @RestController
@@ -64,7 +64,7 @@ import io.swagger.annotations.ApiResponses;
 public class UsuarioResource {
 
     @Autowired
-    private UsuarioService  usuarioService;
+    private UsuarioService usuarioService;
 
     @Autowired
     private ApplicationEventPublisher publisher;
@@ -174,7 +174,7 @@ public class UsuarioResource {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Email enviado com sucesso!");
     }
-    
+
     @ApiOperation(value = "Alterar senha", response = List.class)
     @PostMapping(value = "/usuario/senha/alterar")
     public ResponseEntity<String> alterarSenha(@Valid @RequestBody Map<String, String> mapValores)
@@ -182,9 +182,9 @@ public class UsuarioResource {
             ResourceAdministratorNotUpdateException {
         String senha = mapValores.get("senha");
         String token = mapValores.get("token");
-        
+
         usuarioService.alterarSenha(senha, token);
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Senha alterada com sucesso!");
     }
 
@@ -197,7 +197,7 @@ public class UsuarioResource {
     @ApiOperation(value = "Consulta Login - Usuário autenticação")
     @GetMapping(value = "/acesso/{login}")
     public Usuario findByLogin(@PathVariable String login) throws ResourceNotFoundException {
-	return usuarioService.findByLogin(login).get();
+        return usuarioService.findByLogin(login).get();
     }
 
     @ApiOperation(value = "Consulta Login - Usuário  ", response = List.class)

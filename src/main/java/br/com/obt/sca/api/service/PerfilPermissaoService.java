@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.model.PerfilPermissao;
 import br.com.obt.sca.api.repository.PerfilPermissaoRepository;
@@ -18,9 +16,7 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 
-//@formatter:off
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
-//@formatter:on
 @Service
 public class PerfilPermissaoService {
 

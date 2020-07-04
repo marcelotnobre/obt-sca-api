@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Permissao;
-import br.com.obt.sca.api.projections.GenericoPinkListProjection;
+import br.com.obt.sca.api.projections.GenericoPickListProjection;
 import br.com.obt.sca.api.service.PermissaoService;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
@@ -45,12 +45,12 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
         value = {
-            @ApiResponse(code = 200, message = "Lista de permissões executada com sucesso")
-            ,@ApiResponse(code = 201, message = "Permissão cadastrada com sucesso")
-            ,@ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado")
-            ,@ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso")
-            ,@ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito")
-            ,@ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
+            @ApiResponse(code = 200, message = "Lista de permissões executada com sucesso"),
+            @ApiResponse(code = 201, message = "Permissão cadastrada com sucesso"),
+            @ApiResponse(code = 301, message = "O recurso que você estava tentando acessar foi encontrado"),
+            @ApiResponse(code = 401, message = "Você não está autorizado para visualizar este recurso"),
+            @ApiResponse(code = 403, message = "O recurso que você estava tentando acessar é restrito"),
+            @ApiResponse(code = 404, message = "O recurso que você estava tentando acessar não foi encontrado")
         }
 )
 @RestController
@@ -178,7 +178,7 @@ public class PermissaoResource {
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERMISSAO') and #oauth2.hasScope('write')")
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
-            throws ResourceNotFoundException {
+            throws ResourceNotFoundException, ResourceAlreadyExistsException {
         permissaoService.updatePropertyStatus(id, status);
     }
 
@@ -191,7 +191,7 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
     @GetMapping(value = "/ativos/picklist")
-    public GenericoPinkListProjection findByPermissaoPinkListProjection(@RequestParam(required = false) Long perfilid) {
+    public GenericoPickListProjection findByPermissaoPinkListProjection(@RequestParam(required = false) Long perfilid) {
         return permissaoService.findByPermissaoPinkListProjection(perfilid);
     }
 

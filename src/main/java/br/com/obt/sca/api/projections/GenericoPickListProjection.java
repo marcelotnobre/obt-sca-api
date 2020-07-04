@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GenericoPinkListProjection {
+public class GenericoPickListProjection {
 
 	protected Collection<IDAndNomeGenericoProjection> registrosSelecionados;
 	protected Collection<IDAndNomeGenericoProjection> registrosDisponiveis;

@@ -58,7 +58,7 @@ spring:
         name: desenvolvimento
         url: jdbc:mysql://localhost/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
         username: root
-        password: root
+        password: 
        
     jpa:   
         hibernate:

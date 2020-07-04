@@ -18,56 +18,53 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ResourceParameterNullException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 
-//@formatter:off
-@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceException.class })
-//@formatter:on
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
 @Service
 public class UsuarioPerfilService {
 
-	@Autowired
-	private UsuarioPerfilRepository usuarioPerfilRepository;
+    @Autowired
+    private UsuarioPerfilRepository usuarioPerfilRepository;
 
-	@Transactional(readOnly = false)
-	public void deleteByUsuarioPerfil(Long idUsuario, Long idPerfil)
-			throws ResourceNotFoundException, ResourceParameterNullException {
-		usuarioPerfilRepository.deleteByUsuarioPerfil(idUsuario, idPerfil);
-	}
+    @Transactional(readOnly = false)
+    public void deleteByUsuarioPerfil(Long idUsuario, Long idPerfil)
+            throws ResourceNotFoundException, ResourceParameterNullException {
+        usuarioPerfilRepository.deleteByUsuarioPerfil(idUsuario, idPerfil);
+    }
 
-	@Transactional(readOnly = false)
-	public List<UsuarioPerfil> savePermissions(List<UsuarioPerfil> usuariosPerfis)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+    @Transactional(readOnly = false)
+    public List<UsuarioPerfil> savePermissions(List<UsuarioPerfil> usuariosPerfis)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-		return usuarioPerfilRepository.saveAll(usuariosPerfis);
+        return usuarioPerfilRepository.saveAll(usuariosPerfis);
 
-	}
+    }
 
-	@Transactional(readOnly = false)
-	public List<UsuarioPerfil> saveUsuarioPerfilIDS(Usuario usuario, Set<Long> ids)
-			throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
+    @Transactional(readOnly = false)
+    public List<UsuarioPerfil> saveUsuarioPerfilIDS(Usuario usuario, Set<Long> ids)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-		usuarioPerfilRepository.deleteByPerfilPermissoes(usuario.getId());
+        usuarioPerfilRepository.deleteByPerfilPermissoes(usuario.getId());
 
-		// PerfilPermissao perfilPermissao = new PerfilPermissao();
-		// perfilPermissao.setDataHoraCadastro(LocalDateTime.now());
-		// perfilPermissao.setDataHoraAlteracao(LocalDateTime.now());
-		for (Long idPermissao : ids) {
-			usuarioPerfilRepository.saveUsuarioPerfil(usuario.getId(), idPermissao);
-		}
+        // PerfilPermissao perfilPermissao = new PerfilPermissao();
+        // perfilPermissao.setDataHoraCadastro(LocalDateTime.now());
+        // perfilPermissao.setDataHoraAlteracao(LocalDateTime.now());
+        for (Long idPermissao : ids) {
+            usuarioPerfilRepository.saveUsuarioPerfil(usuario.getId(), idPermissao);
+        }
+        return new ArrayList<>();
 
-		return new ArrayList<UsuarioPerfil>();
+    }
 
-	}
+    public Optional<UsuarioPerfil> findByIdUsuarioIdPerfilId(Long idUsuario, Long idPerfil)
+            throws ResourceNotFoundException {
 
-	public Optional<UsuarioPerfil> findByIdUsuarioIdPerfilId(Long idUsuario, Long idPerfil)
-			throws ResourceNotFoundException {
-
-		Optional<UsuarioPerfil> perfilPermissaoBanco = usuarioPerfilRepository.findByIdUsuarioPerfilId(idUsuario,
-				idPerfil);
-		if (!perfilPermissaoBanco.isPresent()) {
-			throw new ResourceNotFoundException("O código " + idPerfil + " do perfil e o código " + idUsuario
-					+ " da permissão não foram encontrados. ");
-		}
-		return perfilPermissaoBanco;
-	}
+        Optional<UsuarioPerfil> perfilPermissaoBanco = usuarioPerfilRepository.findByIdUsuarioPerfilId(idUsuario,
+                idPerfil);
+        if (!perfilPermissaoBanco.isPresent()) {
+            throw new ResourceNotFoundException("O código " + idPerfil + " do perfil e o código " + idUsuario
+                    + " da permissão não foram encontrados. ");
+        }
+        return perfilPermissaoBanco;
+    }
 
 }
