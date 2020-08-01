@@ -41,6 +41,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.ArrayList;
+import static java.util.Collections.list;
 
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
@@ -190,9 +192,15 @@ public class PermissaoResource {
     }
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
-    @GetMapping(value = "/ativos/picklist")
-    public GenericoPickListProjection findByPermissaoPinkListProjection(@RequestParam(required = false) Long perfilid) {
-        return permissaoService.findByPermissaoPinkListProjection(perfilid);
+    @GetMapping(value = "/picklist/usuario_perfil")
+    public GenericoPickListProjection findByPerfilPinkListProjection(@RequestParam(required = false) Long perfilid) {
+        return permissaoService.findByPermissaoPickListProjection(perfilid);
+    }
+    
+    @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
+    @GetMapping(value = "/picklist/usuario_permissao")
+    public GenericoPickListProjection findByPermissaoPinkListProjection(@RequestParam(required = false) Long usuarioID) throws ResourceNotFoundException {
+        return permissaoService.findByUsuarioPickListProjection(usuarioID);
     }
 
     @ApiOperation(value = " Permissões  ", response = List.class)

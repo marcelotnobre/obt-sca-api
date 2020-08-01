@@ -17,6 +17,8 @@ import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 import br.com.obt.sca.api.service.superclass.GenericService;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
 @Service
@@ -24,6 +26,9 @@ public class PermissaoService extends GenericService<Permissao> {
 
     @Autowired
     private PermissaoRepository permissaoRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     public PermissaoService(GenericRepository<Permissao, Long> repository) {
@@ -57,7 +62,7 @@ public class PermissaoService extends GenericService<Permissao> {
         return permissaoRepository.findByPermissaoPerfilSelectedStatusTrue(perfilid, IDAndNomeGenericoProjection.class);
     }
 
-    public GenericoPickListProjection findByPermissaoPinkListProjection(Long perfilid) {
+    public GenericoPickListProjection findByPermissaoPickListProjection(Long perfilid) {
 
         GenericoPickListProjection permissoesPickListProjection = new GenericoPickListProjection();
 
@@ -72,12 +77,33 @@ public class PermissaoService extends GenericService<Permissao> {
         return permissoesPickListProjection;
     }
 
-    public List<Permissao> findByPermissoesDoUsuario(Long idUsuario) throws ResourceNotFoundException {
-        List<Permissao> permissaoBanco = permissaoRepository.findByPermissoesDoUsuario(idUsuario);
-        if (permissaoBanco.isEmpty()) {
-            throw new ResourceNotFoundException("O código " + idUsuario + " do usuário não foi encontrado. ");
+    public GenericoPickListProjection findByUsuarioPickListProjection(Long usuarioID) throws ResourceNotFoundException {
+        if (usuarioID != null) {
+            usuarioService.validateFindByIdExists(usuarioID);
         }
-        return permissaoBanco;
+        GenericoPickListProjection permissoesPickListProjection = new GenericoPickListProjection();
+
+        Collection<IDAndNomeGenericoProjection> usuarioPerfil = permissaoRepository.findByPermissaoUsuarioAvailableStatusTrue(usuarioID, IDAndNomeGenericoProjection.class);
+
+        Collection<IDAndNomeGenericoProjection> registrosSelecionados = permissaoRepository.findByPermissaoUsuarioAvailableStatusTrue(usuarioID, IDAndNomeGenericoProjection.class);
+        Collection<IDAndNomeGenericoProjection> registrosDisponiveis = permissaoRepository.findByPermissaoAvailableStatusTrue(IDAndNomeGenericoProjection.class);
+        registrosDisponiveis.removeAll(usuarioPerfil);
+        registrosDisponiveis.removeAll(registrosSelecionados);
+
+        permissoesPickListProjection.setRegistrosDisponiveis(registrosDisponiveis);
+        permissoesPickListProjection.setRegistrosSelecionados(registrosSelecionados);
+
+        return permissoesPickListProjection;
+    }
+
+    public List<Permissao> findByPermissoesDoUsuario(Long idUsuario) throws ResourceNotFoundException {
+        List<Permissao> permissoes = new ArrayList<>();
+        List<Permissao> permissoesPerfilPermissao = permissaoRepository.findByPermissoesDoUsuarioUsuarioPerfil(idUsuario);
+        List<Permissao> permissoesUsuarioPermissao = permissaoRepository.findByUsuarioJoinUsuarioPermissao(idUsuario);
+
+        permissoes.addAll(permissoesPerfilPermissao);
+        permissoes.addAll(permissoesUsuarioPermissao);
+        return permissoes;
     }
 
     public List<Permissao> findByPermissoesDoPerfil(Long idPerfil) throws ResourceNotFoundException {

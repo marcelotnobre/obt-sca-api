@@ -35,6 +35,7 @@ import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
@@ -218,6 +219,20 @@ public class UsuarioResource {
                 .saveUsuarioAndPerfis(usuarioAndPerfisProjection);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
+    }
+    
+    @ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
+    @PostMapping(value = "/usuario/permissoes")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
+    public ResponseEntity<UsuarioAndPermissaoProjection> saveUsuarioAndPermissoes(
+            @Valid @RequestBody UsuarioAndPermissaoProjection usuarioAndPermissaoProjection, HttpServletResponse response)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
+
+        UsuarioAndPermissaoProjection usuarioAndPermissaoProjectionSalvo = usuarioService
+                .saveUsuarioAndPermissoes(usuarioAndPermissaoProjection);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPermissaoProjectionSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPermissaoProjectionSalvo);
     }
 
     @ApiOperation(value = "Salvar um usuario", response = List.class)

@@ -73,7 +73,7 @@ public class SistemaService extends GenericService<Sistema> {
         return sistemaRepository.findBySistemaUsuarioAvailableStatusTrue(usuarioID, IDAndNomeGenericoProjection.class);
     }
 
-    public GenericoPickListProjection findBySistemaPinkListProjection(Long usuarioID) throws ResourceNotFoundException {
+    public GenericoPickListProjection findBySistemaPickListProjection(Long usuarioID) throws ResourceNotFoundException {
         if (usuarioID != null) {
             usuarioService.validateFindByIdExists(usuarioID);
         }

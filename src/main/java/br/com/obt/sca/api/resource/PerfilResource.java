@@ -199,7 +199,7 @@ public class PerfilResource {
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao usuário ", response = List.class)
     @GetMapping(value = "/ativos/picklist")
-    public GenericoPickListProjection findByPermissaoPinkListProjection(
+    public GenericoPickListProjection findByPermissaoPickListProjection(
             @RequestParam(required = false) Long usuarioid) {
         return perfilService.findByPerfilPickListProjection(usuarioid);
     }

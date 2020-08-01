@@ -210,7 +210,7 @@ public class SistemaResource {
     @GetMapping(value = "/ativos/picklist")
     public GenericoPickListProjection findBySistemaPinkListProjection(@RequestParam(required = false) Long usuarioID)
             throws ResourceNotFoundException {
-        return sistemaService.findBySistemaPinkListProjection(usuarioID);
+        return sistemaService.findBySistemaPickListProjection(usuarioID);
     }
 
     // Metodos Privados

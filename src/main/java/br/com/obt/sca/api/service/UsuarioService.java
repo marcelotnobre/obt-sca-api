@@ -28,10 +28,12 @@ import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 import br.com.obt.sca.api.config.threadexecutor.ThreadEnviarEmail;
 import br.com.obt.sca.api.mail.Mailer;
 import br.com.obt.sca.api.model.Perfil;
+import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.model.enumeration.TipoAutenticacao;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
 import br.com.obt.sca.api.repository.UsuarioRepository;
 import br.com.obt.sca.api.repository.superclass.GenericRepository;
@@ -53,10 +55,16 @@ public class UsuarioService extends GenericService<Usuario> {
 
     @Autowired
     private UsuarioPerfilService usuarioPerfilService;
+    
+    @Autowired
+    private UsuarioPermissaoService usuarioPermissaoService;
 
     @Autowired
     private UsuarioSistemaService usuarioSistemaService;
 
+    @Autowired
+    private PermissaoService permissaoService;
+    
     @Autowired
     private PerfilService perfilService;
 
@@ -249,6 +257,27 @@ public class UsuarioService extends GenericService<Usuario> {
             usuarioSistemaService.saveUsuarioSistemaIDS(usuario, idSistemas);
         }
         return usuarioAndPerfisProjection;
+    }
+    
+    @Transactional(readOnly = false)
+    public UsuarioAndPermissaoProjection saveUsuarioAndPermissoes(UsuarioAndPermissaoProjection usuarioAndPermissoesProjection)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
+            ResourceAdministratorNotUpdateException {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioAndPermissoesProjection.getId());
+
+        usuarioPermissaoService.saveUsuarioPermissoesIDS(usuario, usuarioAndPermissoesProjection.getIdsPermissoes());
+
+        Set<Long> idSistemas = new TreeSet<>();
+        for (Long idPermissao : usuarioAndPermissoesProjection.getIdsPermissoes()) {
+            Optional<Permissao> permissaoBanco = permissaoService.findById(idPermissao);
+            idSistemas.add(permissaoBanco.get().getSistema().getId());
+        }
+        if (!idSistemas.isEmpty()) {
+            usuarioSistemaService.saveUsuarioSistemaIDS(usuario, idSistemas);
+        }
+        return usuarioAndPermissoesProjection;
     }
 
     @Transactional(readOnly = false)
