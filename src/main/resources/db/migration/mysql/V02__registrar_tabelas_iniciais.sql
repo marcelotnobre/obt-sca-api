@@ -4,7 +4,7 @@
 INSERT INTO usuario 
     (id, email, login, tipoAutenticacao, senha, status) 
 values 
-    (1, 'admin@algamoney.com','admin', 'SCA', '$2a$10$X607ZPhQ4EgGNaYKt3n4SONjIv9zc.VMWdEuhCuba7oLAL5IvcL5.', true),
+    (1, 'fabrica@outerboxtech.com.br','admin', 'SCA', '$2a$10$X607ZPhQ4EgGNaYKt3n4SONjIv9zc.VMWdEuhCuba7oLAL5IvcL5.', true),
     (2, 'bruno.santos@outerboxtech.com.br', 'jose.silva', 'SCA', '$2a$10$JJ0bA6DcfjoanXUEXnqGsudL88LpdQZ8wixKOuwHIxOeWHwMvJMGm', true),
     (3, 'marcelo.nobre@outerboxtech.com.br', 'marcelo.nobre', 'SCA', '$2a$10$/7wDyFFIyYtaHuAywvXwgu5VH6WVI4T17vEqN3ggZNt2syPYSIGE.', true);
 
@@ -13,10 +13,7 @@ INSERT INTO sistema
     (id,  nome, descricao, urlAPI, urlWEB, urlLOGO, status)
 values 
     (1, 'Sistema de Controle de Acesso', 'Sistema de Controle de Acesso', 'https://obt-sca-api.herokuapp.com', 'https://obt-sca-web.herokuapp.com/','https://www.primefaces.org/serenity-react/assets/layout/images/logo-slim.png' ,true),
-    (2, 'Sistema de Clinica Médica', 'Sistema de Clinica Médica', 'https://obt-clinica-api.herokuapp.com/', 'https://obt-clinica-api.herokuapp.com/','https://www.primefaces.org/serenity-react/assets/layout/images/logo-slim.png' ,true),
-    (3, 'Sistema de Clinica Odontologica', 'Sistema de Clinica Odontologica', '', '','' ,true),
-    (4, 'Sistema de Finaceiro', 'Sistema de Finaceiro', '', '','' ,true),
-    (5, 'Sistema de Gestão de Pessoas', 'Sistema de Gestão de Pessoas', '', '','' ,true);
+    (2, 'Sistema de Clinica Odontológica', 'Sistema de Clinica Médica', 'https://obt-clinica-api.herokuapp.com/', 'https://obt-clinica-api.herokuapp.com/','https://www.primefaces.org/serenity-react/assets/layout/images/logo-slim.png' ,true);
 
 -- permissao SCA
 INSERT INTO permissao
@@ -101,61 +98,86 @@ values
     (42, 'ROLE_VISUALIZAR_MENU_LOG_REGISTRO_USUARIO_LOGIN', 'Permissão para visualizar o menu de log do usuário', 1,true),
     (43, 'ROLE_VISUALIZAR_DASHBOARD_ESTATISTICA', 'Permissão para visualizar a dashboard de estatística', 1,true);
 
--- permissao PESSOA
 INSERT INTO permissao
     (id, nome, descricao, sistema_id, status)
 values
 -- Atributo
-    (44, 'ROLE_CRUD_ATRIBUTO', 'Permissão para cadastrar/atualizar/desativar/ativar um atributo', 5, true),
-    (45, 'ROLE_DESATIVAR_ATRIBUTO', 'Permissão para desativar um atributo', 5, true),
-    (46, 'ROLE_ATIVAR_ATRIBUTO', 'Permissão para ativar um atributo', 5, true),
+    (44, 'ROLE_CRUD_ATRIBUTO', 'Permissão para cadastrar/atualizar/desativar/ativar um atributo', 2, true),
+    (45, 'ROLE_DESATIVAR_ATRIBUTO', 'Permissão para desativar um atributo', 2, true),
+    (46, 'ROLE_ATIVAR_ATRIBUTO', 'Permissão para ativar um atributo', 2, true),
 
 -- Dominio
-    (47, 'ROLE_CRUD_DOMINIO', 'Permissão para cadastrar/atualizar/desativar/ativar um dominio', 5, true),
-    (48, 'ROLE_DESATIVAR_DOMINIO', 'Permissão para desativar um dominio', 5, true),
-    (49, 'ROLE_ATIVAR_DOMINIO', 'Permissão para ativar um dominio', 5, true),
+    (47, 'ROLE_CRUD_DOMINIO', 'Permissão para cadastrar/atualizar/desativar/ativar um dominio', 2, true),
+    (48, 'ROLE_DESATIVAR_DOMINIO', 'Permissão para desativar um dominio', 2, true),
+    (49, 'ROLE_ATIVAR_DOMINIO', 'Permissão para ativar um dominio', 2, true),
 
 -- Cargo
-    (50, 'ROLE_CRUD_CARGO', 'Permissão para cadastrar/atualizar/desativar/ativar um cargo', 5, true),
-    (51, 'ROLE_DESATIVAR_CARGO', 'Permissão para desativar um cargo', 5, true),
-    (52, 'ROLE_ATIVAR_CARGO', 'Permissão para ativar um cargo', 5, true),
+    (50, 'ROLE_CRUD_CARGO', 'Permissão para cadastrar/atualizar/desativar/ativar um cargo', 2, true),
+    (51, 'ROLE_DESATIVAR_CARGO', 'Permissão para desativar um cargo', 2, true),
+    (52, 'ROLE_ATIVAR_CARGO', 'Permissão para ativar um cargo', 2, true),
 
 -- Profissão
-    (53, 'ROLE_CRUD_PROFISSAO', 'Permissão para cadastrar/atualizar/desativar/ativar uma profissão', 5, true),
-    (54, 'ROLE_DESATIVAR_PROFISSAO', 'Permissão para desativar uma profissão', 5, true),
-    (55, 'ROLE_ATIVAR_PROFISSAO', 'Permissão para ativar uma profissão', 5, true),
+    (53, 'ROLE_CRUD_PROFISSAO', 'Permissão para cadastrar/atualizar/desativar/ativar uma profissão', 2, true),
+    (54, 'ROLE_DESATIVAR_PROFISSAO', 'Permissão para desativar uma profissão', 2, true),
+    (55, 'ROLE_ATIVAR_PROFISSAO', 'Permissão para ativar uma profissão', 2, true),
 
--- Funcionario
-    (56, 'ROLE_CRUD_FUNCIONARIO', 'Permissão para cadastrar/atualizar/desativar/ativar uma funcionario', 5, true),
-    (57, 'ROLE_DESATIVAR_FUNCIONARIO', 'Permissão para desativar um funcionario', 5, true),
-    (58, 'ROLE_ATIVAR_FUNCIONARIO', 'Permissão para ativar um funcionario', 5, true),
+-- Grupo
+    (56, 'ROLE_CRUD_GRUPO', 'Permissão para cadastrar/atualizar/desativar/ativar uma grupo', 2, true),
+    (57, 'ROLE_DESATIVAR_GRUPO', 'Permissão para desativar um grupo', 2, true),
+    (58, 'ROLE_ATIVAR_GRUPO', 'Permissão para ativar um grupo', 2, true),
 
 -- Contato
-    (59, 'ROLE_CRUD_CONTATO', 'Permissão para cadastrar/atualizar/desativar/ativar um contato', 5, true),
-    (60, 'ROLE_DESATIVAR_CONTATO', 'Permissão para desativar um contato', 5, true),
-    (61, 'ROLE_ATIVAR_CONTATO', 'Permissão para ativar um contato', 5, true),
+    (59, 'ROLE_CRUD_CONTATO', 'Permissão para cadastrar/atualizar/desativar/ativar um contato', 2, true),
+    (60, 'ROLE_DESATIVAR_CONTATO', 'Permissão para desativar um contato', 2, true),
+    (61, 'ROLE_ATIVAR_CONTATO', 'Permissão para ativar um contato', 2, true),
 
 -- Pessoa
-    (62, 'ROLE_CRUD_PESSOA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa', 5, true),
-    (63, 'ROLE_CRUD_PESSOA_JURIDICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa', 5, true);
+    (62, 'ROLE_CRUD_PESSOA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa', 2, true),
+    (63, 'ROLE_DESATIVAR_PESSOA', 'Permissão para desativar uma pessoa', 2, true),
+    (64, 'ROLE_ATIVAR_PESSOA', 'Permissão para ativar uma pessoa', 2, true),
 
--- permissao CLINICA
-INSERT INTO permissao
-    (id, nome, descricao, sistema_id, status)
-values
--- Clinica
-    (64, 'ROLE_CRUD_CLINICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma clinica', 5, true),
-    (65, 'ROLE_DESATIVAR_CLINICA', 'Permissão para desativar uma clinica', 5, true),
-    (66, 'ROLE_ATIVAR_CLINICA', 'Permissão para ativar uma clinica', 5, true);
+-- PessoaFisica
+    (65, 'ROLE_CRUD_PESSOA_FISICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa física', 2, true),
+    (66, 'ROLE_DESATIVAR_PESSOA_FISICA', 'Permissão para desativar uma pessoa física', 2, true),
+    (67, 'ROLE_ATIVAR_PESSOA_FISICA', 'Permissão para ativar uma pessoa física', 2, true),
 
--- permissao RESPONSAVEL
-INSERT INTO permissao
-    (id, nome, descricao, sistema_id, status)
-values
+-- PessoaJuridica
+    (68, 'ROLE_CRUD_PESSOA_JURIDICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma pessoa jurídica', 2, true),
+    (69, 'ROLE_DESATIVAR_PESSOA_JURIDICA', 'Permissão para desativar uma pessoa jurídica', 2, true),
+    (70, 'ROLE_ATIVAR_PESSOA_JURIDICA', 'Permissão para ativar uma pessoa jurídica', 2, true),
+
 -- Clinica
-    (67, 'ROLE_CRUD_RESPONSAVEL', 'Permissão para cadastrar/atualizar/desativar/ativar um responsável', 5, true),
-    (68, 'ROLE_DESATIVAR_RESPONSAVEL', 'Permissão para desativar um responsável', 5, true),
-    (69, 'ROLE_ATIVAR_RESPONSAVEL', 'Permissão para ativar um responsável', 5, true);
+    (71, 'ROLE_CRUD_CLINICA', 'Permissão para cadastrar/atualizar/desativar/ativar uma clinica', 2, true),
+    (72, 'ROLE_DESATIVAR_CLINICA', 'Permissão para desativar uma clinica', 2, true),
+    (73, 'ROLE_ATIVAR_CLINICA', 'Permissão para ativar uma clinica', 2, true),
+
+-- Responsavel
+    (74, 'ROLE_CRUD_LABORATORIO', 'Permissão para cadastrar/atualizar/desativar/ativar um laboratório', 2, true),
+    (75, 'ROLE_DESATIVAR_LABORATORIO', 'Permissão para desativar um laboratório', 2, true),
+    (76, 'ROLE_ATIVAR_LABORATORIO', 'Permissão para ativar um laboratório', 2, true),
+
+-- ConvenioPadrao
+    (77, 'ROLE_CRUD_CONVENIO_PADRAO', 'Permissão para cadastrar/atualizar/desativar/ativar um convênio padrão', 2, true),
+    (78, 'ROLE_DESATIVAR_CONVENIO_PADRAO', 'Permissão para desativar um convênio padrão', 2, true),
+    (79, 'ROLE_ATIVAR_CONVENIO_PADRAO', 'Permissão para ativar um convênio padrão', 2, true),
+
+-- ProcedimentoPadrao
+    (80, 'ROLE_CRUD_PROCEDIMENTO_PADRAO', 'Permissão para cadastrar/atualizar/desativar/ativar um procedimento padrão', 2, true),
+    (81, 'ROLE_DESATIVAR_PROCEDIMENTO_PADRAO', 'Permissão para desativar um procedimento padrão', 2, true),
+    (82, 'ROLE_ATIVAR_PROCEDIMENTO_PADRAO', 'Permissão para ativar um procedimento padrão', 2, true),
+
+-- CartaoCredito
+    (83, 'ROLE_CRUD_CARTAO_CREDITO', 'Permissão para cadastrar/atualizar/desativar/ativar um cartão de crédito', 2, true),
+    (84, 'ROLE_DESATIVAR_CARTAO_CREDITO', 'Permissão para desativar um cartão de crédito', 2, true),
+    (85, 'ROLE_ATIVAR_CARTAO_CREDITO', 'Permissão para ativar um cartão de crédito', 2, true),
+
+-- Consulta
+    (86, 'ROLE_CRUD_CONSULTA', 'Permissão para cadastrar/atualizar/desativar/ativar uma consulta', 2, true),
+    (87, 'ROLE_DESATIVAR_CONSULTA', 'Permissão para desativar uma consulta', 2, true),
+    (88, 'ROLE_ATIVAR_CONSULTA', 'Permissão para ativar uma consulta', 2, true),
+
+-- ProfissionalAdministrador
+    (89, 'ROLE_CRUD_PROFISSIONAL_ADMINISTRADOR', 'Permissão que indica se o profissional é administrador', 2, true);
     
 -- Perfil
 INSERT INTO perfil 
@@ -164,7 +186,7 @@ values
     (1, 'Administrador', 'Administrador do Sistema', 1, true),
     (2, 'Gestor', 'Gestor do Sistema',1, true),
     (3, 'Recepcionista', 'Recepcionista',1, true),
-    (4, 'Profissional', 'Médico, Dentista, Psicólogo, etc.',1, true);
+    (4, 'Profissional', 'Dentista, Cirurgião Dentista, Auxiliar de dentista, etc.',1, true);
 
 -- Perfil do Administrador
 INSERT INTO perfil_permissao 
@@ -238,7 +260,27 @@ values
     (1, 66),
     (1, 67),
     (1, 68),
-    (1, 69);
+    (1, 69),
+    (1, 70),
+    (1, 71),
+    (1, 72),
+    (1, 73),
+    (1, 74),
+    (1, 75),
+    (1, 76),
+    (1, 77),
+    (1, 78),
+    (1, 79),
+    (1, 80),
+    (1, 81),
+    (1, 82),
+    (1, 83),
+    (1, 84),
+    (1, 85),
+    (1, 86),
+    (1, 87),
+    (1, 88),
+    (1, 89);
 
 -- Perfil Usuario - Gestor
 INSERT INTO perfil_permissao
