@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.repository.superclass.GenericRepository;
+import java.util.Set;
 
 public interface PermissaoRepository extends GenericRepository<Permissao, Long> {
 
@@ -40,8 +41,8 @@ public interface PermissaoRepository extends GenericRepository<Permissao, Long> 
             + " where 1=1"
             + " and usuario.id = :idUsuario"
             + " and (perfil.datahorafinalvigencia is null or perfil.datahorafinalvigencia >= now())", nativeQuery = true)
-    List<Permissao> findByPermissoesDoUsuarioUsuarioPerfil(@Param("idUsuario") Long idUsuario);
-    
+    List<Permissao> findByUsuarioJoinUsuarioPerfil(@Param("idUsuario") Long idUsuario);
+
     @Query(value = "SELECT P.id, P.nome FROM permissao P where 1=1 and P.status = true", nativeQuery = true)
     <T> Collection<T> findByPermissaoAvailableStatusTrue(Class<T> type);
 
@@ -53,15 +54,22 @@ public interface PermissaoRepository extends GenericRepository<Permissao, Long> 
             + " and usuario.id = :idUsuario", nativeQuery = true)
     List<Permissao> findByUsuarioJoinUsuarioPermissao(@Param("idUsuario") Long idUsuario);
 
-    @Query(value = "SELECT P.id, P.nome FROM permissao P where not exists " + "(select id from usuario_permissao UP where "
-            + " P.id = UP.permissao_id and UP.usuario_id = :usuarioID ) " + "and P.status = true", nativeQuery = true)
-    <T> Collection<T> findByPermissaoUsuarioAvailableStatusTrue(@Param("usuarioID") Long usuarioID, Class<T> type);
+    @Query(value = ""
+            + " SELECT distinct permissao.* from permissao"
+            + " inner join usuario_permissao on usuario_permissao.permissao_id = permissao.id"
+            + " inner join usuario on usuario_permissao.usuario_id = usuario.id"
+            + " where 1=1"
+            + " and usuario.id = :idUsuario", nativeQuery = true)
+    <T> Collection<T> findSelecionadasByUsuarioJoinUsuarioPermissao(@Param("idUsuario") Long idUsuario, Class<T> type);
 
     @Query(value = ""
-            + " SELECT permissao.id, permissao.nome from permissao"
-            + " WHERE 1=1"
-            + " AND permissao.id NOT IN (:idPermissoes)", nativeQuery = true)
-    <T> Collection<T> findPermissoesDoUsuarioByUsuarioPermissao(@Param("idPermissoes") List<Long> idPermissoes, Class<T> type);
+            + " SELECT P.id, P.nome FROM permissao P where not exists"
+            + " (select id from usuario_permissao UP where"
+            + " P.id = UP.permissao_id and UP.usuario_id = :idUsuario )"
+            + " and P.id NOT IN (:idPermissoes) "
+            + " and P.status = true", nativeQuery = true)
+    <T> Collection<T> findDisponiveisByUsuarioJoinUsuarioPermissao(@Param("idUsuario") Long idUsuario,
+            @Param("idPermissoes") List<Long> idPermissoes, Class<T> type);
 
     @Query(value = ""
             + " SELECT permissao.* FROM permissao"

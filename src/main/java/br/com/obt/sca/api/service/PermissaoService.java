@@ -18,6 +18,7 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 import br.com.obt.sca.api.service.superclass.GenericService;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
@@ -81,24 +82,23 @@ public class PermissaoService extends GenericService<Permissao> {
         if (usuarioID != null) {
             usuarioService.validateFindByIdExists(usuarioID);
         }
-        GenericoPickListProjection permissoesPickListProjection = new GenericoPickListProjection();
 
-        Collection<IDAndNomeGenericoProjection> usuarioPerfil = permissaoRepository.findByPermissaoUsuarioAvailableStatusTrue(usuarioID, IDAndNomeGenericoProjection.class);
+        List<Long> idPermissoes = permissaoRepository.findByUsuarioJoinUsuarioPerfil(usuarioID).stream()
+                .map(Permissao::getId).collect(Collectors.toList());
 
-        Collection<IDAndNomeGenericoProjection> registrosSelecionados = permissaoRepository.findByPermissaoUsuarioAvailableStatusTrue(usuarioID, IDAndNomeGenericoProjection.class);
-        Collection<IDAndNomeGenericoProjection> registrosDisponiveis = permissaoRepository.findByPermissaoAvailableStatusTrue(IDAndNomeGenericoProjection.class);
-        registrosDisponiveis.removeAll(usuarioPerfil);
+        Collection<IDAndNomeGenericoProjection> registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, idPermissoes, IDAndNomeGenericoProjection.class);
+        Collection<IDAndNomeGenericoProjection> registrosSelecionados = permissaoRepository.findSelecionadasByUsuarioJoinUsuarioPermissao(usuarioID, IDAndNomeGenericoProjection.class);
         registrosDisponiveis.removeAll(registrosSelecionados);
 
+        GenericoPickListProjection permissoesPickListProjection = new GenericoPickListProjection();
         permissoesPickListProjection.setRegistrosDisponiveis(registrosDisponiveis);
         permissoesPickListProjection.setRegistrosSelecionados(registrosSelecionados);
-
         return permissoesPickListProjection;
     }
 
     public List<Permissao> findByPermissoesDoUsuario(Long idUsuario) throws ResourceNotFoundException {
         List<Permissao> permissoes = new ArrayList<>();
-        List<Permissao> permissoesPerfilPermissao = permissaoRepository.findByPermissoesDoUsuarioUsuarioPerfil(idUsuario);
+        List<Permissao> permissoesPerfilPermissao = permissaoRepository.findByUsuarioJoinUsuarioPerfil(idUsuario);
         List<Permissao> permissoesUsuarioPermissao = permissaoRepository.findByUsuarioJoinUsuarioPermissao(idUsuario);
 
         permissoes.addAll(permissoesPerfilPermissao);
