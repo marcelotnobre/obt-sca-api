@@ -83,16 +83,25 @@ public class PermissaoService extends GenericService<Permissao> {
             usuarioService.validateFindByIdExists(usuarioID);
         }
 
-        List<Long> idPermissoes = permissaoRepository.findByUsuarioJoinUsuarioPerfil(usuarioID).stream()
-                .map(Permissao::getId).collect(Collectors.toList());
+        Collection<IDAndNomeGenericoProjection> registrosDisponiveis = new ArrayList<>();
+        Collection<IDAndNomeGenericoProjection> registrosSelecionados = new ArrayList<>();
+        
+        if(usuarioID == null) {
+        	registrosDisponiveis = permissaoRepository.findDisponiveisByNovoUsuario(IDAndNomeGenericoProjection.class);
+        } else {        	
+        	List<Long> idPermissoes = permissaoRepository.findByUsuarioJoinUsuarioPerfil(usuarioID).stream()
+        			.map(Permissao::getId).collect(Collectors.toList());
+        	
+        	registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, idPermissoes, IDAndNomeGenericoProjection.class);
+        	registrosSelecionados = permissaoRepository.findSelecionadasByUsuarioJoinUsuarioPermissao(usuarioID, IDAndNomeGenericoProjection.class);
+        	registrosDisponiveis.removeAll(registrosSelecionados);
+        }
 
-        Collection<IDAndNomeGenericoProjection> registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, idPermissoes, IDAndNomeGenericoProjection.class);
-        Collection<IDAndNomeGenericoProjection> registrosSelecionados = permissaoRepository.findSelecionadasByUsuarioJoinUsuarioPermissao(usuarioID, IDAndNomeGenericoProjection.class);
-        registrosDisponiveis.removeAll(registrosSelecionados);
 
         GenericoPickListProjection permissoesPickListProjection = new GenericoPickListProjection();
-        permissoesPickListProjection.setRegistrosDisponiveis(registrosDisponiveis);
-        permissoesPickListProjection.setRegistrosSelecionados(registrosSelecionados);
+        
+		permissoesPickListProjection.setRegistrosDisponiveis(registrosDisponiveis);        
+		permissoesPickListProjection.setRegistrosSelecionados(registrosSelecionados);
         return permissoesPickListProjection;
     }
 

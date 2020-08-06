@@ -58,10 +58,14 @@ public interface PermissaoRepository extends GenericRepository<Permissao, Long> 
             + " SELECT distinct permissao.* from permissao"
             + " inner join usuario_permissao on usuario_permissao.permissao_id = permissao.id"
             + " inner join usuario on usuario_permissao.usuario_id = usuario.id"
-            + " where 1=1"
-            + " and usuario.id = :idUsuario", nativeQuery = true)
+            + " where usuario_permissao.usuario_id = :idUsuario", nativeQuery = true)
     <T> Collection<T> findSelecionadasByUsuarioJoinUsuarioPermissao(@Param("idUsuario") Long idUsuario, Class<T> type);
 
+    @Query(value = ""
+            + " SELECT P.id, P.nome FROM permissao P where"
+            + " P.status = true", nativeQuery = true)
+    <T> Collection<T> findDisponiveisByNovoUsuario(Class<T> type);
+    
     @Query(value = ""
             + " SELECT P.id, P.nome FROM permissao P where not exists"
             + " (select id from usuario_permissao UP where"
