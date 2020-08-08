@@ -41,8 +41,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.ArrayList;
-import static java.util.Collections.list;
 
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
@@ -80,7 +78,7 @@ public class PermissaoResource {
                 Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
 
         Page<Permissao> permissoesPage;
-        if ((idSistema != null) && (idSistema.longValue() > 0)) {
+        if (idSistema != null && idSistema.longValue() > 0) {
             permissoesPage = permissaoService.findByNomeContainingAndSistemaAndStatus(idSistema, nome, status,
                     pageRequest);
         } else {

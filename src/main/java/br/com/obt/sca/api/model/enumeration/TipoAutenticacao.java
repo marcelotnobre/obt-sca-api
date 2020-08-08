@@ -10,7 +10,7 @@ public enum TipoAutenticacao {
         return label;
     }
 
-    private TipoAutenticacao(String label) {
+    TipoAutenticacao(String label) {
         this.label = label;
     }
 }

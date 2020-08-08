@@ -13,10 +13,14 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.util.Calendar;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})
 @Service
 public class TokenService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
 
     public final String SECRET_KEY = "outerboxtech";
 
@@ -31,7 +35,7 @@ public class TokenService {
                     .withExpiresAt(expiresAt.getTime())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
-            //Invalid Signing configuration / Couldn't convert Claims.
+            logger.warn("-- Não foi possível criar o token!. --");
         }
         return token;
     }
@@ -43,6 +47,7 @@ public class TokenService {
                     .build(); //Reusable verifier instance
             return verifier.verify(token);
         } catch (JWTCreationException exception) {
+            logger.warn("-- Não foi possível verificar a validade do token!. --");
         }
         return null;
     }
@@ -58,6 +63,7 @@ public class TokenService {
 
             return dataAtual.after(dataExpiracao);
         } catch (Exception e) {
+            logger.warn("-- Não foi possível verificar se o token está expirado!. --");
         }
         return true;
     }

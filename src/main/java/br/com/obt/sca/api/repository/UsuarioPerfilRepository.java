@@ -39,6 +39,6 @@ public interface UsuarioPerfilRepository extends JpaRepository<UsuarioPerfil, Lo
     void deleteByPerfilPermissoes(Long idUsuario);
 
     @Query("select UP from UsuarioPerfil UP where UP.usuarioPerfilPK.usuario.id = ?1 and UP.usuarioPerfilPK.perfil.id = ?2")
-    public Optional<UsuarioPerfil> findByIdUsuarioPerfilId(Long idUsuario, Long idPerfil);
+    Optional<UsuarioPerfil> findByIdUsuarioPerfilId(Long idUsuario, Long idPerfil);
 
 }

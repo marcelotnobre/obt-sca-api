@@ -7,7 +7,7 @@ public class OuterBoxTechSCAApiProperty {
 
     private String originPermitida = "*";
 
-    private String UrlApiScaClient = "http://localhost:8080";
+    private String urlApiScaClient = "http://localhost:8080";
 
     private final Seguranca seguranca = new Seguranca();
 
@@ -36,11 +36,11 @@ public class OuterBoxTechSCAApiProperty {
     }
 
     public String getUrlApiScaClient() {
-        return UrlApiScaClient;
+        return urlApiScaClient;
     }
 
     public void setUrlApiScaClient(String urlApiScaClient) {
-        UrlApiScaClient = urlApiScaClient;
+        this.urlApiScaClient = urlApiScaClient;
     }
 
     public static class S3 {

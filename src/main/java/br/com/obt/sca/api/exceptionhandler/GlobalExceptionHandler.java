@@ -128,9 +128,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             int indice_abre = messageSqlException.indexOf("'");
             int indice_fecha = messageSqlException.trim().substring(indice_abre + 1).indexOf("'");
             String nomeCampo = messageSqlException.substring(indice_abre + 1, indice_abre + indice_fecha + 1);
-            SQLIntegrityConstraintViolationConfig.nomeCampo = nomeCampo;
 
-            SQLIntegrityMessage.initHashMapMessageException();
+            SQLIntegrityMessage.initHashMapMessageException(nomeCampo);
             String nomeConstraint = ((ConstraintViolationException) ex.getCause()).getConstraintName();
             mensagemUsuario = SQLIntegrityMessage.getHashMapMessageException().get(nomeConstraint);
 

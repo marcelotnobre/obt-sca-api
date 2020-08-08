@@ -18,7 +18,6 @@ import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import br.com.obt.sca.api.service.exception.ServiceException;
 import br.com.obt.sca.api.service.superclass.GenericService;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ServiceException.class})

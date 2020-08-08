@@ -5,18 +5,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.FOUND)
 public class ResourceAlreadyExistsException extends ServiceException {
-	private static final long serialVersionUID = 1L;
 
-	public ResourceAlreadyExistsException(String message) {
-		super(message);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public ResourceAlreadyExistsException(Exception exception, String message) {
-		super(exception);
-	}
+    public ResourceAlreadyExistsException(String message) {
+        super(message);
+    }
 
-	public ResourceAlreadyExistsException(Exception exception) {
-		super(exception);
-	}
+    public ResourceAlreadyExistsException(String message, Exception exception) {
+        super(message, exception);
+    }
+
+    public ResourceAlreadyExistsException(Exception exception) {
+        super(exception);
+    }
 
 }

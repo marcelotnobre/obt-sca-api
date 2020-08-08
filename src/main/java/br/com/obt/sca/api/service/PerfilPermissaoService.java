@@ -105,11 +105,9 @@ public class PerfilPermissaoService {
     // metodos privados
     private void validatePerfilPermissao(Long idPerfil, Long idPermissao)
             throws ResourceNotFoundException, ResourceParameterNullException {
-
-        if ((idPerfil == null) || (idPermissao == 0)) {
+        if (idPerfil == null || idPermissao == 0) {
             throw new ResourceParameterNullException("Parametros invalidos");
         }
-
     }
 
 }

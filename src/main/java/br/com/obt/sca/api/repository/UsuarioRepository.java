@@ -11,18 +11,18 @@ public interface UsuarioRepository extends GenericRepository<Usuario, Long> {
 
 //	@Query("SELECT U FROM Usuario U INNER JOIN fetch U.pessoa P where ((U.login = ?1 or U.email = ?1) and (U.status = true and  P.status=true))")
     @Query("SELECT U FROM Usuario U where ((U.login = ?1 or U.email = ?1) and (U.status = true ))")
-    public Optional<Usuario> findByEmailOrLogin(String emailOrLogin);
+    Optional<Usuario> findByEmailOrLogin(String emailOrLogin);
 
     @Query("SELECT U FROM Usuario U where (U.login like %?1%)")
-    public Page<Usuario> findByNomeContaining(String login, Pageable pageable);
+    Page<Usuario> findByNomeContaining(String login, Pageable pageable);
 
     @Query("SELECT U FROM Usuario U where (U.login like %?1% AND U.email like %?2%)")
-    public Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable);
+    Page<Usuario> findByEmailAndLogin(String login, String email, Pageable pageable);
 
     @Query("SELECT U FROM Usuario U where (U.login like %?1% or U.email like %?1%)")
-    public Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable);
+    Page<Usuario> findByEmailOrLogin(String emailOrLogin, Pageable pageable);
 
     @Query("SELECT U FROM Usuario U where (U.login = ?1 or U.email = ?1)")
-    public Optional<Usuario> findByLogin(String login);
+    Optional<Usuario> findByLogin(String login);
 
 }

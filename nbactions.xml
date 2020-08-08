@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+	<action>
+		<actionName>CUSTOM-pmd-cpd-findBugs</actionName>
+		<displayName>pmd-cpd-findBugs</displayName>
+		<goals>
+			<goal>clean</goal>
+			<goal>package</goal>
+			<goal>pmd:check</goal>
+			<goal>pmd:cpd-check</goal>
+			<goal>findbugs:check</goal>
+			
+		</goals>
+	</action>
+</actions>

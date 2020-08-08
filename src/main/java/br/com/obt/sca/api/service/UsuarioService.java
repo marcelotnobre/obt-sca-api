@@ -55,7 +55,7 @@ public class UsuarioService extends GenericService<Usuario> {
 
     @Autowired
     private UsuarioPerfilService usuarioPerfilService;
-    
+
     @Autowired
     private UsuarioPermissaoService usuarioPermissaoService;
 
@@ -64,7 +64,7 @@ public class UsuarioService extends GenericService<Usuario> {
 
     @Autowired
     private PermissaoService permissaoService;
-    
+
     @Autowired
     private PerfilService perfilService;
 
@@ -87,7 +87,11 @@ public class UsuarioService extends GenericService<Usuario> {
     public Usuario save(Usuario usuario)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
 
-        if ((usuario != null) && (usuario.getId() != null) && (usuario.getId() == 1l)) {
+        if (usuario == null) {
+            throw new ResourceNotFoundException("O usuário não foi encontrado!");
+        }
+
+        if (usuario.getId() != null && usuario.getId() == 1l) {
             throw new ResourceNotFoundException("O usuário administrador não pode ser alterado!");
         }
 
@@ -98,7 +102,7 @@ public class UsuarioService extends GenericService<Usuario> {
         // Criptografando a senha.
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if ((usuario != null) && (usuario.getId() != null)) {
+        if (usuario.getId() != null) {
             Optional<Usuario> usuarioBanco = this.findById(usuario.getId());
 
             isMesmaSenha = usuarioBanco.get().getSenha().equals(usuario.getSenha());
@@ -118,17 +122,15 @@ public class UsuarioService extends GenericService<Usuario> {
 
         logger.info("antes de salvar usuário.");
         Usuario usuarioSalvo = usuario;
-        if (usuario != null) {
-            if (usuario.getTipoAutenticacao() == null) {
-                usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
-            }
-
-            //se nao e a mesma senha, salva.
-            if (!isMesmaSenha) {
-                usuario.setSenha(encoder.encode(senha));
-            }
-            usuarioSalvo = usuarioRepository.save(usuario);
+        if (usuario.getTipoAutenticacao() == null) {
+            usuario.setTipoAutenticacao(TipoAutenticacao.SCA);
         }
+
+        //se nao e a mesma senha, salva.
+        if (!isMesmaSenha) {
+            usuario.setSenha(encoder.encode(senha));
+        }
+        usuarioSalvo = usuarioRepository.save(usuario);
 
         logger.info("depois de salvar usuário.");
 
@@ -198,15 +200,17 @@ public class UsuarioService extends GenericService<Usuario> {
     public void updatePropertyStatus(Long idUsuario, Boolean status)
             throws ResourceNotFoundException {
 
-        if ((idUsuario != null) && (idUsuario == 1l)) {
+        if (idUsuario == null) {
+            throw new ResourceNotFoundException("Usuário não encontrado!");
+        }
+
+        if (idUsuario == 1l) {
             throw new ResourceNotFoundException("O status do administrador não pode ser alterado!");
         } else {
-            if (idUsuario != null) {
-                Optional<Usuario> usuarioBanco = findById(idUsuario);
-                Usuario usuario = usuarioBanco.get();
-                usuario.setStatus(status);
-                usuarioRepository.save(usuario);
-            }
+            Optional<Usuario> usuarioBanco = findById(idUsuario);
+            Usuario usuario = usuarioBanco.get();
+            usuario.setStatus(status);
+            usuarioRepository.save(usuario);
         }
     }
 
@@ -258,7 +262,7 @@ public class UsuarioService extends GenericService<Usuario> {
         }
         return usuarioAndPerfisProjection;
     }
-    
+
     @Transactional(readOnly = false)
     public UsuarioAndPermissaoProjection saveUsuarioAndPermissoes(UsuarioAndPermissaoProjection usuarioAndPermissoesProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,

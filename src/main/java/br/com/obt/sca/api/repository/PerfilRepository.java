@@ -10,30 +10,29 @@ import org.springframework.data.repository.query.Param;
 import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import java.util.List;
-import org.springframework.data.jpa.domain.Specification;
 
 public interface PerfilRepository extends GenericRepository<Perfil, Long> {
 
-    public Page<Perfil> findByNomeContaining(String nome, Pageable pageable);
+    Page<Perfil> findByNomeContaining(String nome, Pageable pageable);
 
     @Query(value = "SELECT P.id, P.nome FROM perfil P where EXISTS  "
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilSelectedStatusTrue(@Param("usuarioid") Long usuarioid,
+    <T> Collection<T> findByUsuarioPerfilSelectedStatusTrue(@Param("usuarioid") Long usuarioid,
             Class<T> type);
 
     @Query(value = "SELECT distinct P.id, P.nome FROM perfil P where EXISTS  "
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.sistema_id IN (:sistemas) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilSistemaSelectedStatusTrue(@Param("usuarioid") Long usuarioid,
+    <T> Collection<T> findByUsuarioPerfilSistemaSelectedStatusTrue(@Param("usuarioid") Long usuarioid,
             @Param("sistemas") List<Long> sistemas, Class<T> type);
 
     @Query(value = "SELECT distinct P.id, P.nome FROM perfil P where NOT EXISTS  "
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.sistema_id IN(:sistemas) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilSistemaAvailableStatusTrue(@Param("usuarioid") Long usuarioid,
+    <T> Collection<T> findByUsuarioPerfilSistemaAvailableStatusTrue(@Param("usuarioid") Long usuarioid,
             @Param("sistemas") List<Long> sistemas, Class<T> type);
 
     // FOR PICKLIST
@@ -41,7 +40,7 @@ public interface PerfilRepository extends GenericRepository<Perfil, Long> {
             + " where EXISTS (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.sistema_id IN (:sistemas) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilSistemaSelectedStatusTrueForPicklist(
+    <T> Collection<T> findByUsuarioPerfilSistemaSelectedStatusTrueForPicklist(
             @Param("usuarioid") Long usuarioid, @Param("sistemas") List<Long> sistemas, Class<T> type);
 
     // FOR PICKLIST
@@ -49,13 +48,13 @@ public interface PerfilRepository extends GenericRepository<Perfil, Long> {
             + " where  NOT EXISTS  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.sistema_id IN(:sistemas) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilSistemaAvailableStatusTrueForPicklist(
+    <T> Collection<T> findByUsuarioPerfilSistemaAvailableStatusTrueForPicklist(
             @Param("usuarioid") Long usuarioid, @Param("sistemas") List<Long> sistemas, Class<T> type);
 
     @Query(value = "SELECT P.id, P.nome FROM perfil P where NOT EXISTS  "
             + "  (SELECT UP.* FROM usuario_perfil UP WHERE UP.perfil_id = P.id and UP.usuario_id = :usuarioid ) "
             + " and P.status = true and (P.datahorafinalvigencia is null or P.datahorafinalvigencia >= now()) ", nativeQuery = true)
-    public <T> Collection<T> findByUsuarioPerfilAvailableStatusTrue(@Param("usuarioid") Long usuarioid,
+    <T> Collection<T> findByUsuarioPerfilAvailableStatusTrue(@Param("usuarioid") Long usuarioid,
             Class<T> type);
 
     @Query(value = "SELECT * FROM perfil P where EXISTS  "

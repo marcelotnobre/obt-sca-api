@@ -24,6 +24,6 @@ public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistema, 
     void deleteByUsuarioSistemas(Long idUsuario);
 
     @Query("select US from UsuarioSistema US where US.usuarioSistemaPK.usuario.id = ?1 and US.usuarioSistemaPK.sistema.id = ?2")
-    public Optional<UsuarioSistema> findByIdUsuarioSistemalId(Long idUsuario, Long idSistema);
+    Optional<UsuarioSistema> findByIdUsuarioSistemalId(Long idUsuario, Long idSistema);
 
 }

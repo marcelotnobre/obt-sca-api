@@ -24,6 +24,6 @@ public interface PerfilPermissaoRepository extends JpaRepository<PerfilPermissao
     void deleteByPerfilPermissoes(Long idPerfil);
 
     @Query("select PP from PerfilPermissao PP where PP.perfilPermissaoPK.perfil.id = ?1 and PP.perfilPermissaoPK.permissao.id = ?2")
-    public Optional<PerfilPermissao> findByIdPerfilIdPermissao(Long idPerfil, Long idPermissao);
+    Optional<PerfilPermissao> findByIdPerfilIdPermissao(Long idPerfil, Long idPermissao);
 
 }

@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.repository;
 
-import br.com.obt.sca.api.model.Permissao;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 import br.com.obt.sca.api.model.UsuarioPermissao;
 import java.util.List;
-import java.util.Set;
 
 public interface UsuarioPermissaoRepository extends JpaRepository<UsuarioPermissao, Long> {
 
@@ -31,6 +29,6 @@ public interface UsuarioPermissaoRepository extends JpaRepository<UsuarioPermiss
     void deleteByPermissaoPermissoes(Long idUsuario);
 
     @Query("select UP from UsuarioPermissao UP where UP.usuarioPermissaoPK.usuario.id = ?1 and UP.usuarioPermissaoPK.permissao.id = ?2")
-    public Optional<UsuarioPermissao> findByIdUsuarioPermissaoId(Long idUsuario, Long idPermissao);
+    Optional<UsuarioPermissao> findByIdUsuarioPermissaoId(Long idUsuario, Long idPermissao);
 
 }
