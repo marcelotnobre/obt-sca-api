@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
@@ -14,13 +13,8 @@ import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
-import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.projections.GenericoPickListProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
@@ -42,6 +35,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Map;
 
 @Api(value = "perfis", description = "Serviço de perfis")
 @ApiResponses(value = {
@@ -54,7 +48,7 @@ import io.swagger.annotations.ApiResponses;
 })
 @RestController
 @RequestMapping("/perfis")
-public class PerfilResource {
+public class PerfilResource extends BaseResource<Perfil> {
 
     @Autowired
     private PerfilService perfilService;
@@ -62,65 +56,25 @@ public class PerfilResource {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    @ApiOperation(value = "Listar dos perfis paginada por nome", response = List.class)
-    @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
-    public ResponseEntity<Page<Perfil>> findByNomeContainingPagination(
-            @RequestParam(required = false, defaultValue = "") String nome,
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @PageableDefault(size = 10) Pageable pageable) {
-
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Page<Perfil> perfisPage = perfilService.findByNomeContaining(nome, pageRequest);
-
-        if (perfisPage.getContent().isEmpty()) {
-            return new ResponseEntity<Page<Perfil>>(HttpStatus.NO_CONTENT);
-        } else {
-            long totalPermissoes = perfisPage.getTotalElements();
-            int nbPagePermissoes = perfisPage.getNumberOfElements();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Total-Count", String.valueOf(perfisPage.getTotalElements()));
-
-            if (nbPagePermissoes < totalPermissoes) {
-                headers.add("first", buildPageUri(PageRequest.of(0, perfisPage.getSize())));
-                headers.add("last", buildPageUri(PageRequest.of(perfisPage.getTotalPages() - 1, perfisPage.getSize())));
-                if (perfisPage.hasNext()) {
-                    headers.add("next", buildPageUri(perfisPage.nextPageable()));
-                }
-                if (perfisPage.hasPrevious()) {
-                    headers.add("prev", buildPageUri(perfisPage.previousPageable()));
-                }
-                return new ResponseEntity<>(perfisPage, headers, HttpStatus.PARTIAL_CONTENT);
-            } else {
-                return new ResponseEntity<Page<Perfil>>(perfisPage, headers, HttpStatus.OK);
-            }
-        }
+    @Override
+    protected Specification getSpecificationPaginacao(Map<String, String> map) {
+        return Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("id", SearchCriteria.EQUALS, getValueMap(map, "sistema.id"), "sistema"))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, map));
     }
 
     @ApiOperation(value = "Lista paginada de perfis", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
-    public List<Permissao> findAll(
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String idSistema,
-            @RequestParam(required = false) Boolean status,
+    @Override
+    public List<Perfil> findAllPaginacao(
+            @RequestParam(required = false) Map<String, String> map,
             @PathVariable int page,
             @PathVariable int limit) {
 
-        PageRequest pageRequest = PageRequest.of(page, limit,
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+        PageRequest pageRequest = getPageRequestDefault(page, limit, map);
+        Specification spec = getSpecificationPaginacao(map);
 
         return perfilService.findAll(spec, pageRequest).getContent();
     }
@@ -128,25 +82,15 @@ public class PerfilResource {
     @ApiOperation(value = "Retorna a quantidade de perfis de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL')")
-    public Long countAll(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String idSistema,
-            @RequestParam(required = false) Boolean status) {
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-
-        Long retorno = perfilService.countAll(spec);
-
-        return retorno;
+    @Override
+    public Long countAllPaginacao(@RequestParam(required = false) Map<String, String> map) {
+        return perfilService.countAll(getSpecificationPaginacao(map));
     }
 
     @ApiOperation(value = "Salvar uma perfil", response = List.class)
     @PostMapping()
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
+    @Override
     public ResponseEntity<Perfil> save(@Valid @RequestBody Perfil perfil, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Perfil perfilSalvo = perfilService.save(perfil);
@@ -171,6 +115,7 @@ public class PerfilResource {
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('read')")
+    @Override
     public ResponseEntity<Perfil> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Perfil> perfil = perfilService.findById(id);
         return perfil.isPresent() ? ResponseEntity.ok(perfil.get()) : ResponseEntity.notFound().build();
@@ -179,6 +124,7 @@ public class PerfilResource {
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERFIL') and #oauth2.hasScope('write')")
+    @Override
     public void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException, ResourceAlreadyExistsException {
         perfilService.updatePropertyStatus(id, status);
@@ -193,20 +139,16 @@ public class PerfilResource {
     @ApiOperation(value = "Excluir perfil - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERFIL') and #oauth2.hasScope('write')")
+    @Override
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         perfilService.deleteById(id);
     }
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao usuário ", response = List.class)
     @GetMapping(value = "/ativos/picklist")
-    public GenericoPickListProjection findByPermissaoPickListProjection(
+    @Override
+    public GenericoPickListProjection findByPickListProjection(
             @RequestParam(required = false) Long usuarioid) {
         return perfilService.findByPerfilPickListProjection(usuarioid);
-    }
-
-    // Metodos Privados
-    private String buildPageUri(Pageable page) {
-        return fromUriString("/perfis").query("page={page}&size={size}")
-                .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
-    }
+    } 
 }

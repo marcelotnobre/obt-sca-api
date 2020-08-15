@@ -29,6 +29,9 @@ public class PermissaoService extends GenericService<Permissao> {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private PerfilService perfilService;
 
     @Autowired
     public PermissaoService(GenericRepository<Permissao, Long> repository) {
@@ -115,11 +118,8 @@ public class PermissaoService extends GenericService<Permissao> {
     }
 
     public List<Permissao> findByPermissoesDoPerfil(Long idPerfil) throws ResourceNotFoundException {
-        List<Permissao> permissaoBanco = permissaoRepository.findByPermissoesDoPerfil(idPerfil);
-        if (permissaoBanco.isEmpty()) {
-            throw new ResourceNotFoundException("O código " + idPerfil + " do perfil não foi encontrada. ");
-        }
-        return permissaoBanco;
+        perfilService.validateFindByIdExists(idPerfil);
+        return permissaoRepository.findByPermissoesDoPerfil(idPerfil);
     }
 
     public List<Permissao> findPermissoes(String nomePermissao, Long idUsuario) throws ResourceNotFoundException {

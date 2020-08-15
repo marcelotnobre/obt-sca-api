@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
-	<action>
-		<actionName>CUSTOM-pmd-cpd-findBugs</actionName>
-		<displayName>pmd-cpd-findBugs</displayName>
-		<goals>
-			<goal>clean</goal>
-			<goal>package</goal>
-			<goal>pmd:check</goal>
-			<goal>pmd:cpd-check</goal>
-			<goal>findbugs:check</goal>
+    <action>
+        <actionName>CUSTOM-pmd-cpd-findBugs</actionName>
+        <displayName>pmd-cpd-findBugs</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+            <goal>pmd:check</goal>
+            <goal>pmd:cpd-check</goal>
+            <goal>findbugs:check</goal>
 			
-		</goals>
-	</action>
+        </goals>
+    </action>
+    
+    <action>
+        <actionName>CUSTOM-site-findBugs</actionName>
+        <displayName>site-findBugs</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>site:site</goal>
+            <goal>findbugs:check</goal>
+        </goals>
+    </action>
+        
+    <action>
+        <actionName>CUSTOM-site-spotbugs</actionName>
+        <displayName>site-spotbugs</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>site:site</goal>
+            <goal>spotbugs:spotbugs</goal>
+        </goals>
+    </action>
 </actions>

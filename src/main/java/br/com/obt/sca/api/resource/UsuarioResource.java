@@ -1,7 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,13 +9,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,46 +63,6 @@ public class UsuarioResource {
 
     @Autowired
     private ApplicationEventPublisher publisher;
-
-    @ApiOperation(value = "Listar dos usuarios paginada por nome", response = List.class)
-    @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
-    public ResponseEntity<Page<Usuario>> findByNomeContainingPagination(
-            @RequestParam(required = false, defaultValue = "") String nome,
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @PageableDefault(size = 10) Pageable pageable) {
-
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Page<Usuario> usuarioPage = usuarioService.findByNomeContaining(nome, pageRequest);
-
-        if (usuarioPage.getContent().isEmpty()) {
-            return new ResponseEntity<Page<Usuario>>(HttpStatus.NO_CONTENT);
-        } else {
-            long totalPermissoes = usuarioPage.getTotalElements();
-            int nbPagePermissoes = usuarioPage.getNumberOfElements();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Total-Count", String.valueOf(usuarioPage.getTotalElements()));
-
-            if (nbPagePermissoes < totalPermissoes) {
-                headers.add("first", buildPageUri(PageRequest.of(0, usuarioPage.getSize())));
-                headers.add("last",
-                        buildPageUri(PageRequest.of(usuarioPage.getTotalPages() - 1, usuarioPage.getSize())));
-                if (usuarioPage.hasNext()) {
-                    headers.add("next", buildPageUri(usuarioPage.nextPageable()));
-                }
-                if (usuarioPage.hasPrevious()) {
-                    headers.add("prev", buildPageUri(usuarioPage.previousPageable()));
-                }
-                return new ResponseEntity<>(usuarioPage, headers, HttpStatus.PARTIAL_CONTENT);
-            } else {
-                return new ResponseEntity<Page<Usuario>>(usuarioPage, headers, HttpStatus.OK);
-            }
-        }
-    }
 
     @ApiOperation(value = "Lista paginada de usuarios", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
@@ -220,7 +174,7 @@ public class UsuarioResource {
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
     }
-    
+
     @ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
     @PostMapping(value = "/usuario/permissoes")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
@@ -282,12 +236,6 @@ public class UsuarioResource {
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         usuarioService.deleteById(id);
-    }
-
-    // Metodos Privados
-    private String buildPageUri(Pageable page) {
-        return fromUriString("/usuarios").query("page={page}&size={size}")
-                .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
     }
 
     // private Usuario getUsuarioLogado(HttpServletRequest request) {

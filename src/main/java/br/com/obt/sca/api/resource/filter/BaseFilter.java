@@ -1,5 +1,6 @@
 package br.com.obt.sca.api.resource.filter;
 
+import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -17,6 +18,14 @@ public class BaseFilter<T> implements Specification<T> {
 
     public BaseFilter(String chave, String operacao, Object valor) {
         this.criteria = new SearchCriteria(chave, operacao, valor);
+    }
+
+    public BaseFilter(String chave, String operacao, Map<String, Object> map) {
+        this.criteria = new SearchCriteria(chave, operacao, map != null && map.get(chave) != null ? map.get(chave) : null);
+    }
+
+    public BaseFilter(String chave, String operacao, Map<String, Object> map, String join) {
+        this.criteria = new SearchCriteria(chave, operacao, map != null && map.get(chave) != null ? map.get(chave) : null, join);
     }
 
     public BaseFilter(String chave, String operacao, Object valor, String join) {
@@ -43,11 +52,22 @@ public class BaseFilter<T> implements Specification<T> {
                         return builder.equal(pathCampo, criteria.getValor());
                     }
                 } else if (root.get(criteria.getChave()).getJavaType() == Boolean.class) {
+                    if (criteria.getValor() instanceof String) {
+                        String valor = (String) criteria.getValor();
+
+                        if ("0".equals(valor) || "1".equals(valor)) {
+                            return builder.equal(pathCampo, "1".equals(valor) ? Boolean.TRUE : Boolean.FALSE);
+                        }
+                        return builder.equal(pathCampo, Boolean.parseBoolean(valor));
+                    }
                     return builder.equal(pathCampo, criteria.getValor());
                 } else if (root.get(criteria.getChave()).getJavaType() == Long.class) {
+                    if (criteria.getValor() instanceof String) {
+                        return builder.equal(pathCampo, Long.parseLong((String) criteria.getValor()));
+                    }
                     return builder.equal(pathCampo, criteria.getValor());
                 }
-
+                //FIM JOIN
             } else if (root.get(criteria.getChave()).getJavaType() == String.class) {
                 if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.CONTAINS)) {
                     return builder.like(root.<String>get(criteria.getChave()), "%" + criteria.getValor() + "%");
@@ -59,10 +79,24 @@ public class BaseFilter<T> implements Specification<T> {
                     return builder.equal(root.get(criteria.getChave()), "" + criteria.getValor());
                 }
             } else if (root.get(criteria.getChave()).getJavaType() == Boolean.class) {
+                if (criteria.getValor() instanceof String) {
+                    String valor = (String) criteria.getValor();
+
+                    if ("0".equals(valor) || "1".equals(valor)) {
+                        return builder.equal(root.get(criteria.getChave()), "1".equals(valor) ? Boolean.TRUE : Boolean.FALSE);
+                    }
+                    return builder.equal(root.get(criteria.getChave()), Boolean.parseBoolean(valor));
+                }
+                return builder.equal(root.get(criteria.getChave()), criteria.getValor());
+            } else if (root.get(criteria.getChave()).getJavaType() == Long.class) {
+                if (criteria.getValor() instanceof String) {
+                    return builder.equal(root.get(criteria.getChave()), Long.parseLong((String) criteria.getValor()));
+                }
                 return builder.equal(root.get(criteria.getChave()), criteria.getValor());
             }
+
         }
         return null;
     }
-
+    
 }
