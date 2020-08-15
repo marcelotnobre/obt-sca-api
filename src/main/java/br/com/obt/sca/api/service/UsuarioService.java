@@ -31,10 +31,8 @@ import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.model.enumeration.TipoAutenticacao;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection; 
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection; 
 import br.com.obt.sca.api.repository.UsuarioRepository;
 import br.com.obt.sca.api.repository.superclass.GenericRepository;
 import br.com.obt.sca.api.service.exception.ResourceAdministratorNotUpdateException;
@@ -143,7 +141,7 @@ public class UsuarioService extends GenericService<Usuario> {
     }
 
     @Transactional(readOnly = false)
-    public UsuarioAndSistemasProjection salvarSistemas(UsuarioAndSistemasProjection usuarioAndSistemasProjection)
+    public UsuarioAndPerfisAndSistemasProjection salvarSistemas(UsuarioAndPerfisAndSistemasProjection usuarioAndSistemasProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
         usuarioSistemaService.salvarSistemasIDs(usuarioAndSistemasProjection.getId(), usuarioAndSistemasProjection.getIdsSistemas());
@@ -239,7 +237,7 @@ public class UsuarioService extends GenericService<Usuario> {
     }
 
     @Transactional(readOnly = false)
-    public UsuarioAndPerfisProjection saveUsuarioAndPerfis(UsuarioAndPerfisProjection usuarioAndPerfisProjection)
+    public UsuarioAndPerfisAndSistemasProjection saveUsuarioAndPerfis(UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisProjection)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
             ResourceAdministratorNotUpdateException {
 

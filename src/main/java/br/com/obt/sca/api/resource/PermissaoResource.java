@@ -191,13 +191,13 @@ public class PermissaoResource {
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
     @GetMapping(value = "/picklist/usuario_perfil")
-    public GenericoPickListProjection findByPerfilPinkListProjection(@RequestParam(required = false) Long perfilid) {
+    public GenericoPickListProjection findByPerfilPickListProjection(@RequestParam(required = false) Long perfilid) {
         return permissaoService.findByPermissaoPickListProjection(perfilid);
     }
     
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
     @GetMapping(value = "/picklist/usuario_permissao")
-    public GenericoPickListProjection findByPermissaoPinkListProjection(@RequestParam(required = false) Long usuarioID) throws ResourceNotFoundException {
+    public GenericoPickListProjection findByPermissaoPickListProjection(@RequestParam(required = false) Long usuarioID) throws ResourceNotFoundException {
         return permissaoService.findByUsuarioPickListProjection(usuarioID);
     }
 

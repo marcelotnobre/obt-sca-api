@@ -8,10 +8,11 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.projections.GenericoPickListProjection;
+import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
+import java.util.Collection;
 import java.util.Map;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,7 +35,7 @@ public abstract class BaseResource<T> {
         return PageRequest.of(page, limit,
                 Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
     }
-    
+
     protected abstract Specification getSpecificationPaginacao(Map<String, String> map);
 
     protected abstract List<T> findAllPaginacao(
@@ -48,14 +49,18 @@ public abstract class BaseResource<T> {
             @RequestBody T bean, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException;
 
-    protected abstract ResponseEntity<Perfil> findById(@PathVariable Long id) throws ResourceNotFoundException;
+    protected abstract ResponseEntity<T> findById(@PathVariable Long id) throws ResourceNotFoundException;
+
+    protected abstract Collection<IDAndNomeGenericoProjection> findByStatusTrue();
 
     protected abstract void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException, ResourceAlreadyExistsException;
 
     protected abstract void deleteById(@PathVariable Long id) throws ResourceNotFoundException;
 
-    protected abstract GenericoPickListProjection findByPickListProjection(
-            @RequestParam(required = false) Long id);
+    protected GenericoPickListProjection findByPickListProjection(
+            @RequestParam(required = false) Long id) throws ResourceNotFoundException {
+        return new GenericoPickListProjection();
+    }
 
 }

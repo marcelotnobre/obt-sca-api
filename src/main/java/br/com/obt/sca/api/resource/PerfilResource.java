@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-
 import br.com.obt.sca.api.model.Perfil;
 import br.com.obt.sca.api.projections.perfil.PerfilAndPermissoesProjection;
 import br.com.obt.sca.api.service.PerfilService;
@@ -29,12 +28,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.projections.GenericoPickListProjection;
+import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Collection;
 import java.util.Map;
 
 @Api(value = "perfis", description = "Serviço de perfis")
@@ -121,6 +122,13 @@ public class PerfilResource extends BaseResource<Perfil> {
         return perfil.isPresent() ? ResponseEntity.ok(perfil.get()) : ResponseEntity.notFound().build();
     }
 
+    @ApiOperation(value = "Lista dos ativos - dropdown ", response = List.class)
+    @GetMapping(value = "/ativos/dropdown")
+    @Override
+    public Collection<IDAndNomeGenericoProjection> findByStatusTrue() {
+        return perfilService.findByStatusTrue();
+    }
+
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_PERFIL') and #oauth2.hasScope('write')")
@@ -148,7 +156,7 @@ public class PerfilResource extends BaseResource<Perfil> {
     @GetMapping(value = "/ativos/picklist")
     @Override
     public GenericoPickListProjection findByPickListProjection(
-            @RequestParam(required = false) Long usuarioid) {
+            @RequestParam(required = false) Long usuarioid) throws ResourceNotFoundException {
         return perfilService.findByPerfilPickListProjection(usuarioid);
-    } 
+    }
 }

@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,12 +11,7 @@ import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,6 +36,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Map;
 
 @Api(value = "sistemas", description = "Serviço de Sistemas")
 @ApiResponses(
@@ -56,53 +51,42 @@ import io.swagger.annotations.ApiResponses;
 )
 @RestController
 @RequestMapping("/sistemas")
-public class SistemaResource {
+public class SistemaResource extends BaseResource<Sistema> {
 
     @Autowired
     private SistemaService sistemaService;
 
     @Autowired
     private ApplicationEventPublisher publisher;
-
-    @ApiOperation(value = "Listar de sistemas paginada por nome", response = List.class)
-    @GetMapping(value = "/paginacao")
+    
+    @Override
+    protected Specification getSpecificationPaginacao(Map<String, String> map) {
+        return Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, map));
+    }
+    
+    @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
+    @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
-    public ResponseEntity<Page<Sistema>> findByNomeContainingPagination(
-            @RequestParam(required = false, defaultValue = "") String nome,
-            @RequestParam(required = false, defaultValue = "true") Boolean status,
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @PageableDefault(size = 10) Pageable pageable) {
+    @Override
+    public List<Sistema> findAllPaginacao(
+            @RequestParam(required = false) Map<String, String> map,
+            @PathVariable int page,
+            @PathVariable int limit) {
 
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
+        PageRequest pageRequest = getPageRequestDefault(page, limit, map);
+        Specification spec = getSpecificationPaginacao(map);
 
-        Page<Sistema> pessoasPage = sistemaService.findByNomeContainingAndStatusEquals(nome, status, pageRequest);
-
-        if (pessoasPage.getContent().isEmpty()) {
-            return new ResponseEntity<Page<Sistema>>(HttpStatus.NO_CONTENT);
-        } else {
-            long totalPermissoes = pessoasPage.getTotalElements();
-            int nbPagePermissoes = pessoasPage.getNumberOfElements();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Total-Count", String.valueOf(pessoasPage.getTotalElements()));
-
-            if (nbPagePermissoes < totalPermissoes) {
-                headers.add("first", buildPageUri(PageRequest.of(0, pessoasPage.getSize())));
-                headers.add("last",
-                        buildPageUri(PageRequest.of(pessoasPage.getTotalPages() - 1, pessoasPage.getSize())));
-                if (pessoasPage.hasNext()) {
-                    headers.add("next", buildPageUri(pessoasPage.nextPageable()));
-                }
-                if (pessoasPage.hasPrevious()) {
-                    headers.add("prev", buildPageUri(pessoasPage.previousPageable()));
-                }
-                return new ResponseEntity<>(pessoasPage, headers, HttpStatus.PARTIAL_CONTENT);
-            } else {
-                return new ResponseEntity<Page<Sistema>>(pessoasPage, headers, HttpStatus.OK);
-            }
-        }
+        return sistemaService.findAll(spec, pageRequest).getContent();
+    }
+    
+    @ApiOperation(value = "Retorna a quantidade de sistemas de acordo com os filtros", response = List.class)
+    @GetMapping(value = "/count/all/")
+    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
+    @Override
+    public Long countAllPaginacao(@RequestParam(required = false) Map<String, String> map) {
+        return sistemaService.countAll(getSpecificationPaginacao(map));
     }
 
     @ApiOperation(value = "Lista de sistemas", response = List.class)
@@ -119,48 +103,10 @@ public class SistemaResource {
         return sistemaService.findAllByUsuario(idUsuario);
     }
 
-    @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
-    @GetMapping(value = "/paginacao/{page}/{limit}")
-    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
-    public List<Sistema> findAll(
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) Boolean status,
-            @PathVariable int page,
-            @PathVariable int limit) {
-
-        PageRequest pageRequest = PageRequest.of(page, limit,
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-
-        return sistemaService.findAll(spec, pageRequest).getContent();
-    }
-
-    @ApiOperation(value = "Retorna a quantidade de sistemas de acordo com os filtros", response = List.class)
-    @GetMapping(value = "/count/all/")
-    @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
-    public Long countAll(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) Boolean status) {
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-
-        Long retorno = sistemaService.countAll(spec);
-
-        return retorno;
-    }
-
     @ApiOperation(value = "Salvar um sistema", response = List.class)
     @PostMapping()
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('write')")
+    @Override
     public ResponseEntity<Sistema> save(@Valid @RequestBody Sistema sistema, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Sistema sistemaSalva = sistemaService.save(sistema);
@@ -180,6 +126,7 @@ public class SistemaResource {
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('read')")
+    @Override
     public ResponseEntity<Sistema> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Sistema> sistema = sistemaService.findById(id);
         return sistema.isPresent() ? ResponseEntity.ok(sistema.get()) : ResponseEntity.notFound().build();
@@ -187,6 +134,7 @@ public class SistemaResource {
 
     @ApiOperation(value = "Lista dos sistemas ativos - dropdown ", response = List.class)
     @GetMapping(value = "/ativos/dropdown")
+    @Override
     public Collection<IDAndNomeGenericoProjection> findByStatusTrue() {
         return sistemaService.findByStatusTrue();
     }
@@ -194,6 +142,7 @@ public class SistemaResource {
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_SISTEMA') and #oauth2.hasScope('write')")
+    @Override
     public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException, ResourceAlreadyExistsException {
         sistemaService.updatePropertyStatus(id, status);
@@ -202,20 +151,17 @@ public class SistemaResource {
     @ApiOperation(value = "Excluir sistema - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA') and #oauth2.hasScope('write')")
+    @Override
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         sistemaService.deleteById(id);
     }
 
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao usuário ", response = List.class)
     @GetMapping(value = "/ativos/picklist")
-    public GenericoPickListProjection findBySistemaPinkListProjection(@RequestParam(required = false) Long usuarioID)
+    @Override
+    public GenericoPickListProjection findByPickListProjection(@RequestParam(required = false) Long usuarioID)
             throws ResourceNotFoundException {
         return sistemaService.findBySistemaPickListProjection(usuarioID);
     }
 
-    // Metodos Privados
-    private String buildPageUri(Pageable page) {
-        return fromUriString("/sistemas").query("page={page}&size={size}")
-                .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
-    }
 }

@@ -22,6 +22,16 @@
             <goal>findbugs:check</goal>
         </goals>
     </action>
+    
+    <action>
+        <actionName>CUSTOM-findBugs</actionName>
+        <displayName>findBugs</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+            <goal>findbugs:check</goal>
+        </goals>
+    </action>
         
     <action>
         <actionName>CUSTOM-site-spotbugs</actionName>

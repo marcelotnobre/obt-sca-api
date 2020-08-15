@@ -76,7 +76,7 @@ public class BaseFilter<T> implements Specification<T> {
                 } else if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.END_WITH)) {
                     return builder.like(root.<String>get(criteria.getChave()), criteria.getValor() + "%");
                 } else if (criteria.getOperacao().equalsIgnoreCase(SearchCriteria.EQUALS)) {
-                    return builder.equal(root.get(criteria.getChave()), "" + criteria.getValor());
+                    return builder.equal(root.<String>get(criteria.getChave()), "" + criteria.getValor());
                 }
             } else if (root.get(criteria.getChave()).getJavaType() == Boolean.class) {
                 if (criteria.getValor() instanceof String) {

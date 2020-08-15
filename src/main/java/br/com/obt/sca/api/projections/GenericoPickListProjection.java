@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class GenericoPickListProjection {
 
-	protected Collection<IDAndNomeGenericoProjection> registrosSelecionados;
-	protected Collection<IDAndNomeGenericoProjection> registrosDisponiveis;
+    protected Collection<IDAndNomeGenericoProjection> registrosSelecionados;
+    protected Collection<IDAndNomeGenericoProjection> registrosDisponiveis;
 
 }

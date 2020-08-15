@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 public class ReflectionUtil {
 
     private static final String FIELD_ID = "id";
-    private static final String FIELD_STATUS = "status";
 
     public static Object getIdFromObject(Object value, String fieldSearch) {
         Object result = null;
@@ -36,14 +35,6 @@ public class ReflectionUtil {
         return (Long) obj;
     }
 
-    public static Boolean getStatusByReflection(Object bean) {
-        Object obj = getIdFromObject(bean, FIELD_STATUS);
-        if (obj == null) {
-            return null;
-        }
-        return (Boolean) obj;
-    }
-
     public static Object setStatusByReflection(Object value, Boolean status) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Method setter = null;
         try {
@@ -54,7 +45,7 @@ public class ReflectionUtil {
                 setter = value.getClass().getMethod("setStatus", Boolean.class);
                 setter.invoke(value, status);
             } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | InvocationTargetException ex2) {
-                 throw new NoSuchMethodException("Não foi possível alterar o status, tente novamente!");
+                throw new NoSuchMethodException("Não foi possível alterar o status, tente novamente!");
             }
         }
         return value;

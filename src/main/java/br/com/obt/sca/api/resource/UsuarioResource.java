@@ -28,9 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndSistemasProjection;
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection; 
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import br.com.obt.sca.api.service.UsuarioService;
@@ -164,12 +162,12 @@ public class UsuarioResource {
     @ApiOperation(value = "Salvar um Usuario e seus Perfis", response = List.class)
     @PostMapping(value = "/usuario/perfis")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
-    public ResponseEntity<UsuarioAndPerfisProjection> saveUsuarioAndPerfis(
-            @Valid @RequestBody UsuarioAndPerfisProjection usuarioAndPerfisProjection, HttpServletResponse response)
+    public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveUsuarioAndPerfis(
+            @Valid @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisProjection, HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException,
             ResourceAdministratorNotUpdateException {
 
-        UsuarioAndPerfisProjection usuarioAndPerfisProjectionSalvo = usuarioService
+        UsuarioAndPerfisAndSistemasProjection usuarioAndPerfisProjectionSalvo = usuarioService
                 .saveUsuarioAndPerfis(usuarioAndPerfisProjection);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndPerfisProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndPerfisProjectionSalvo);
@@ -204,12 +202,12 @@ public class UsuarioResource {
     @ApiOperation(value = "Salvar um usuario e suas permissões", response = List.class)
     @PostMapping(value = "/usuario/sistemas")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
-    public ResponseEntity<UsuarioAndSistemasProjection> saveAndSistemas(
-            @RequestBody UsuarioAndSistemasProjection usuarioAndSistemasProjection,
+    public ResponseEntity<UsuarioAndPerfisAndSistemasProjection> saveAndSistemas(
+            @RequestBody UsuarioAndPerfisAndSistemasProjection usuarioAndSistemasProjection,
             HttpServletResponse response)
             throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceParameterNullException {
 
-        UsuarioAndSistemasProjection usuarioAndSistemasProjectionSalvo = usuarioService
+        UsuarioAndPerfisAndSistemasProjection usuarioAndSistemasProjectionSalvo = usuarioService
                 .salvarSistemas(usuarioAndSistemasProjection);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioAndSistemasProjectionSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAndSistemasProjectionSalvo);
