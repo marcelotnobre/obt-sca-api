@@ -12,6 +12,7 @@ import br.com.obt.sca.api.projections.GenericoPickListProjection;
 import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +52,9 @@ public abstract class BaseResource<T> {
 
     protected abstract ResponseEntity<T> findById(@PathVariable Long id) throws ResourceNotFoundException;
 
-    protected abstract Collection<IDAndNomeGenericoProjection> findByStatusTrue();
+    protected Collection<IDAndNomeGenericoProjection> findByStatusTrue() {
+        return new ArrayList<>();
+    }
 
     protected abstract void updatePropertyStatus(@PathVariable Long id, @RequestBody Boolean status)
             throws ResourceNotFoundException, ResourceAlreadyExistsException;
@@ -60,7 +63,10 @@ public abstract class BaseResource<T> {
 
     protected GenericoPickListProjection findByPickListProjection(
             @RequestParam(required = false) Long id) throws ResourceNotFoundException {
-        return new GenericoPickListProjection();
+        GenericoPickListProjection picklist = new GenericoPickListProjection();
+        picklist.setRegistrosDisponiveis(new ArrayList<>());
+        picklist.setRegistrosSelecionados(new ArrayList<>());
+        return picklist;
     }
 
 }

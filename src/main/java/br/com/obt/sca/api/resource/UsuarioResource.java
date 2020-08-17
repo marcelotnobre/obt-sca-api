@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Usuario;
+import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.projections.usuario.UsuarioAndPerfisAndSistemasProjection;
-import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection; 
+import br.com.obt.sca.api.projections.usuario.UsuarioAndPermissaoProjection;
 import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import br.com.obt.sca.api.service.UsuarioService;
@@ -40,6 +40,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Collection;
 
 @Api(value = "usuarios", description = "Serviço de usuarios")
 @ApiResponses(
@@ -54,7 +55,7 @@ import io.swagger.annotations.ApiResponses;
 )
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioResource {
+public class UsuarioResource extends BaseResource<Usuario> {
 
     @Autowired
     private UsuarioService usuarioService;
@@ -62,24 +63,24 @@ public class UsuarioResource {
     @Autowired
     private ApplicationEventPublisher publisher;
 
+    @Override
+    protected Specification getSpecificationPaginacao(Map<String, String> map) {
+        return Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("email", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, map));
+    }
+
     @ApiOperation(value = "Lista paginada de usuarios", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
-    public List<Usuario> findAll(
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @RequestParam(required = false) String login,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) Boolean status,
+    @Override
+    public List<Usuario> findAllPaginacao(
+            @RequestParam(required = false) Map<String, String> map,
             @PathVariable int page,
             @PathVariable int limit) {
 
-        PageRequest pageRequest = PageRequest.of(page, limit,
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
-                .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+        PageRequest pageRequest = getPageRequestDefault(page, limit, map);
+        Specification spec = getSpecificationPaginacao(map);
 
         return usuarioService.findAll(spec, pageRequest).getContent();
     }
@@ -87,18 +88,9 @@ public class UsuarioResource {
     @ApiOperation(value = "Retorna a quantidade de usuários de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO')")
-    public Long countAll(
-            @RequestParam(required = false) String login,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) Boolean status) {
-
-        Specification spec = Specification.where(new BaseFilter("login", SearchCriteria.CONTAINS, login))
-                .and(new BaseFilter("email", SearchCriteria.CONTAINS, email))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-
-        Long retorno = usuarioService.countAll(spec);
-
-        return retorno;
+    @Override
+    public Long countAllPaginacao(@RequestParam(required = false) Map<String, String> map) {
+        return usuarioService.countAll(getSpecificationPaginacao(map));
     }
 
     @ApiOperation(value = "Salvar um Usuario, seus Perfis e seus Sistemas", response = List.class)
@@ -192,8 +184,9 @@ public class UsuarioResource {
     // @PreAuthorize("#oauth2.hasScope('write')")
     // @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and
     // #oauth2.hasScope('write')")
+    @Override
     public ResponseEntity<Usuario> save(@Valid @RequestBody Usuario usuario, HttpServletResponse response)
-            throws ResourceAlreadyExistsException, ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Usuario usuarioSalva = usuarioService.save(usuario);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalva);
@@ -216,28 +209,34 @@ public class UsuarioResource {
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('read')")
+    @Override
     public ResponseEntity<Usuario> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Usuario> usuario = usuarioService.findById(id);
         return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
     }
 
+    @ApiOperation(value = "Lista dos ativos - dropdown ", response = List.class)
+    @GetMapping(value = "/ativos/dropdown")
+    @Override
+    public Collection<IDAndNomeGenericoProjection> findByStatusTrue() {
+        return usuarioService.findByStatusTrue();
+    }
+
     @ApiOperation(value = "Atualizar o status")
     @PutMapping(value = "/ativo/{id}")
     @PreAuthorize("hasAuthority('ROLE_DESATIVAR_USUARIO') and #oauth2.hasScope('write')")
+    @Override
     public void updatePropertyStatus(@PathVariable(value = "id") Long id, @RequestBody Boolean status)
-            throws ResourceNotFoundException, ResourceAdministratorNotUpdateException {
+            throws ResourceNotFoundException {
         usuarioService.updatePropertyStatus(id, status);
     }
 
     @ApiOperation(value = "Excluir permissão - Default : Só o administrador poderá fazer essa exclusão fisica.")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_USUARIO') and #oauth2.hasScope('write')")
+    @Override
     public void deleteById(@PathVariable Long id) throws ResourceNotFoundException {
         usuarioService.deleteById(id);
     }
 
-    // private Usuario getUsuarioLogado(HttpServletRequest request) {
-    // Principal principal = request.getUserPrincipal();
-    // return ((UsuarioSistema)principal).getUsuario();
-    // }
 }

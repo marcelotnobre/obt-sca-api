@@ -1,7 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
-
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
@@ -10,15 +8,9 @@ import br.com.obt.sca.api.resource.filter.BaseFilter;
 import br.com.obt.sca.api.resource.filter.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import br.com.obt.sca.api.event.RecursoCriadoEvent;
 import br.com.obt.sca.api.model.Permissao;
 import br.com.obt.sca.api.projections.GenericoPickListProjection;
+import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
 import br.com.obt.sca.api.service.PermissaoService;
 import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
 import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
@@ -41,6 +33,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.Collection;
+import java.util.Map;
 
 @Api(value = "permissoes", description = "Serviço de permissões")
 @ApiResponses(
@@ -55,7 +49,7 @@ import io.swagger.annotations.ApiResponses;
 )
 @RestController
 @RequestMapping("/permissoes")
-public class PermissaoResource {
+public class PermissaoResource extends BaseResource<Permissao> {
 
     @Autowired
     private PermissaoService permissaoService;
@@ -63,74 +57,25 @@ public class PermissaoResource {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    @ApiOperation(value = "Listar das permissão paginada por nome , sistema e status", response = List.class)
-    @GetMapping(value = "/paginacao")
-    @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
-    public ResponseEntity<Page<Permissao>> findByNomeContainingPagination(
-            @RequestParam(required = false, defaultValue = "") String nome,
-            @RequestParam(required = false) Long idSistema,
-            @RequestParam(required = false, defaultValue = "true") Boolean status,
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @PageableDefault(size = 10) Pageable pageable) {
-
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Page<Permissao> permissoesPage;
-        if (idSistema != null && idSistema.longValue() > 0) {
-            permissoesPage = permissaoService.findByNomeContainingAndSistemaAndStatus(idSistema, nome, status,
-                    pageRequest);
-        } else {
-            permissoesPage = permissaoService.findByNomeContainingAndStatusEquals(nome, status, pageable);
-        }
-
-        if (permissoesPage.getContent().isEmpty()) {
-            return new ResponseEntity<Page<Permissao>>(HttpStatus.NO_CONTENT);
-        } else {
-            long totalPermissoes = permissoesPage.getTotalElements();
-            int nbPagePermissoes = permissoesPage.getNumberOfElements();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Total-Count", String.valueOf(permissoesPage.getTotalElements()));
-
-            if (nbPagePermissoes < totalPermissoes) {
-                headers.add("first", buildPageUri(PageRequest.of(0, permissoesPage.getSize())));
-                headers.add("last",
-                        buildPageUri(PageRequest.of(permissoesPage.getTotalPages() - 1, permissoesPage.getSize())));
-                if (permissoesPage.hasNext()) {
-                    headers.add("next", buildPageUri(permissoesPage.nextPageable()));
-                }
-                if (permissoesPage.hasPrevious()) {
-                    headers.add("prev", buildPageUri(permissoesPage.previousPageable()));
-                }
-                return new ResponseEntity<>(permissoesPage, headers, HttpStatus.PARTIAL_CONTENT);
-            } else {
-                return new ResponseEntity<Page<Permissao>>(permissoesPage, headers, HttpStatus.OK);
-            }
-        }
+    @Override
+    protected Specification getSpecificationPaginacao(Map<String, String> map) {
+        return Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("id", SearchCriteria.EQUALS, getValueMap(map, "sistema.id"), "sistema"))
+                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, map))
+                .and(new BaseFilter("status", SearchCriteria.EQUALS, map));
     }
 
     @ApiOperation(value = "Lista paginada de permissões", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
-    public List<Permissao> findAll(
-            @RequestParam(required = false, defaultValue = "id") String sort,
-            @RequestParam(required = false, defaultValue = "asc") String order,
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String idSistema,
-            @RequestParam(required = false) Boolean status,
+    @Override
+    public List<Permissao> findAllPaginacao(
+            @RequestParam(required = false) Map<String, String> map,
             @PathVariable int page,
             @PathVariable int limit) {
 
-        PageRequest pageRequest = PageRequest.of(page, limit,
-                Sort.by("asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC, sort));
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
+        PageRequest pageRequest = getPageRequestDefault(page, limit, map);
+        Specification spec = getSpecificationPaginacao(map);
 
         return permissaoService.findAll(spec, pageRequest).getContent();
     }
@@ -138,29 +83,17 @@ public class PermissaoResource {
     @ApiOperation(value = "Retorna a quantidade de permissões de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO')")
-    public Long countAll(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String descricao,
-            @RequestParam(required = false) String idSistema,
-            @RequestParam(required = false) Boolean status) {
-
-        Specification spec = Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, nome))
-                .and(new BaseFilter("id", SearchCriteria.EQUALS, idSistema, "sistema"))
-                .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, descricao))
-                .and(new BaseFilter("status", SearchCriteria.EQUALS, status));
-
-        Long retorno = permissaoService.countAll(spec);
-
-        return retorno;
+    @Override
+    public Long countAllPaginacao(@RequestParam(required = false) Map<String, String> map) {
+        return permissaoService.countAll(getSpecificationPaginacao(map));
     }
 
-    @ApiOperation(value = "Salvar uma permissão", response = List.class)
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {
-        MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @ApiOperation(value = "Salvar uma permissao", response = List.class)
+    @PostMapping()
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO') and #oauth2.hasScope('write')")
-    public ResponseEntity<Permissao> save(@Valid @RequestBody Permissao permissao, HttpServletResponse response,
-            UriComponentsBuilder ucBuilder) throws ResourceAlreadyExistsException, ResourceNotFoundException {
-
+    @Override
+    public ResponseEntity<Permissao> save(@Valid @RequestBody Permissao permissao, HttpServletResponse response)
+            throws ResourceAlreadyExistsException, ResourceNotFoundException {
         Permissao permissaoSalva = permissaoService.save(permissao);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, permissaoSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(permissaoSalva);
@@ -169,9 +102,17 @@ public class PermissaoResource {
     @ApiOperation(value = "Pesquisa por ID", response = List.class)
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_PERMISSAO') and #oauth2.hasScope('read')")
+    @Override
     public ResponseEntity<Permissao> findById(@PathVariable Long id) throws ResourceNotFoundException {
         Optional<Permissao> permissao = permissaoService.findById(id);
         return permissao.isPresent() ? ResponseEntity.ok(permissao.get()) : ResponseEntity.notFound().build();
+    }
+
+    @ApiOperation(value = "Lista dos ativos - dropdown ", response = List.class)
+    @GetMapping(value = "/ativos/dropdown")
+    @Override
+    public Collection<IDAndNomeGenericoProjection> findByStatusTrue() {
+        return permissaoService.findByStatusTrue();
     }
 
     @ApiOperation(value = "Atualizar o status")
@@ -194,7 +135,7 @@ public class PermissaoResource {
     public GenericoPickListProjection findByPerfilPickListProjection(@RequestParam(required = false) Long perfilid) {
         return permissaoService.findByPermissaoPickListProjection(perfilid);
     }
-    
+
     @ApiOperation(value = "Duas listas : Vinculadas e Não vinculadas ao perfil ", response = List.class)
     @GetMapping(value = "/picklist/usuario_permissao")
     public GenericoPickListProjection findByPermissaoPickListProjection(@RequestParam(required = false) Long usuarioID) throws ResourceNotFoundException {
@@ -223,12 +164,6 @@ public class PermissaoResource {
     @GetMapping(value = "/ativos/sistema/{permissao}/{idSistema}")
     public Permissao findPermissaoPorSistema(@PathVariable String permissao, @PathVariable Long idSistema) throws ResourceNotFoundException {
         return permissaoService.findPermissaoPorSistema(permissao, idSistema);
-    }
-
-    // Metodos Privados
-    private String buildPageUri(Pageable page) {
-        return fromUriString("/permissoes").query("page={page}&size={size}")
-                .buildAndExpand(page.getPageNumber(), page.getPageSize()).toUriString();
     }
 
     /**

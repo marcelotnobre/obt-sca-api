@@ -1,6 +1,5 @@
 package br.com.obt.sca.api.resource;
 
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -58,14 +57,14 @@ public class SistemaResource extends BaseResource<Sistema> {
 
     @Autowired
     private ApplicationEventPublisher publisher;
-    
+
     @Override
     protected Specification getSpecificationPaginacao(Map<String, String> map) {
         return Specification.where(new BaseFilter("nome", SearchCriteria.CONTAINS, map))
                 .and(new BaseFilter("descricao", SearchCriteria.CONTAINS, map))
                 .and(new BaseFilter("status", SearchCriteria.EQUALS, map));
     }
-    
+
     @ApiOperation(value = "Lista paginada de sistemas", response = List.class)
     @GetMapping(value = "/paginacao/{page}/{limit}")
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
@@ -80,7 +79,7 @@ public class SistemaResource extends BaseResource<Sistema> {
 
         return sistemaService.findAll(spec, pageRequest).getContent();
     }
-    
+
     @ApiOperation(value = "Retorna a quantidade de sistemas de acordo com os filtros", response = List.class)
     @GetMapping(value = "/count/all/")
     @PreAuthorize("hasAuthority('ROLE_CRUD_SISTEMA')")
