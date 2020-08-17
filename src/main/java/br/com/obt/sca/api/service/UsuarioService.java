@@ -153,16 +153,17 @@ public class UsuarioService extends GenericService<Usuario> {
     public void enviarEmailUsuario(Usuario usuario) throws ResourceNotFoundException {
 
         System.out.println("Thread :" + Thread.currentThread().getName());
-
-        Optional<Usuario> usuarioBanco = findById(usuario.getId());
+        
+        if(usuario.getEmail() == null)
+        	usuario = usuarioRepository.getOne(usuario.getId());
 
         List<String> emails = new ArrayList<String>();
-        emails.add(usuarioBanco.get().getEmail());
+        emails.add(usuario.getEmail());
         //emails.add("marcelo.nobre@outerboxtech.com.br");
         //emails.add("jose.silva@outerboxtech.com.br");
         //emails.add("vinicius.assis@outerboxtech.com.br");
 
-        String token = tokenService.criarToken(usuarioBanco.get().getId());
+        String token = tokenService.criarToken(usuario.getId());
 
         Map<String, Object> variaveis = new HashMap<>();
         variaveis.put("emails", emails);
@@ -170,11 +171,12 @@ public class UsuarioService extends GenericService<Usuario> {
 
         logger.info("antes de enviar o email.");
         mailer.enviarEmailConfirmacaoDePermissaoCadastrada(emails,
-                "Usuario : " + usuarioBanco.get().getLogin() + " cadastrado com sucesso!",
+                "Usuario : " + usuario.getLogin() + " cadastrado com sucesso!",
                 "mail/email-recuperacao-senha", variaveis);
         logger.info("Envio de e-mail de aviso concluído.");
 
     }
+
 
     @Transactional(readOnly = false)
     public void alterarSenha(String senha, String token)
