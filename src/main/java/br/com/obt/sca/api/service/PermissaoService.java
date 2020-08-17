@@ -94,7 +94,12 @@ public class PermissaoService extends GenericService<Permissao> {
         	List<Long> idPermissoes = permissaoRepository.findByUsuarioJoinUsuarioPerfil(usuarioID).stream()
         			.map(Permissao::getId).collect(Collectors.toList());
         	
-        	registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, idPermissoes, IDAndNomeGenericoProjection.class);
+        	if(idPermissoes.isEmpty()) {
+        		registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, IDAndNomeGenericoProjection.class);
+        	} else {        		
+        		registrosDisponiveis = permissaoRepository.findDisponiveisByUsuarioJoinUsuarioPermissao(usuarioID, idPermissoes, IDAndNomeGenericoProjection.class);
+        	}
+        	
         	registrosSelecionados = permissaoRepository.findSelecionadasByUsuarioJoinUsuarioPermissao(usuarioID, IDAndNomeGenericoProjection.class);
         	registrosDisponiveis.removeAll(registrosSelecionados);
         }
