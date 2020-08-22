@@ -34,6 +34,11 @@
 
         <maven.test.skip>true</maven.test.skip>
 
+        <spotbugs-maven-plugin.version>4.0.0</spotbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.13.0</maven-pmd-plugin.version>
+        <check.dir>${project.build.directory}/coding</check.dir>
+        <pmd.dir>${check.dir}</pmd.dir>
+
     </properties>
 
     <dependencies>
@@ -284,6 +289,12 @@
             </plugin>
             
             <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+            </plugin>			
+            
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -346,6 +357,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </reporting>

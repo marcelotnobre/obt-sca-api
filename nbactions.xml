@@ -1,45 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
     <action>
-        <actionName>CUSTOM-pmd-cpd-findBugs</actionName>
-        <displayName>pmd-cpd-findBugs</displayName>
+        <actionName>CUSTOM-cpd-pmd-spotbugs</actionName>
+        <displayName>cpd-pmd-spotbugs</displayName>
         <goals>
             <goal>clean</goal>
-            <goal>package</goal>
             <goal>pmd:check</goal>
             <goal>pmd:cpd-check</goal>
-            <goal>findbugs:check</goal>
-			
-        </goals>
-    </action>
-    
-    <action>
-        <actionName>CUSTOM-site-findBugs</actionName>
-        <displayName>site-findBugs</displayName>
-        <goals>
-            <goal>clean</goal>
-            <goal>site:site</goal>
-            <goal>findbugs:check</goal>
-        </goals>
-    </action>
-    
-    <action>
-        <actionName>CUSTOM-findBugs</actionName>
-        <displayName>findBugs</displayName>
-        <goals>
-            <goal>clean</goal>
-            <goal>package</goal>
-            <goal>findbugs:check</goal>
-        </goals>
-    </action>
-        
-    <action>
-        <actionName>CUSTOM-site-spotbugs</actionName>
-        <displayName>site-spotbugs</displayName>
-        <goals>
-            <goal>clean</goal>
             <goal>site:site</goal>
             <goal>spotbugs:spotbugs</goal>
         </goals>
     </action>
+    
+    <action>
+        <actionName>CUSTOM-spotbugs</actionName>
+        <displayName>spotbugs</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>verify</goal>
+            <goal>pmd:check</goal>
+            <goal>pmd:cpd-check</goal>
+            <goal>spotbugs:check</goal>
+        </goals>
+    </action>
+        
 </actions>
