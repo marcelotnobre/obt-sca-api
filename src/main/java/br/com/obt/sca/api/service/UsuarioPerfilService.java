@@ -48,8 +48,8 @@ public class UsuarioPerfilService {
         // PerfilPermissao perfilPermissao = new PerfilPermissao();
         // perfilPermissao.setDataHoraCadastro(LocalDateTime.now());
         // perfilPermissao.setDataHoraAlteracao(LocalDateTime.now());
-        for (Long idPermissao : ids) {
-            usuarioPerfilRepository.saveUsuarioPerfil(usuario.getId(), idPermissao);
+        for (Long idPerfil : ids) {
+            usuarioPerfilRepository.saveUsuarioPerfil(usuario.getId(), idPerfil);
         }
         return new ArrayList<>();
 

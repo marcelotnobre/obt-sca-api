@@ -151,7 +151,7 @@ values
     (72, 'ROLE_DESATIVAR_CLINICA', 'Permissão para desativar uma clinica', 2, true),
     (73, 'ROLE_ATIVAR_CLINICA', 'Permissão para ativar uma clinica', 2, true),
 
--- Responsavel
+-- Laboratorio
     (74, 'ROLE_CRUD_LABORATORIO', 'Permissão para cadastrar/atualizar/desativar/ativar um laboratório', 2, true),
     (75, 'ROLE_DESATIVAR_LABORATORIO', 'Permissão para desativar um laboratório', 2, true),
     (76, 'ROLE_ATIVAR_LABORATORIO', 'Permissão para ativar um laboratório', 2, true),
@@ -186,7 +186,8 @@ values
     (1, 'Administrador', 'Administrador do Sistema', 1, true),
     (2, 'Gestor', 'Gestor do Sistema',1, true),
     (3, 'Recepcionista', 'Recepcionista',1, true),
-    (4, 'Profissional', 'Dentista, Cirurgião Dentista, Auxiliar de dentista, etc.',1, true);
+    (4, 'Profissional', 'Dentista, Cirurgião Dentista, Auxiliar de dentista, etc.',1, true),
+    (5, 'Profissional Administrador', 'Dentista, Cirurgião Dentista, Auxiliar de dentista, etc.',1, true);
 
 -- Perfil do Administrador
 INSERT INTO perfil_permissao 
@@ -310,6 +311,53 @@ values
     (1, 1),
     (2, 2),
     (3, 3);
+
+-- Perfil do Profissional Administrador (Faz tudo menos aquilo que é responsabilidade da OBT)
+INSERT INTO perfil_permissao 
+    (perfil_id, permissao_id) 
+values 
+    (5, 14),
+    (5, 15),
+    (5, 16),
+    (5, 20),
+    (5, 23),
+    (5, 24),
+    (5, 25),
+    (5, 26),
+    (5, 27),
+    (5, 28),
+    (5, 29),
+    (5, 30),
+    (5, 31),
+    (5, 32),
+    (5, 33),
+    (5, 34),
+    (5, 35),
+    (5, 36),
+    (5, 37),
+    (5, 38),
+    (5, 39),
+    (5, 40),
+    (5, 41),
+    (5, 42),
+    (5, 43),
+    (5, 56),
+    (5, 57),
+    (5, 58),
+    (5, 59),
+    (5, 60),
+    (5, 61),
+    (5, 71),
+    (5, 74),
+    (5, 75),
+    (5, 76),
+    (5, 83),
+    (5, 84),
+    (5, 85),
+    (5, 86),
+    (5, 87),
+    (5, 88),
+    (5, 89);
 
 -- Usuario Sistema 
 INSERT INTO usuario_sistema 
