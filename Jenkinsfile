@@ -11,8 +11,6 @@ pipeline {
         stage ('Test') {
             steps {
                 withMaven(maven : 'Maven') {
-                    sh 'mvn flyway:clean'
-
                     sh 'mvn test'
                 }
             }
