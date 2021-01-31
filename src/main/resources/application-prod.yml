@@ -30,8 +30,8 @@ spring:
 # Variaveis do properties da aplicacao     
 outerboxtech:
   #docker
-  origin-permitida: http://64.225.7.183:8080
-  url-api-sca-client: http://64.225.7.183:8080
+  origin-permitida: http://104.236.0.150:8080
+  url-api-sca-client: http://104.236.0.150:8080
   #heroku
   #origin-permitida: https://obt-sca-web.herokuapp.com
   #url-api-sca-client: https://obt-sca-web.herokuapp.com
