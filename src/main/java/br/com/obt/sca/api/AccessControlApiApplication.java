@@ -15,6 +15,7 @@ import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 @EnableJpaAuditing
 @EnableConfigurationProperties(OuterBoxTechSCAApiProperty.class)
 public class AccessControlApiApplication {
+	// teste commit development
 
 	private static ApplicationContext APPLICATION_CONTEXT;
 	private static final Logger logger = LoggerFactory.getLogger(AccessControlApiApplication.class);
