@@ -16,6 +16,7 @@ import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 @EnableConfigurationProperties(OuterBoxTechSCAApiProperty.class)
 public class AccessControlApiApplication {
 	// teste commit development
+	// teste commit development - usuario configurado
 
 	private static ApplicationContext APPLICATION_CONTEXT;
 	private static final Logger logger = LoggerFactory.getLogger(AccessControlApiApplication.class);
