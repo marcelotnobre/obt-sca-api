@@ -17,6 +17,7 @@ import br.com.obt.sca.api.config.property.OuterBoxTechSCAApiProperty;
 public class AccessControlApiApplication {
 	// teste commit development
 	// teste commit development - usuario configurado
+	// teste commit development - teste
 
 	private static ApplicationContext APPLICATION_CONTEXT;
 	private static final Logger logger = LoggerFactory.getLogger(AccessControlApiApplication.class);
