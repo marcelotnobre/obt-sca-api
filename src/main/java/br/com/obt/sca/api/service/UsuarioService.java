@@ -75,6 +75,8 @@ public class UsuarioService extends GenericService<Usuario> {
     @Autowired
     private TokenService tokenService;
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     @Autowired
     public UsuarioService(GenericRepository<Usuario, Long> repository) {
         super(repository);
@@ -132,7 +134,6 @@ public class UsuarioService extends GenericService<Usuario> {
 
         logger.info("depois de salvar usuário.");
 
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
         ThreadEnviarEmail task = new ThreadEnviarEmail(this, usuarioSalvo);
         executorService.execute(task);
 
