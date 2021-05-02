@@ -61,8 +61,9 @@ import lombok.ToString;
 @Audited()
 @AuditTable(value = "AUDITORIA_USUARIO" , schema = "sca_api_auditoria")
 @AuditOverrides(value = {
-    @AuditOverride(forClass = Usuario.class, name = "usuarioPerfis", isAudited = false)
-})
+						  @AuditOverride(forClass = Usuario.class, name = "usuarioPerfis", isAudited = false)
+						}
+				)
 //@formatter:on
 
 @SequenceGenerator(sequenceName = "seq_usuario", name = "ID_SEQUENCE", allocationSize = 1)

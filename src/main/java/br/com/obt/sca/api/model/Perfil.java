@@ -40,12 +40,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+//@formatter:off
 // @Cacheable(value = true)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
 @Table(name = "PERFIL", uniqueConstraints = { 
 												@UniqueConstraint(name = "UK_PERFIL_NOME" , columnNames = { "nome" } ) 
-										 }
+										    }
 	   )
+//@formatter:on
 @SequenceGenerator(sequenceName = "seq_perfil", name = "ID_SEQUENCE", allocationSize = 1)
 @Getter
 @Setter

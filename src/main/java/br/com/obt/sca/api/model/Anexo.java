@@ -24,53 +24,57 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "ANEXO", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"nome", "tamanho", "tipoConteudo"}, name = "UK_ANEXO_NOME_TAM_TPCONTEUDO")
-}
-)
+//@formatter:off
+@Table(name = "ANEXO", 
+       uniqueConstraints = {
+    		   			     @UniqueConstraint(columnNames = {"nome", "tamanho", "tipoConteudo"}, name = "UK_ANEXO_NOME_TAM_TPCONTEUDO")
+						   }
+      )
+// @formatter:on
+
 @Inheritance(strategy = InheritanceType.JOINED)
 @PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false, of = {"nome", "tamanho", "tipoConteudo"})
-@ToString(callSuper = false, exclude = {"lobAnexo"})
+@EqualsAndHashCode(callSuper = false, of = { "nome", "tamanho", "tipoConteudo" })
+@ToString(callSuper = false, exclude = { "lobAnexo" })
 public class Anexo implements Comparable<Anexo> {
 
-    @ApiModelProperty(notes = "ID gerado pelo banco de dados")
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@ApiModelProperty(notes = "ID gerado pelo banco de dados")
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank(message = "Campo nome é obrigatório!")
-    @Column(name = "nome", nullable = false)
-    private String nome;
+	@NotBlank(message = "Campo nome é obrigatório!")
+	@Column(name = "nome", nullable = false)
+	private String nome;
 
-    @NotNull(message = "Campo tamanho é obrigatório!")
-    @Column(name = "tamanho", nullable = false)
-    private Long tamanho;
+	@NotNull(message = "Campo tamanho é obrigatório!")
+	@Column(name = "tamanho", nullable = false)
+	private Long tamanho;
 
-    @NotBlank(message = "Campo tipo conteudo é obrigatório!")
-    @Column(name = "tipoconteudo", nullable = false)
-    private String tipoConteudo;
+	@NotBlank(message = "Campo tipo conteudo é obrigatório!")
+	@Column(name = "tipoconteudo", nullable = false)
+	private String tipoConteudo;
 
-    @NotBlank(message = "Campo label é obrigatório!")
-    @Column(name = "label", nullable = false)
-    private String label;
+	@NotBlank(message = "Campo label é obrigatório!")
+	@Column(name = "label", nullable = false)
+	private String label;
 
-    @JsonIgnore
-    @Transient
-    @Setter(AccessLevel.NONE)
-    private LobAnexo lobAnexo;
+	@JsonIgnore
+	@Transient
+	@Setter(AccessLevel.NONE)
+	private LobAnexo lobAnexo;
 
-    public void setLobAnexo(LobAnexo lobAnexo) {
-        this.lobAnexo = lobAnexo;
-        if (lobAnexo != null) {
-            lobAnexo.setAnexo(this);
-        }
-    }
+	public void setLobAnexo(LobAnexo lobAnexo) {
+		this.lobAnexo = lobAnexo;
+		if (lobAnexo != null) {
+			lobAnexo.setAnexo(this);
+		}
+	}
 
-    @Override
-    public int compareTo(Anexo o) {
-        return nome.compareTo(o.getNome());
-    }
+	@Override
+	public int compareTo(Anexo o) {
+		return nome.compareTo(o.getNome());
+	}
 }
