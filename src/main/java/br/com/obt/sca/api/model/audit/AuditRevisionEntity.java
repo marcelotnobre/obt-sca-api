@@ -19,7 +19,7 @@ import lombok.ToString;
 
 @Entity
 @RevisionEntity(AuditRevisionListener.class)
-@Table(name = "AUDITORIA")
+@Table(name = "AUDITORIA" , schema = "sca_api_auditoria")
 @AttributeOverrides({ @AttributeOverride(name = "timestamp", column = @Column(name = "REVTSTMP")),
 		@AttributeOverride(name = "id", column = @Column(name = "REV")) })
 @Getter

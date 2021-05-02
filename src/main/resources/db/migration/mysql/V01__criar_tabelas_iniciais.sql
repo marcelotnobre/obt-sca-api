@@ -1,22 +1,22 @@
 -- DROP TABLE CONTROLE DE ACESSO 
 
-DROP TABLE IF EXISTS anexo;
-DROP TABLE IF EXISTS auditoria;
-DROP TABLE IF EXISTS auditoria_usuario;
+DROP TABLE IF EXISTS sca_api.anexo;
+DROP TABLE IF EXISTS sca_api_auditoria.auditoria;
+DROP TABLE IF EXISTS sca_api_auditoria.auditoria_usuario;
 DROP TABLE IF EXISTS hibernate_sequence;
-DROP TABLE IF EXISTS lob_anexo;
-DROP TABLE IF EXISTS perfil;
-DROP TABLE IF EXISTS perfil_permissao;
-DROP TABLE IF EXISTS permissao;
-DROP TABLE IF EXISTS sistema;
-DROP TABLE IF EXISTS usuario;
-DROP TABLE IF EXISTS usuario_perfil;
-DROP TABLE IF EXISTS usuario_sistema;
-DROP TABLE IF EXISTS usuario_permissao;
+DROP TABLE IF EXISTS sca_api.lob_anexo;
+DROP TABLE IF EXISTS sca_api.perfil;
+DROP TABLE IF EXISTS sca_api.perfil_permissao;
+DROP TABLE IF EXISTS sca_api.permissao;
+DROP TABLE IF EXISTS sca_api.sistema;
+DROP TABLE IF EXISTS sca_api.usuario;
+DROP TABLE IF EXISTS sca_api.usuario_perfil;
+DROP TABLE IF EXISTS sca_api.usuario_sistema;
+DROP TABLE IF EXISTS sca_api.usuario_permissao;
 
 
 -- CREATE TABLE CONTROLE DE ACESSO
-CREATE TABLE anexo (
+CREATE TABLE sca_api.anexo (
     id BIGINT NOT NULL AUTO_INCREMENT,
     label VARCHAR(255) NOT NULL,
     nome VARCHAR(255) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE anexo (
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE auditoria (
+CREATE TABLE sca_api_auditoria.auditoria (
     rev INTEGER NOT NULL,
     revtstmp BIGINT,
     host_name VARCHAR(255),
@@ -35,7 +35,7 @@ CREATE TABLE auditoria (
     PRIMARY KEY (rev)
 )  ENGINE=INNODB;
 
-CREATE TABLE auditoria_usuario (
+CREATE TABLE sca_api_auditoria.auditoria_usuario (
     id BIGINT NOT NULL,
     rev INTEGER NOT NULL,
     revtype TINYINT,
@@ -51,13 +51,13 @@ CREATE TABLE hibernate_sequence (
 )  ENGINE=INNODB;
 INSERT INTO hibernate_sequence VALUES ( 1 );
 
-CREATE TABLE lob_anexo (
+CREATE TABLE sca_api.lob_anexo (
     id BIGINT NOT NULL,
     lob LONGBLOB NOT NULL,
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE perfil (
+CREATE TABLE sca_api.perfil (
     id BIGINT NOT NULL AUTO_INCREMENT,
     status BIT NOT NULL,
     datahorafinalvigencia DATETIME,
@@ -67,13 +67,13 @@ CREATE TABLE perfil (
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE perfil_permissao (
+CREATE TABLE sca_api.perfil_permissao (
     perfil_id BIGINT NOT NULL,
     permissao_id BIGINT NOT NULL,
     PRIMARY KEY (perfil_id , permissao_id)
 )  ENGINE=INNODB;
 
-CREATE TABLE permissao (
+CREATE TABLE sca_api.permissao (
     id BIGINT NOT NULL AUTO_INCREMENT,
     status BIT NOT NULL,
     descricao VARCHAR(500) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE permissao (
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE sistema (
+CREATE TABLE sca_api.sistema (
     id BIGINT NOT NULL AUTO_INCREMENT,
     status BIT NOT NULL,
     descricao VARCHAR(500),
@@ -93,7 +93,7 @@ CREATE TABLE sistema (
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE usuario (
+CREATE TABLE sca_api.usuario (
     id BIGINT NOT NULL AUTO_INCREMENT,
     status BIT NOT NULL,
     email VARCHAR(50) NOT NULL,
@@ -103,19 +103,19 @@ CREATE TABLE usuario (
     PRIMARY KEY (id)
 )  ENGINE=INNODB;
 
-CREATE TABLE usuario_perfil (
+CREATE TABLE sca_api.usuario_perfil (
     perfil_id BIGINT NOT NULL,
     usuario_id BIGINT NOT NULL,
     PRIMARY KEY (perfil_id , usuario_id)
 )  ENGINE=INNODB;
 
-CREATE TABLE usuario_sistema (
+CREATE TABLE sca_api.usuario_sistema (
     usuario_id BIGINT NOT NULL,
     sistema_id BIGINT NOT NULL,
     PRIMARY KEY (sistema_id , usuario_id)
 )  ENGINE=INNODB;
 
-CREATE TABLE usuario_permissao (
+CREATE TABLE sca_api.usuario_permissao (
     usuario_id BIGINT NOT NULL,
     permissao_id BIGINT NOT NULL,
     PRIMARY KEY (usuario_id , permissao_id)
@@ -124,31 +124,31 @@ CREATE TABLE usuario_permissao (
 
 -- CREATE INDICES E UNIQUE
 
-ALTER TABLE anexo ADD CONSTRAINT UK_ANEXO_NOME_TAM_TPCONTEUDO UNIQUE (nome, tamanho, tipoconteudo);
-ALTER TABLE perfil ADD CONSTRAINT UK_PERFIL_NOME UNIQUE (nome);
-CREATE INDEX INDEX_NOME_PERMISSAO ON permissao (nome);
-ALTER TABLE permissao ADD CONSTRAINT UK_PERMISSAO_NOME UNIQUE (nome);
-ALTER TABLE sistema ADD CONSTRAINT UK_SISTEMA_NOME UNIQUE (nome);
-CREATE INDEX INDEX_EMAIL_USUARIO ON usuario (email);
-CREATE INDEX INDEX_LOGIN_USUARIO ON usuario (login);
-CREATE INDEX INDEX_EMAIL_E_SENHA_USUARIO ON usuario (email, senha);
-CREATE INDEX INDEX_LOGIN_E_SENHA_USUARIO ON usuario (login, senha);
-ALTER TABLE usuario ADD CONSTRAINT UK_USUARIO_EMAIL UNIQUE (email);
-ALTER TABLE usuario ADD CONSTRAINT UK_USUARIO_LOGIN UNIQUE (login);
+ALTER TABLE sca_api.anexo ADD CONSTRAINT UK_ANEXO_NOME_TAM_TPCONTEUDO UNIQUE (nome, tamanho, tipoconteudo);
+ALTER TABLE sca_api.perfil ADD CONSTRAINT UK_PERFIL_NOME UNIQUE (nome);
+CREATE INDEX INDEX_NOME_PERMISSAO ON sca_api.permissao (nome);
+ALTER TABLE sca_api.permissao ADD CONSTRAINT UK_PERMISSAO_NOME UNIQUE (nome);
+ALTER TABLE sca_api.sistema ADD CONSTRAINT UK_SISTEMA_NOME UNIQUE (nome);
+CREATE INDEX INDEX_EMAIL_USUARIO ON sca_api.usuario (email);
+CREATE INDEX INDEX_LOGIN_USUARIO ON sca_api.usuario (login);
+CREATE INDEX INDEX_EMAIL_E_SENHA_USUARIO ON sca_api.usuario (email, senha);
+CREATE INDEX INDEX_LOGIN_E_SENHA_USUARIO ON sca_api.usuario (login, senha);
+ALTER TABLE sca_api.usuario ADD CONSTRAINT UK_USUARIO_EMAIL UNIQUE (email);
+ALTER TABLE sca_api.usuario ADD CONSTRAINT UK_USUARIO_LOGIN UNIQUE (login);
 
 -- FOREIGN KEY
-ALTER TABLE auditoria_usuario ADD CONSTRAINT FKd8adfv4n47pekinlhk7xjtugm FOREIGN KEY (rev) REFERENCES auditoria (rev);
-ALTER TABLE lob_anexo ADD CONSTRAINT FKmno6foehx2tvts0x7gq1pxipe FOREIGN KEY (id) REFERENCES anexo (id);
-ALTER TABLE perfil ADD CONSTRAINT FK_PERFIL_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sistema (id);
-ALTER TABLE perfil_permissao ADD CONSTRAINT FK_PERFILPERMISSAO_PERFIL FOREIGN KEY (perfil_id) REFERENCES perfil (id);
-ALTER TABLE perfil_permissao ADD CONSTRAINT FK_PERFILPERMISSAO_PERMISSAO FOREIGN KEY (permissao_id) REFERENCES permissao (id);
-ALTER TABLE permissao ADD CONSTRAINT FK_PERMISSAO_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sistema (id);
-ALTER TABLE usuario_perfil ADD CONSTRAINT FK_USUARIOPERFIL_PERFIL FOREIGN KEY (perfil_id) REFERENCES perfil (id);
-ALTER TABLE usuario_perfil ADD CONSTRAINT FK_USUARIOPERFIL_USUARIO FOREIGN KEY (usuario_id) REFERENCES usuario (id);
-ALTER TABLE usuario_sistema ADD CONSTRAINT FK_USUARIOSISTEMA_USUARIO FOREIGN KEY (usuario_id) REFERENCES usuario (id);
-ALTER TABLE usuario_sistema ADD CONSTRAINT FK_USUARIOPERFIL_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sistema (id);
-ALTER TABLE usuario_permissao ADD CONSTRAINT FK_USUARIOPERMISSAO_USUARIO FOREIGN KEY (usuario_id) REFERENCES usuario (id);
-ALTER TABLE usuario_permissao ADD CONSTRAINT FK_USUARIOPERMISSAO_SISTEMA FOREIGN KEY (permissao_id) REFERENCES permissao (id);
+ALTER TABLE sca_api_auditoria.auditoria_usuario ADD CONSTRAINT FKd8adfv4n47pekinlhk7xjtugm FOREIGN KEY (rev) REFERENCES sca_api_auditoria.auditoria (rev);
+ALTER TABLE sca_api.lob_anexo ADD CONSTRAINT FKmno6foehx2tvts0x7gq1pxipe FOREIGN KEY (id) REFERENCES sca_api.anexo (id);
+ALTER TABLE sca_api.perfil ADD CONSTRAINT FK_PERFIL_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sca_api.sistema (id);
+ALTER TABLE sca_api.perfil_permissao ADD CONSTRAINT FK_PERFILPERMISSAO_PERFIL FOREIGN KEY (perfil_id) REFERENCES sca_api.perfil (id);
+ALTER TABLE sca_api.perfil_permissao ADD CONSTRAINT FK_PERFILPERMISSAO_PERMISSAO FOREIGN KEY (permissao_id) REFERENCES sca_api.permissao (id);
+ALTER TABLE sca_api.permissao ADD CONSTRAINT FK_PERMISSAO_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sca_api.sistema (id);
+ALTER TABLE sca_api.usuario_perfil ADD CONSTRAINT FK_USUARIOPERFIL_PERFIL FOREIGN KEY (perfil_id) REFERENCES sca_api.perfil (id);
+ALTER TABLE sca_api.usuario_perfil ADD CONSTRAINT FK_USUARIOPERFIL_USUARIO FOREIGN KEY (usuario_id) REFERENCES sca_api.usuario (id);
+ALTER TABLE sca_api.usuario_sistema ADD CONSTRAINT FK_USUARIOSISTEMA_USUARIO FOREIGN KEY (usuario_id) REFERENCES sca_api.usuario (id);
+ALTER TABLE sca_api.usuario_sistema ADD CONSTRAINT FK_USUARIOPERFIL_SISTEMA FOREIGN KEY (sistema_id) REFERENCES sca_api.sistema (id);
+ALTER TABLE sca_api.usuario_permissao ADD CONSTRAINT FK_USUARIOPERMISSAO_USUARIO FOREIGN KEY (usuario_id) REFERENCES sca_api.usuario (id);
+ALTER TABLE sca_api.usuario_permissao ADD CONSTRAINT FK_USUARIOPERMISSAO_SISTEMA FOREIGN KEY (permissao_id) REFERENCES sca_api.permissao (id);
 
 -- DROP TABLE AUDITORIA
 

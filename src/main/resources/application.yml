@@ -34,8 +34,8 @@ spring:
 # PROFILES
 spring:
       profiles:
-            active: oauth-security,dev 
-        #      active: basic-security,dev   
+#            active: oauth-security,dev 
+              active: basic-security,dev   
 
 # Acessando o banco de dados local - mysql
 ---
@@ -56,7 +56,7 @@ spring:
 # Ambiente Local        
      -
         name: desenvolvimento
-        url: jdbc:mysql://localhost/outerboxtech_sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+        url: jdbc:mysql://localhost/sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
         username: root
         password: root
        
@@ -86,8 +86,9 @@ spring:
          properties:               
             hibernate: 
                 dialect: org.hibernate.dialect.MySQL55Dialect
-#                envers:
-#                    default_schema: AUDITORIA
+                envers:
+                    default_schema: sca_api_auditoria
+                    
                 cache:
                     # To enable query cache, you need to specify one more additional configuration property.
                     use_query_cache: true
