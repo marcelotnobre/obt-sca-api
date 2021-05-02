@@ -44,16 +44,19 @@ import lombok.ToString;
 // @Cacheable(value = true)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
 //@formatter:off
-@Table(name = "USUARIO", uniqueConstraints = {
-											    @UniqueConstraint(name = "UK_USUARIO_EMAIL", columnNames = {"email"}),
-											    @UniqueConstraint(name = "UK_USUARIO_LOGIN", columnNames = {"login"})
-							    	  		 }, 
-						 indexes = {
-								    @Index(name = "INDEX_EMAIL_USUARIO", columnList = "email"),
-								    @Index(name = "INDEX_LOGIN_USUARIO", columnList = "login"),
-								    @Index(name = "INDEX_LOGIN_E_SENHA_USUARIO", columnList = "login,senha"),
-								    @Index(name = "INDEX_EMAIL_E_SENHA_USUARIO", columnList = "email,senha")
-							       }
+@Table(name = "USUARIO", 
+	   uniqueConstraints = {
+						    @UniqueConstraint(name = "UK_USUARIO_EMAIL", columnNames = {"email"}),
+						    @UniqueConstraint(name = "UK_USUARIO_LOGIN", columnNames = {"login"})
+	  	    	  		   }, 
+	   indexes = {
+			      @Index(name = "INDEX_EMAIL_USUARIO", columnList = "email"),
+				  @Index(name = "INDEX_LOGIN_USUARIO", columnList = "login"),
+				  @Index(name = "INDEX_LOGIN_E_SENHA_USUARIO", columnList = "login,senha"),
+				  @Index(name = "INDEX_EMAIL_E_SENHA_USUARIO", columnList = "email,senha")
+				 },
+	   schema = "sca_api"
+  
        )
 @Audited()
 @AuditTable(value = "AUDITORIA_USUARIO" , schema = "sca_api_auditoria")
