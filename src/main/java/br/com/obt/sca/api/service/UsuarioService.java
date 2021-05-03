@@ -75,7 +75,7 @@ public class UsuarioService extends GenericService<Usuario> {
     @Autowired
     private TokenService tokenService;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     @Autowired
     public UsuarioService(GenericRepository<Usuario, Long> repository) {
