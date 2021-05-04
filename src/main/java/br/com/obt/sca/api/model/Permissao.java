@@ -36,54 +36,58 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-//@Cacheable(value = true)
+//@formatter:off
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
-@Table(name = "PERMISSAO", uniqueConstraints = {
-    @UniqueConstraint(name = "UK_PERMISSAO_NOME", columnNames = {"nome"})},
-        indexes = {
-            @Index(name = "INDEX_NOME_PERMISSAO", columnList = "nome")
-        }
+@Table(name = "PERMISSAO", 
+	   uniqueConstraints = {
+			   				 @UniqueConstraint(name = "UK_PERMISSAO_NOME", columnNames = {"nome"})},
+       indexes = {
+                  @Index(name = "INDEX_NOME_PERMISSAO", columnList = "nome")
+				 }
 )
+//@formatter:on
 @SequenceGenerator(sequenceName = "seq_permissao", name = "ID_SEQUENCE", allocationSize = 1)
+
 //@AssociationOverrides({
 //				  	  @AssociationOverride(joinColumns=@JoinColumn(name = "USUARIO_CADASTRO_ID"),name = "usuarioCadastro", foreignKey = @ForeignKey(name="FK_PERMISSAO_USUARIOCADASTRO")),
 //					  @AssociationOverride(joinColumns=@JoinColumn(name = "USUARIO_ALTERACAO_ID"),name = "usuarioAlteracao", foreignKey = @ForeignKey(name="FK_PERMISSAO_USUARIOALTERACAO"))
 //					 })
+
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false, of = {"nome"})
+@EqualsAndHashCode(callSuper = false, of = { "nome" })
 @ToString(callSuper = true)
-@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
+@JsonIgnoreProperties({ "handler", "hibernateLazyInitializer" })
 public class Permissao extends BaseEntity {
 
-    @Id
-    @SequenceGenerator(name = "ID", sequenceName = "seq_permissao", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_permissao")
-    @Column(name = "ID", nullable = false)
-    private Long id;
+	@Id
+	@SequenceGenerator(name = "ID", sequenceName = "seq_permissao", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_permissao")
+	@Column(name = "ID", nullable = false)
+	private Long id;
 
-    @ApiModelProperty(notes = "Nome da permissão - deve seguir a seguinte nomeclatura ROLE_ACAO_NOMECLASSEMAIUSCULA. Ex.:  ROLE_CRUD_CATEGORIA")
-    @NotNull(message = "O campo nome é obrigatório!")
-    @Size(min = 3, max = 100, message = "O campo nome deve ter o tamanho entre {min} e {max} caractere.")
-    @Column(name = "nome", nullable = false)
-    private String nome;
+	@ApiModelProperty(notes = "Nome da permissão - deve seguir a seguinte nomeclatura ROLE_ACAO_NOMECLASSEMAIUSCULA. Ex.:  ROLE_CRUD_CATEGORIA")
+	@NotNull(message = "O campo nome é obrigatório!")
+	@Size(min = 3, max = 100, message = "O campo nome deve ter o tamanho entre {min} e {max} caractere.")
+	@Column(name = "nome", nullable = false)
+	private String nome;
 
-    @ApiModelProperty(notes = "Descrição da permissão - Default : repetir o nome da permissão")
-    @NotNull(message = "O campo descrição é obrigatório!")
-    @Size(min = 3, max = 500, message = "O campo descrição deve ter o tamanho entre {min} e {max}  caractere.")
-    @Column(name = "DESCRICAO", length = 500, nullable = false)
-    private String descricao;
+	@ApiModelProperty(notes = "Descrição da permissão - Default : repetir o nome da permissão")
+	@NotNull(message = "O campo descrição é obrigatório!")
+	@Size(min = 3, max = 500, message = "O campo descrição deve ter o tamanho entre {min} e {max}  caractere.")
+	@Column(name = "DESCRICAO", length = 500, nullable = false)
+	private String descricao;
 
-    @ApiModelProperty(notes = "Sistema vinculado a permissão")
-    @NotNull(message = "O campo sistema é obrigatório!")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "SISTEMA_ID", foreignKey = @ForeignKey(name = "FK_PERMISSAO_SISTEMA"))
-    private Sistema sistema;
+	@ApiModelProperty(notes = "Sistema vinculado a permissão")
+	@NotNull(message = "O campo sistema é obrigatório!")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@Fetch(FetchMode.JOIN)
+	@JoinColumn(name = "SISTEMA_ID", foreignKey = @ForeignKey(name = "FK_PERMISSAO_SISTEMA"))
+	private Sistema sistema;
 
-    @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "perfilPermissaoPK.permissao")
-    private List<PerfilPermissao> perfilPermissoes;
+	@JsonIgnore
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "perfilPermissaoPK.permissao")
+	private List<PerfilPermissao> perfilPermissoes;
 
 }

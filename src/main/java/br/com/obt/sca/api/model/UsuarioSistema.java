@@ -18,7 +18,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-// @Cacheable(value = true)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
 @Table(name = "USUARIO_SISTEMA")
 @EqualsAndHashCode(of = { "usuarioSistemaPK" })

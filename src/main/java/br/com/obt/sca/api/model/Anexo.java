@@ -27,7 +27,7 @@ import lombok.ToString;
 //@formatter:off
 @Table(name = "ANEXO", 
        uniqueConstraints = {
-    		   			     @UniqueConstraint(columnNames = {"nome", "tamanho", "tipoConteudo"}, name = "UK_ANEXO_NOME_TAM_TPCONTEUDO")
+    		   			    @UniqueConstraint(columnNames = {"nome", "tamanho", "tipoConteudo"}, name = "UK_ANEXO_NOME_TAM_TPCONTEUDO")
 						   }
       )
 // @formatter:on

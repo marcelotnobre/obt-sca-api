@@ -25,12 +25,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-// @Cacheable(value = true)
+//@formatter:off
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
 @Table(name = "SISTEMA", uniqueConstraints = { 
 												@UniqueConstraint(name = "UK_SISTEMA_NOME", columnNames = { "nome" } ) 
 											 } 
 	  )
+//@formatter:on
 @SequenceGenerator(sequenceName = "seq_sistema", name = "ID_SEQUENCE", allocationSize = 1)
 
 @Getter

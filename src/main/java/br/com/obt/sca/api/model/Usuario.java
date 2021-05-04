@@ -41,7 +41,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-// @Cacheable(value = true)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, include = "all")
 //@formatter:off
 @Table(name = "USUARIO", 
@@ -56,7 +55,6 @@ import lombok.ToString;
 				  @Index(name = "INDEX_EMAIL_E_SENHA_USUARIO", columnList = "email,senha")
 				 },
 	   schema = "sca_api"
-  
        )
 @Audited()
 @AuditTable(value = "AUDITORIA_USUARIO" , schema = "sca_api_auditoria")
