@@ -1,14 +1,10 @@
 package br.com.obt.sca.api.service.superclass;
  
-import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
-import br.com.obt.sca.api.repository.superclass.GenericRepository;
-import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
-import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
-import br.com.obt.sca.api.util.ReflectionUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.obt.sca.api.projections.IDAndNomeGenericoProjection;
+import br.com.obt.sca.api.repository.superclass.GenericRepository;
+import br.com.obt.sca.api.service.exception.ResourceAlreadyExistsException;
+import br.com.obt.sca.api.service.exception.ResourceNotFoundException;
+import br.com.obt.sca.api.util.ReflectionUtil;
 
 /**
  *

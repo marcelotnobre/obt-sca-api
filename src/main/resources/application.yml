@@ -3,7 +3,7 @@
 
 #Enabling HTTP/2 support in Spring Boot
 server:
-    port: 8090
+    port: 8080
     http2:
             enabled: true
 ---
