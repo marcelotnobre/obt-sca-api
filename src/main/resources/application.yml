@@ -55,11 +55,17 @@ spring:
 
 # Ambiente Local        
      -
-        name: desenvolvimento
-        url: jdbc:mysql://localhost/sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-        username: root
-        password: root
-       
+       name: desenvolvimento
+       url: jdbc:postgresql://localhost:5432/sca_api
+       username: postgres
+       password: postgres
+
+#         name: desenvolvimento
+#         url: jdbc:mysql://localhost/sca_api?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+#         username: root
+#         password: root
+
+
     jpa:   
         hibernate:
 #           para executar esses dois comandos, deve desabilitar o flyway
@@ -70,22 +76,24 @@ spring:
 spring:
     flyway:
         enabled: true
-        locations: classpath:db/migration/mysql
+#        locations: classpath:db/migration/mysql
+        locations: classpath:db/migration/postgres
         baseline-on-migrate: true
-#        locations: classpath:db/migration/postgres
 ---
 # exibe os comandos SQL
 spring:
       jpa:
-         database: MYSQL
+         database: POSTGRESQL
+#          database: MYSQL
          show-sql: true
 #         hibernate:
 #              naming:
 #                implicit_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
 #                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
          properties:               
-            hibernate: 
-                dialect: org.hibernate.dialect.MySQL55Dialect
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+#                dialect: org.hibernate.dialect.MySQL55Dialect
                 envers:
                     default_schema: sca_api_auditoria
                     

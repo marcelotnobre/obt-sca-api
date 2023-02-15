@@ -83,6 +83,12 @@
             <artifactId>hibernate-envers</artifactId>
         </dependency>
 
+        <!-- postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- mysql -->
         <dependency>
             <groupId>mysql</groupId>
@@ -320,15 +326,21 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>6.5.1</version>
+                <version>9.8.1</version>
                 <configuration>
                     <!-- dev env -->
                     <!-- <url>jdbc:mysql://localhost/sca_api?allowPublicKeyRetrieval=true&amp;createDatabaseIfNotExist=true&amp;useSSL=false&amp;serverTimezone=UTC</url> -->
                     <!-- <user>root</user> -->
                     <!-- <password></password> -->
-                    <url>jdbc:mysql://localhost:3306/sca_api?createDatabaseIfNotExist=true&amp;useSSL=false&amp;serverTimezone=UTC</url>
-                    <user>outerboxtech</user>
-                    <password>outerboxtech</password>
+
+                    <!-- <url>jdbc:mysql://localhost:3306/sca_api?createDatabaseIfNotExist=true&amp;useSSL=false&amp;serverTimezone=UTC</url> -->
+                    <!-- <user>outerboxtech</user> -->
+                    <!-- <password>outerboxtech</password> -->
+
+                    <url>jdbc:postgresql://localhost:5432/sca_api</url>
+                    <user>postgres</user>
+                    <password>postgres</password>
+
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -354,7 +366,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
-            
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
